@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context7 MCP 徹底解説</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f0fdf4; /* Light green tint for "Fresh" docs */
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-6 md:p-10">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <div class="inline-block bg-green-100 text-green-800 px-4 py-1 rounded-full text-sm font-bold mb-4">
+                Docs for AI
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Context7 MCP
+            </h1>
+            <p class="text-xl text-gray-600">
+                「その機能、もう古いです」と言わせない。<br>
+                AIに<span class="text-green-600 font-bold">最新の公式ドキュメント</span>を動的に注入する専門家。
+            </p>
+        </header>
+
+        <!-- The Problem & Solution -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <!-- Problem -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-red-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-red-500 text-white text-xs px-3 py-1 rounded-bl-lg">Before</div>
+                <h3 class="text-lg font-bold text-gray-800 mb-3"><i class="fas fa-times-circle text-red-500 mr-2"></i>これまでの課題</h3>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex items-start">
+                        <span class="mr-2">❌</span>
+                        <span><strong>知識の期限切れ:</strong> 「そのライブラリのv2.0は私の知識（2024年まで）にはありません」と断られる。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">❌</span>
+                        <span><strong>幻覚（ハルシネーション）:</strong> 存在しない関数や、廃止された古い書き方を自信満々で提案してくる。</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Solution -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-green-200 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-lg">With Context7</div>
+                <h3 class="text-lg font-bold text-gray-800 mb-3"><i class="fas fa-check-circle text-green-500 mr-2"></i>Context7の解決策</h3>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex items-start">
+                        <span class="mr-2">✅</span>
+                        <span><strong>リアルタイム・ドキュメント:</strong> 15,000以上のライブラリの「今」のドキュメントを瞬時に取得。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">✅</span>
+                        <span><strong>正確なコード生成:</strong> 公式のコード例をそのままプロンプトに混ぜるため、文法ミスが激減する。</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Key Features Grid -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-green-500 pl-4">主な機能</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="feature-card bg-white p-6 rounded-xl border border-gray-100">
+                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-book text-green-600 text-xl"></i>
+                </div>
+                <h3 class="font-bold mb-2">ドキュメント検索</h3>
+                <p class="text-sm text-gray-500">
+                    `get-library-docs` ツールを提供。ユーザーがライブラリ名を指定するだけで、関連ページを自動で探して要約します。
+                </p>
+            </div>
+            <div class="feature-card bg-white p-6 rounded-xl border border-gray-100">
+                <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-code text-blue-600 text-xl"></i>
+                </div>
+                <h3 class="font-bold mb-2">コード例の注入</h3>
+                <p class="text-sm text-gray-500">
+                    解説文だけでなく、実際の「Usage（使い方）」コードスニペットを優先的に取得するため、コピペで動くコードが生成されやすくなります。
+                </p>
+            </div>
+            <div class="feature-card bg-white p-6 rounded-xl border border-gray-100">
+                <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-bolt text-purple-600 text-xl"></i>
+                </div>
+                <h3 class="font-bold mb-2">高速・軽量</h3>
+                <p class="text-sm text-gray-500">
+                    Web検索（Brave等）よりもデータ量が最適化されており、必要な情報だけをピンポイントで取得するためトークン効率が良いです。
+                </p>
+            </div>
+        </div>
+
+        <!-- Comparison with Brave Search -->
+        <div class="bg-gray-800 text-white rounded-2xl p-8 mb-12">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-question-circle text-yellow-400 mr-3"></i>
+                Brave Search との違いは？
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+                <div>
+                    <h4 class="font-bold text-orange-400 mb-2 border-b border-gray-600 pb-1">Brave Search MCP</h4>
+                    <p class="text-gray-300 mb-2">「広範なウェブ検索」が得意。</p>
+                    <ul class="list-disc list-inside text-gray-400 space-y-1">
+                        <li>ブログ記事、フォーラム(StackOverflow)の検索</li>
+                        <li>トレンドや一般的な知識の調査</li>
+                        <li>エラーメッセージの解決策探し</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-green-400 mb-2 border-b border-gray-600 pb-1">Context7 MCP</h4>
+                    <p class="text-gray-300 mb-2">「一次情報の取得」に特化。</p>
+                    <ul class="list-disc list-inside text-gray-400 space-y-1">
+                        <li><strong>公式ドキュメントのみ</strong>を対象にする</li>
+                        <li>APIの引数や戻り値の正確な定義</li>
+                        <li>アップデート直後の最新ライブラリ仕様</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation -->
+        <div class="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 class="text-lg font-bold mb-4">🚀 導入コマンド</h2>
+            <div class="bg-gray-900 rounded-lg p-4 flex items-center justify-between group">
+                <code class="text-green-400 font-mono text-sm break-all">
+                    npx -y @upstash/context7-mcp@latest
+                </code>
+                <button class="text-gray-500 hover:text-white transition-colors" onclick="navigator.clipboard.writeText('npx -y @upstash/context7-mcp@latest');alert('コピーしました！')">
+                    <i class="far fa-copy"></i>
+                </button>
+            </div>
+            <p class="mt-2 text-xs text-gray-500">
+                ※ Claude DesktopやClaude Codeの設定ファイルに追加して使用します。
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>

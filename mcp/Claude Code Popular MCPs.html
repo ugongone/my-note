@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code 人気MCP Top 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .mcp-card {
+            transition: all 0.3s ease;
+        }
+        .mcp-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-6 md:p-10">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                <i class="fas fa-robot text-indigo-600 mr-2"></i> Claude Code 人気MCP Top 3
+            </h1>
+            <p class="text-gray-600">
+                開発者の生産性を劇的に向上させる、最も導入頻度の高いModel Context Protocolサーバー
+            </p>
+        </header>
+
+        <!-- MCP Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Card 1: GitHub -->
+            <div class="mcp-card bg-white rounded-xl overflow-hidden shadow-lg border-t-4 border-gray-800">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-gray-100 rounded-full p-3">
+                            <i class="fab fa-github text-2xl text-gray-800"></i>
+                        </div>
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded">Essential</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">GitHub MCP</h2>
+                    <p class="text-gray-600 text-sm mb-4 h-16">
+                        リポジトリの検索、Issueの読み取り、プルリクエストの作成などをClaudeから直接操作可能にします。
+                    </p>
+                    <div class="bg-gray-50 rounded p-3 mb-4">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">主なユースケース</h3>
+                        <ul class="text-sm space-y-1">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>PR内容の自動生成とマージ</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>関連するIssueの検索・分析</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>ファイル履歴の調査</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="https://github.com/modelcontextprotocol/servers/tree/main/src/github" target="_blank" class="block text-center w-full bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 rounded transition-colors text-sm">
+                        公式リポジトリを見る
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2: Postgres -->
+            <div class="mcp-card bg-white rounded-xl overflow-hidden shadow-lg border-t-4 border-blue-600">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-50 rounded-full p-3">
+                            <i class="fas fa-database text-2xl text-blue-600"></i>
+                        </div>
+                        <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">Database</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">Postgres MCP</h2>
+                    <p class="text-gray-600 text-sm mb-4 h-16">
+                        読み取り専用アクセスでスキーマを分析し、自然言語で複雑なSQLクエリを生成・実行できます。
+                    </p>
+                    <div class="bg-gray-50 rounded p-3 mb-4">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">主なユースケース</h3>
+                        <ul class="text-sm space-y-1">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>テーブル構造の即時把握</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>自然言語でのデータ分析</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>SQLクエリのデバッグ支援</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="https://github.com/modelcontextprotocol/servers/tree/main/src/postgres" target="_blank" class="block text-center w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded transition-colors text-sm">
+                        公式リポジトリを見る
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Brave Search -->
+            <div class="mcp-card bg-white rounded-xl overflow-hidden shadow-lg border-t-4 border-orange-500">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-orange-50 rounded-full p-3">
+                            <i class="fas fa-search text-2xl text-orange-500"></i>
+                        </div>
+                        <span class="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded">Web Access</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-2">Brave Search</h2>
+                    <p class="text-gray-600 text-sm mb-4 h-16">
+                        Claudeに「検索」能力を与え、最新のドキュメントやエラー解決策をウェブから取得させます。
+                    </p>
+                    <div class="bg-gray-50 rounded p-3 mb-4">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase mb-2">主なユースケース</h3>
+                        <ul class="text-sm space-y-1">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>最新ライブラリのドキュメント参照</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>エラーログの解決策検索</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                <span>技術トレンドの調査</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search" target="_blank" class="block text-center w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded transition-colors text-sm">
+                        公式リポジトリを見る
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Note -->
+        <div class="mt-10 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-800 mb-2">
+                <i class="fas fa-info-circle text-indigo-500 mr-2"></i>なぜこの3つなのか？
+            </h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+                これら3つのMCPサーバーは、開発者の三大要素である<strong>「コード管理 (GitHub)」</strong>、<strong>「データ操作 (Postgres)」</strong>、<strong>「外部知識の取得 (Brave Search)」</strong>を網羅しているため、Claude Codeの基本セットアップとして推奨されています。他にも、Google Drive（ドキュメント管理）や Chrome DevTools（ウェブテスト）も人気があります。
+            </p>
+        </div>
+        
+        <footer class="mt-8 text-center text-xs text-gray-400">
+            <p>※MCP (Model Context Protocol) はオープン標準であり、使用するにはローカル環境へのセットアップが必要です。</p>
+        </footer>
+    </div>
+
+</body>
+</html>

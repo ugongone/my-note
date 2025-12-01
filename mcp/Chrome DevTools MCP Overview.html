@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome DevTools MCP 解説</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f1f5f9; /* Slate-100 */
+        }
+        .dev-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dev-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .code-block {
+            background-color: #1e293b; /* Slate-800 */
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="text-slate-800 p-6 md:p-10">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <div class="inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full text-sm font-bold mb-4">
+                The "Eyes" for AI
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
+                Chrome DevTools MCP
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                AIはもう「コードを書くだけ」じゃない。<br>
+                <span class="text-blue-600 font-bold">ブラウザを開き、クリックし、エラーを目視確認する</span>時代へ。
+            </p>
+        </header>
+
+        <!-- Main Value Proposition -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 mb-10">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fab fa-chrome text-blue-500 mr-3 text-3xl"></i>
+                何ができるのか？
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="dev-card p-4 rounded-xl border border-slate-100 bg-slate-50">
+                    <div class="text-blue-500 text-2xl mb-3"><i class="fas fa-mouse-pointer"></i></div>
+                    <h3 class="font-bold text-lg mb-2">自動操作 (Puppeteer)</h3>
+                    <p class="text-sm text-slate-600">
+                        「localhost:3000を開いてログインボタンを押して」と言えば、AIが実際にブラウザを操作して実行します。
+                    </p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="dev-card p-4 rounded-xl border border-slate-100 bg-slate-50">
+                    <div class="text-red-500 text-2xl mb-3"><i class="fas fa-bug"></i></div>
+                    <h3 class="font-bold text-lg mb-2">コンソール監視</h3>
+                    <p class="text-sm text-slate-600">
+                        ブラウザのConsoleに出ているエラーログをAIが直接読み取り、バグの原因を即座に特定・修正案を出します。
+                    </p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="dev-card p-4 rounded-xl border border-slate-100 bg-slate-50">
+                    <div class="text-purple-500 text-2xl mb-3"><i class="fas fa-camera"></i></div>
+                    <h3 class="font-bold text-lg mb-2">視覚的確認</h3>
+                    <p class="text-sm text-slate-600">
+                        スクリーンショットを撮影したり、DOM構造を取得して「CSSでレイアウトが崩れている」ことを認識できます。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm">
+                <h3 class="font-bold text-lg mb-2">💻 フロントエンド開発の革命</h3>
+                <p class="text-sm text-slate-600 mb-3">
+                    コードを書いても、実際に動くかは別問題でした。このMCPを使えば、AIは以下のフローを完結できます。
+                </p>
+                <ol class="list-decimal list-inside text-sm font-medium text-slate-700 space-y-1">
+                    <li>コードを修正する</li>
+                    <li>ブラウザでページをリロードする</li>
+                    <li>コンソールエラーが消えたか確認する</li>
+                    <li>まだエラーなら、ログを読んで再修正する</li>
+                </ol>
+            </div>
+            <div class="bg-white p-6 rounded-xl border-l-4 border-green-500 shadow-sm">
+                <h3 class="font-bold text-lg mb-2">🧪 E2Eテストの自動生成</h3>
+                <p class="text-sm text-slate-600 mb-3">
+                    「ユーザー登録フローをテストして」と頼むだけで、AIが入力項目を埋めて送信テストを行い、その操作ログからPlaywright等のテストコードを生成することも可能です。
+                </p>
+            </div>
+        </div>
+
+        <!-- Installation Command -->
+        <div class="bg-slate-900 text-white rounded-xl p-6 shadow-lg">
+            <h3 class="text-lg font-bold mb-4 flex items-center">
+                <i class="fas fa-terminal mr-2 text-green-400"></i> インストール (Claude Code)
+            </h3>
+            <p class="text-sm text-slate-400 mb-2">
+                以下のコマンドでプロジェクトに追加できます。
+            </p>
+            <div class="bg-black rounded p-4 font-mono text-sm flex justify-between items-center group">
+                <code class="break-all text-green-400">
+                    claude mcp add chrome-devtools npx chrome-devtools-mcp@latest
+                </code>
+                <button class="text-slate-500 hover:text-white transition-colors ml-4" onclick="navigator.clipboard.writeText('claude mcp add chrome-devtools npx chrome-devtools-mcp@latest');alert('コマンドをコピーしました')">
+                    <i class="far fa-copy"></i>
+                </button>
+            </div>
+            <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 rounded text-xs text-yellow-200">
+                <i class="fas fa-exclamation-triangle mr-1"></i> 注意: 実行にはGoogle Chromeがインストールされている必要があります。ヘッドレスモード（画面なし）で起動させるオプションもあります。
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

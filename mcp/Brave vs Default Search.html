@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code: 標準検索 vs Brave Search MCP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+        }
+        .comparison-row:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="text-gray-800 p-6 md:p-10">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-balance-scale text-orange-500 mr-2"></i> 標準検索 vs Brave Search MCP
+            </h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                2025年現在、Claude Codeには標準で検索機能が搭載されていますが、なぜ多くの開発者が追加でBrave Search MCPを導入するのか？その決定的な違いを解説します。
+            </p>
+        </header>
+
+        <!-- Main Comparison Table -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-10">
+            <div class="grid grid-cols-3 bg-gray-800 text-white p-4 font-bold text-sm md:text-base">
+                <div class="col-span-1">比較項目</div>
+                <div class="col-span-1 text-center"><i class="fas fa-magic mr-2"></i>標準検索機能</div>
+                <div class="col-span-1 text-center"><i class="fas fa-shield-alt mr-2 text-orange-400"></i>Brave Search MCP</div>
+            </div>
+
+            <!-- Row 1 -->
+            <div class="grid grid-cols-3 p-4 border-b border-gray-100 comparison-row items-center">
+                <div class="col-span-1 font-bold text-sm text-gray-700">
+                    プライバシー・追跡
+                </div>
+                <div class="col-span-1 px-4 text-sm">
+                    <span class="text-red-500 font-bold"><i class="fas fa-times-circle mr-1"></i> 低～中</span><br>
+                    <span class="text-xs text-gray-500">Google等のエンジンを使用するため、検索クエリやIPが追跡される可能性がある。企業ポリシーによってはNG。</span>
+                </div>
+                <div class="col-span-1 px-4 text-sm border-l-2 border-orange-100">
+                    <span class="text-green-600 font-bold"><i class="fas fa-check-circle mr-1"></i> 非常に高い</span><br>
+                    <span class="text-xs text-gray-500">ユーザー追跡を行わない方針。社内コードに関連するキーワードを含めても比較的安全。</span>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="grid grid-cols-3 p-4 border-b border-gray-100 comparison-row items-center">
+                <div class="col-span-1 font-bold text-sm text-gray-700">
+                    トークン効率 (AIの記憶容量)
+                </div>
+                <div class="col-span-1 px-4 text-sm">
+                    <span class="text-yellow-600 font-bold"><i class="fas fa-exclamation-triangle mr-1"></i> 低い (重い)</span><br>
+                    <span class="text-xs text-gray-500">HTMLページ全体や広告などのノイズ情報も読み込みがちで、コンテキストウィンドウを圧迫しやすい。</span>
+                </div>
+                <div class="col-span-1 px-4 text-sm border-l-2 border-orange-100">
+                    <span class="text-green-600 font-bold"><i class="fas fa-check-circle mr-1"></i> 高い (軽い)</span><br>
+                    <span class="text-xs text-gray-500">API経由で「構造化データ（JSON）」として必要な情報だけを返すため、AIが処理しやすく、トークン消費が少ない。</span>
+                </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="grid grid-cols-3 p-4 border-b border-gray-100 comparison-row items-center">
+                <div class="col-span-1 font-bold text-sm text-gray-700">
+                    技術情報の精度
+                </div>
+                <div class="col-span-1 px-4 text-sm">
+                    <span class="text-gray-700 font-bold">一般的</span><br>
+                    <span class="text-xs text-gray-500">一般的なウェブ検索結果。SEO対策された記事や古い情報が上位に来ることもある。</span>
+                </div>
+                <div class="col-span-1 px-4 text-sm border-l-2 border-orange-100">
+                    <span class="text-gray-700 font-bold">開発者寄り</span><br>
+                    <span class="text-xs text-gray-500">技術ドキュメントやReddit、StackOverflowなどのフォーラム情報に対するインデックス精度が高く評価されている。</span>
+                </div>
+            </div>
+
+             <!-- Row 4 -->
+             <div class="grid grid-cols-3 p-4 comparison-row items-center">
+                <div class="col-span-1 font-bold text-sm text-gray-700">
+                    導入の手間
+                </div>
+                <div class="col-span-1 px-4 text-sm">
+                    <span class="text-green-600 font-bold">ゼロ</span><br>
+                    <span class="text-xs text-gray-500">Claude Codeをインストールした時点で即座に使用可能。</span>
+                </div>
+                <div class="col-span-1 px-4 text-sm border-l-2 border-orange-100">
+                    <span class="text-gray-700 font-bold">要設定</span><br>
+                    <span class="text-xs text-gray-500">Brave APIキーの取得（無料枠あり）と設定ファイルの記述が必要。</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-gray-400">
+                <h3 class="font-bold text-lg mb-3 text-gray-700">標準検索機能で十分な場合</h3>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li><i class="fas fa-check text-gray-400 mr-2"></i>ライブラリのバージョン番号をちょっと確認したい</li>
+                    <li><i class="fas fa-check text-gray-400 mr-2"></i>一般的な用語の意味を調べたい</li>
+                    <li><i class="fas fa-check text-gray-400 mr-2"></i>セットアップの手間をかけたくない</li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow border-l-4 border-orange-500">
+                <h3 class="font-bold text-lg mb-3 text-gray-800">Brave Search MCPを入れるべき場合</h3>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li><i class="fas fa-check text-orange-500 mr-2"></i><strong>トークン制限ギリギリ</strong>の長文コードを扱っている</li>
+                    <li><i class="fas fa-check text-orange-500 mr-2"></i>仕事で使っており、<strong>検索ログを残したくない</strong></li>
+                    <li><i class="fas fa-check text-orange-500 mr-2"></i>標準検索がエラーやハルシネーションを起こした時の<strong>予備（バックアップ）</strong>として</li>
+                    <li><i class="fas fa-check text-orange-500 mr-2"></i>古い記事を除外し、最新のドキュメントだけを厳密に探させたい</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-6 text-center">
+            <h4 class="text-indigo-900 font-bold mb-2">結論：併用が最強のソリューション</h4>
+            <p class="text-sm text-indigo-800 leading-relaxed">
+                標準機能を「メイン」として使いつつ、Brave Search MCPを「高精度・高セキュリティなサブウェポン」として導入するのが、2025年のパワーユーザーの標準的な構成です。<br>
+                特に、Brave SearchはAPIを通じて<strong>「AIが読みやすい形式」</strong>で情報を渡すことに特化しているため、Claudeの思考精度が向上するという報告も多数あります。
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>

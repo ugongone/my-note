@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG技術解説：質問タイプに応じた検索語追加</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #cbd5e1;
+            margin: 0 auto;
+        }
+        pre {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12 px-4 shadow-lg">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold mb-4">
+                RAG 精度向上テクニック
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">質問タイプに応じた検索語追加</h1>
+            <p class="text-blue-100 text-lg max-w-2xl mx-auto">
+                ユーザーの「曖昧な言葉」をドキュメントの「正確な言葉」へ。<br>
+                インテント（意図）理解による検索クエリ最適化の仕組み。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 -mt-8">
+        
+        <!-- Section 1: The Core Problem -->
+        <section class="bg-white rounded-xl shadow-md p-6 md:p-8 mb-8 border-l-4 border-red-500">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center mb-4">
+                <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                なぜこれが必要なのか？（言葉のズレ問題）
+            </h2>
+            <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                <div class="bg-gray-50 p-4 rounded-lg text-center relative flex-1 w-full">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-600 text-white text-xs px-2 py-1 rounded">ユーザーの入力</div>
+                    <p class="text-lg font-bold text-gray-700 mt-2">「経費精算」</p>
+                    <p class="text-sm text-gray-500 mt-1">（面倒だから単語しか打たない）</p>
+                </div>
+                
+                <div class="hidden md:flex justify-center text-gray-400">
+                    <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg text-center relative border border-blue-100 flex-1 w-full">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs px-2 py-1 rounded">ドキュメントのタイトル</div>
+                    <ul class="text-left text-sm space-y-2 mt-2 max-w-xs mx-auto">
+                        <li class="flex items-center text-gray-400"><span class="w-2 h-2 bg-gray-300 rounded-full mr-2"></span>経費精算システムログ</li>
+                        <li class="flex items-center text-gray-400"><span class="w-2 h-2 bg-gray-300 rounded-full mr-2"></span>経費精算規定（定義）</li>
+                        <li class="flex items-center text-blue-700 font-bold bg-blue-100 px-2 rounded"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>経費精算マニュアル（手順）</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="mt-4 text-gray-600 text-sm md:text-base leading-relaxed">
+                ユーザーは「やり方」を知りたくても、「経費精算」としか入力しません。そのままだと、システムは「定義」や「ログ」など関係ない資料もヒットさせてしまいます。この<strong>「言葉のズレ」</strong>を埋めるのが本機能です。
+            </p>
+        </section>
+
+        <!-- Section 2: How it Works -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">処理の仕組み（2ステップ）</h2>
+            <div class="grid md:grid-cols-3 gap-4 items-stretch">
+                <!-- Step 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center text-center card-hover relative">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4 text-xl font-bold">1</div>
+                    <h3 class="font-bold text-lg mb-2">インテント判定</h3>
+                    <p class="text-sm text-gray-600 mb-4">LLMや分類器が、ユーザーの質問が「何を知りたがっているか」を分類します。</p>
+                    <div class="bg-gray-100 p-3 rounded w-full text-xs text-left">
+                        <span class="text-gray-500">入力:</span> "VPN接続できない"<br>
+                        <span class="text-green-600 font-bold">判定: Trouble型 (解決策)</span>
+                    </div>
+                    <div class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 z-10">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center text-center card-hover relative">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4 text-xl font-bold">2</div>
+                    <h3 class="font-bold text-lg mb-2">検索語(キーワード)注入</h3>
+                    <p class="text-sm text-gray-600 mb-4">判定結果に基づき、ドキュメントでよく使われる「書き言葉」を強制的に追加します。</p>
+                    <div class="bg-gray-100 p-3 rounded w-full text-xs text-left">
+                        <span class="text-gray-500">ルール:</span> Trouble型なら...<br>
+                        <span class="text-blue-600 font-bold">+ "対処法", "原因", "エラー"</span>
+                    </div>
+                    <div class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 z-10">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </div>
+
+                <!-- Result -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl shadow-sm border border-blue-100 flex flex-col items-center text-center card-hover">
+                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">最適化された検索</h3>
+                    <p class="text-sm text-gray-600 mb-4">拡張されたクエリで検索を実行。</p>
+                    <div class="bg-white p-3 rounded w-full text-xs text-center border border-blue-200 shadow-sm">
+                        <span class="font-bold text-gray-800">"VPN接続"</span> AND <br>
+                        <span class="font-bold text-blue-600">("対処法" OR "原因" OR "エラー")</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The Classification Matrix -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">質問タイプ別：追加されるマジックワード</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- How Type -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border-t-4 border-green-500 card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-xl text-gray-800">How型 (手順)</h3>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">頻出</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">「やりたい」「操作したい」という意図。</p>
+                        <div class="bg-gray-50 rounded p-3 mb-4">
+                            <p class="text-xs text-gray-400 mb-1">追加キーワード</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-green-700">手順</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-green-700">方法</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-green-700">マニュアル</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-green-700">ステップ</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400">ターゲット文書: マニュアル、手順書、操作ガイド</p>
+                    </div>
+                </div>
+
+                <!-- What Type -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border-t-4 border-blue-500 card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-xl text-gray-800">What型 (概要)</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">「意味を知りたい」「全体像」という意図。</p>
+                        <div class="bg-gray-50 rounded p-3 mb-4">
+                            <p class="text-xs text-gray-400 mb-1">追加キーワード</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-blue-700">とは</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-blue-700">概要</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-blue-700">定義</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-blue-700">Introduction</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400">ターゲット文書: 規定集(第1条)、製品概要資料</p>
+                    </div>
+                </div>
+
+                <!-- Trouble Type -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border-t-4 border-red-500 card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-xl text-gray-800">Trouble型 (解決)</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">「困っている」「直したい」という意図。</p>
+                        <div class="bg-gray-50 rounded p-3 mb-4">
+                            <p class="text-xs text-gray-400 mb-1">追加キーワード</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-red-700">原因</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-red-700">対処法</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-red-700">解決策</span>
+                                <span class="px-2 py-1 bg-white border border-gray-200 rounded text-sm font-medium text-red-700">エラーコード</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400">ターゲット文書: FAQ、障害報告書、トラブル集</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Before After Simulation -->
+        <section class="bg-gray-800 text-white rounded-xl shadow-xl p-8 mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-center">効果シミュレーション：「PC 初期化」と検索した場合</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Before -->
+                <div class="bg-gray-700 rounded-lg p-6 opacity-75">
+                    <div class="flex items-center justify-between mb-4 border-b border-gray-600 pb-2">
+                        <span class="font-bold text-red-300">Before: 通常検索</span>
+                        <span class="text-xs bg-gray-600 px-2 py-1 rounded">Query: "PC 初期化"</span>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex items-start text-gray-400">
+                            <svg class="w-5 h-5 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <div>
+                                <div class="font-medium">PC初期化時の情報漏洩リスク規定</div>
+                                <div class="text-xs text-gray-500">...初期化はリスクを伴うため...</div>
+                            </div>
+                        </li>
+                        <li class="flex items-start text-gray-400">
+                            <svg class="w-5 h-5 mr-2 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            <div>
+                                <div class="font-medium">2023年度 PC廃棄一覧表</div>
+                                <div class="text-xs text-gray-500">...全台初期化済み...</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class="mt-4 text-sm text-red-300 font-medium text-center">本当に欲しい「手順」が出てこない...</p>
+                </div>
+
+                <!-- After -->
+                <div class="bg-white text-gray-800 rounded-lg p-6 shadow-lg transform md:scale-105 border-2 border-green-400">
+                    <div class="flex items-center justify-between mb-4 border-b border-gray-200 pb-2">
+                        <span class="font-bold text-green-600">After: How型として処理</span>
+                        <span class="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500 truncate max-w-[120px] md:max-w-none">Query: "PC 初期化" + 手順 OR 方法</span>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 mr-2 mt-1 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <div>
+                                <div class="font-bold text-blue-600 underline cursor-pointer">Windows PC 初期化手順書.pdf</div>
+                                <div class="text-xs text-gray-500">...1. 設定を開く 2. 回復を選択...</div>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 mr-2 mt-1 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <div>
+                                <div class="font-bold text-blue-600 underline cursor-pointer">PCセットアップマニュアル（管理者用）</div>
+                                <div class="text-xs text-gray-500">...第5章：トラブル時の初期化方法...</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class="mt-4 text-sm text-green-600 font-medium text-center">ピンポイントで手順書がヒット！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Configuration Management -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">運用のポイント：設定の外出し管理</h2>
+            <div class="bg-white rounded-xl shadow-md p-6 md:p-8 border border-gray-200">
+                <div class="flex flex-col md:flex-row gap-8">
+                    <!-- Text Explanation -->
+                    <div class="md:w-1/2">
+                        <h3 class="font-bold text-xl text-indigo-600 mb-3">コードに直書きしない</h3>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                            キーワードをプログラムの中に直接書いてしまうと、単語を1つ追加するたびにシステムの更新（再デプロイ）が必要になります。実務では<strong>設定ファイル（JSON等）として分離</strong>し、柔軟に管理することが推奨されます。
+                        </p>
+                        <h4 class="font-bold text-gray-700 text-sm mb-2">メリット：</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>PDCAが高速化：</strong> 検索ログを見て「ヒットしない単語」があれば即座に追加設定が可能。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-4 h-4 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>誰でも管理可能：</strong> エンジニアでなくても、管理画面からJSONを編集するだけで調整ができる。</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Code Snippet -->
+                    <div class="md:w-1/2">
+                        <div class="text-xs text-gray-500 mb-1 ml-1">intent_config.json の例</div>
+                        <pre><code>{
+  "intent_rules": [
+    {
+      "id": "how_to",
+      "description": "手順・方法を知りたい意図",
+      "inject_keywords": ["手順", "方法", "マニュアル", "ステップ"],
+      "boost_score": 1.5
+    },
+    {
+      "id": "trouble",
+      "description": "トラブル解決の意図",
+      "inject_keywords": ["原因", "対処法", "解決策", "エラー"],
+      "boost_score": 2.0
+    }
+  ]
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer / Technical Note -->
+        <footer class="text-center text-gray-500 text-sm mt-8 pb-8">
+            <div class="inline-block bg-white px-6 py-4 rounded-full shadow-sm">
+                <p><strong>技術的な肝：</strong> 企業ドキュメントの「お作法（テンプレート）」を逆手に取ることで精度を高めています。</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // Simple interactivity or animation triggers can be added here
+        console.log("RAG Optimization Guide Loaded");
+    </script>
+</body>
+</html>

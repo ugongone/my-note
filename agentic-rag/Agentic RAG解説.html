@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic RAG 解説まとめ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+        }
+        .step-active {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+            transform: scale(1.02);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pro-con-card {
+            transition: all 0.3s ease;
+        }
+        .pro-con-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        /* ベン図のアニメーション */
+        .venn-circle {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .venn-circle:hover {
+            transform: scale(1.03);
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white py-12 px-4 shadow-lg">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-block bg-blue-600 text-xs font-bold px-3 py-1 rounded-full mb-4">AI トレンド解説</div>
+            <h1 class="text-3xl md:text-5xl font-bold mb-4">Agentic RAGとは？</h1>
+            <p class="text-slate-300 text-lg md:text-xl">自律的な意思決定を組み込んだ、進化版のRAG（検索拡張生成）</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-12 space-y-16">
+
+        <!-- Section 1: Definition -->
+        <section class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-robot text-blue-600"></i>
+                基本概念
+            </h2>
+            <p class="leading-relaxed text-lg mb-6">
+                従来のRAGは「検索して答える」という一本道な処理でした。一方、<strong>Agentic RAG</strong>は、LLMが「エージェント（自律的な実行者）」として振る舞い、状況に応じて「検索すべきか？」「どのツールを使うか？」「回答は十分か？」を判断しながら処理を進めます。
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-book-open text-4xl text-slate-400"></i>
+                    </div>
+                    <h3 class="font-bold text-center text-lg mb-2">これまでのRAG</h3>
+                    <p class="text-sm text-center text-slate-600">「マニュアル通りの図書館司書」</p>
+                    <p class="text-sm mt-3 text-slate-600 leading-relaxed">キーワードで検索し、見つかった本をそのまま渡す。見つからなければ「わかりません」で終了。</p>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs px-2 py-1 rounded-bl">New</div>
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-graduate text-4xl text-blue-600"></i>
+                    </div>
+                    <h3 class="font-bold text-center text-lg mb-2 text-blue-900">Agentic RAG</h3>
+                    <p class="text-sm text-center text-blue-700">「優秀なリサーチャー」</p>
+                    <p class="text-sm mt-3 text-blue-800 leading-relaxed">質問の意図を考え、必要な資料を探し、足りなければ別の資料もあたり、内容を検証してから報告する。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Comparison -->
+        <section>
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-project-diagram text-blue-600"></i>
+                処理フローの違い（シミュレーション）
+            </h2>
+            <p class="mb-6 text-slate-600">ボタンを押して、処理の流れの違いを確認してください。</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Standard RAG Simulator -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-lg mb-4 text-center">従来の RAG (Standard)</h3>
+                    <div id="standard-flow" class="space-y-3 min-h-[300px] relative">
+                        <!-- Steps will be injected here -->
+                        <div class="absolute inset-0 flex items-center justify-center text-slate-300 pointer-events-none opacity-50">
+                            <i class="fas fa-arrow-down text-6xl"></i>
+                        </div>
+                    </div>
+                    <button onclick="runStandardRAG()" class="w-full mt-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-lg transition-colors">
+                        <i class="fas fa-play mr-2"></i>実行 (直線的)
+                    </button>
+                </div>
+
+                <!-- Agentic RAG Simulator -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-blue-200 ring-1 ring-blue-100">
+                    <h3 class="font-bold text-lg mb-4 text-center text-blue-900">Agentic RAG</h3>
+                    <div id="agentic-flow" class="space-y-3 min-h-[300px] relative">
+                         <!-- Steps will be injected here -->
+                         <div class="absolute inset-0 flex items-center justify-center text-blue-100 pointer-events-none opacity-50">
+                            <i class="fas fa-recycle text-6xl"></i>
+                        </div>
+                    </div>
+                    <button onclick="runAgenticRAG()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition-colors shadow-blue-200">
+                        <i class="fas fa-magic mr-2"></i>実行 (自律的)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Key Features -->
+        <section>
+            <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+                <i class="fas fa-cogs text-blue-600"></i>
+                主な機能・戦略
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-blue-300 transition-colors">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mb-4 text-indigo-600">
+                        <i class="fas fa-route text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Routing (ルーティング)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        「この質問ならWeb検索」「これは社内DB」といったように、エージェントが最適な情報源への振り分けを判断します。
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-blue-300 transition-colors">
+                    <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 text-emerald-600">
+                        <i class="fas fa-edit text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Query Transformation</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        ユーザーの曖昧な質問を、検索システムが理解しやすい形に書き換えたり、複数のサブ質問に分解したりします。
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-blue-300 transition-colors">
+                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-4 text-amber-600">
+                        <i class="fas fa-sync-alt text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Self-Correction (自己修正)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        検索結果を見て「情報が足りない」「矛盾している」と判断した場合、検索条件を変えて自動的に再試行します。
+                    </p>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:border-blue-300 transition-colors">
+                    <div class="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center mb-4 text-rose-600">
+                        <i class="fas fa-tools text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Tool Use (ツール利用)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        検索だけでなく、API叩いて株価を取得したり、Pythonコードを実行して計算したりと、外部ツールを使いこなします。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW Section: AI Agent Difference (Venn Diagram Style) -->
+        <section class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-8 shadow-sm border border-slate-200 overflow-hidden">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <i class="fas fa-layer-group text-blue-600"></i>
+                AI Agent との違いは？
+            </h2>
+            <p class="leading-relaxed text-lg mb-4 text-slate-700">
+                Agentic RAGは、広い意味での<strong>「AI Agent（自律エージェント）」の一部</strong>です。<br>
+                AI Agentが「行動（Action）」全般を指すのに対し、Agentic RAGは特に<strong>「知識検索（Knowledge）」に特化</strong>したエージェントと言えます。
+            </p>
+
+            <!-- Venn Diagram Container -->
+            <div class="relative w-full max-w-lg mx-auto h-[400px] md:h-[480px] my-8 flex items-center justify-center">
+                
+                <!-- AI Agent Circle (Outer) -->
+                <div class="absolute w-72 h-72 md:w-[450px] md:h-[450px] bg-slate-200/50 border-4 border-slate-300 rounded-full flex flex-col items-center justify-start pt-6 md:pt-10 shadow-inner venn-circle z-0">
+                    <div class="text-slate-300 text-6xl md:text-8xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    
+                    <h3 class="font-bold text-xl text-slate-700 mb-1 z-10"><i class="fas fa-robot mr-2 text-slate-500"></i>AI Agent (広義)</h3>
+                    <span class="text-xs bg-slate-300 text-slate-700 px-2 py-0.5 rounded-full mb-3 z-10">何でも屋の秘書</span>
+                    
+                    <div class="text-left text-xs md:text-sm text-slate-600 space-y-1 w-3/4 md:w-2/3 pl-4 z-10">
+                        <p class="font-bold border-b border-slate-300 pb-1 mb-1">特徴</p>
+                        <p>・目的: タスク実行 (Action)</p>
+                        <p>・範囲: PC操作, メール, 買い物...</p>
+                        <p>・他: Webサーフィン, 予約...</p>
+                    </div>
+                </div>
+
+                <!-- Agentic RAG Circle (Inner) -->
+                <div class="absolute bottom-2 right-2 md:bottom-8 md:right-8 w-48 h-48 md:w-72 md:h-72 bg-blue-500/10 border-4 border-blue-500 rounded-full flex flex-col items-center justify-center shadow-lg venn-circle z-10 backdrop-blur-sm ring-4 ring-white">
+                    <div class="text-blue-200 text-5xl md:text-7xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
+                        <i class="fas fa-search"></i>
+                    </div>
+
+                    <h3 class="font-bold text-base md:text-xl text-blue-900 mb-1 z-20"><i class="fas fa-search-location mr-1"></i>Agentic RAG</h3>
+                    <span class="text-[10px] md:text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full mb-2 md:mb-4 z-20 font-bold border border-blue-200">特化型リサーチャー</span>
+                    
+                    <div class="text-left text-[10px] md:text-xs text-blue-900 space-y-1 md:space-y-2 w-5/6 px-2 md:px-6 z-20 font-medium">
+                        <p class="font-bold border-b border-blue-200 pb-1 mb-1">ここに位置する</p>
+                        <p><i class="fas fa-check-circle mr-1 text-blue-500"></i>目的: 知識提供 (Knowledge)</p>
+                        <p><i class="fas fa-check-circle mr-1 text-blue-500"></i>範囲: 検索, 分析, レポート</p>
+                    </div>
+                </div>
+
+                <!-- Arrow/Label indicating inclusion -->
+                <div class="absolute top-1/2 left-4 md:left-0 transform -translate-y-1/2 md:-translate-x-8 bg-white/80 p-2 rounded shadow text-xs text-slate-500 max-w-[120px] hidden md:block">
+                    <i class="fas fa-arrow-right mr-1"></i>AIエージェントという<br>大きな枠組みの一部
+                </div>
+
+            </div>
+            
+            <div class="mt-2 text-center text-sm text-slate-500">
+                <i class="fas fa-info-circle mr-1"></i>
+                Agentic RAGは、AI Agentの「ツールセット」の中に、強力な検索機能（RAG）を装備した形態です。
+            </div>
+        </section>
+
+        <!-- Section 4: Comparison Table -->
+        <section class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 overflow-hidden">
+            <h2 class="text-2xl font-bold mb-6">比較まとめ</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm uppercase tracking-wider">
+                            <th class="p-4 font-semibold">特徴</th>
+                            <th class="p-4 font-semibold">従来の RAG</th>
+                            <th class="p-4 font-semibold text-blue-600">Agentic RAG</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="p-4 font-bold text-slate-700">処理の流れ</td>
+                            <td class="p-4 text-slate-600">直列的 (検索 → 生成)</td>
+                            <td class="p-4 text-slate-800 font-medium bg-blue-50/50">反復的・ループ (計画 → 実行 → 検証)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-slate-700">主導権</td>
+                            <td class="p-4 text-slate-600">固定されたフロー</td>
+                            <td class="p-4 text-slate-800 font-medium bg-blue-50/50">LLM (エージェント) が判断</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-slate-700">複雑な質問</td>
+                            <td class="p-4 text-slate-600">苦手 (1回で終わるため)</td>
+                            <td class="p-4 text-slate-800 font-medium bg-blue-50/50">得意 (問題を分解して解決)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-slate-700">コスト・速度</td>
+                            <td class="p-4 text-slate-600">低コスト・高速</td>
+                            <td class="p-4 text-slate-800 font-medium bg-blue-50/50">高コスト・低速 (精度重視)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 5: Pros & Cons -->
+        <section>
+            <h2 class="text-2xl font-bold mb-6">メリットと課題</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-emerald-600 font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-thumbs-up"></i> メリット
+                    </h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-lg pro-con-card">
+                            <i class="fas fa-check mt-1 text-emerald-500"></i>
+                            <div>
+                                <span class="font-bold block text-emerald-900">回答精度の向上</span>
+                                <span class="text-sm text-emerald-800">情報が見つかるまで粘り強く探すため、精度が高い。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-emerald-50 p-4 rounded-lg pro-con-card">
+                            <i class="fas fa-check mt-1 text-emerald-500"></i>
+                            <div>
+                                <span class="font-bold block text-emerald-900">複雑タスクへの対応</span>
+                                <span class="text-sm text-emerald-800">「比較」「分析」など複数ステップ必要なタスクも可能。</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-rose-600 font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> 課題・デメリット
+                    </h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3 bg-rose-50 p-4 rounded-lg pro-con-card">
+                            <i class="fas fa-clock mt-1 text-rose-500"></i>
+                            <div>
+                                <span class="font-bold block text-rose-900">レイテンシー（遅延）</span>
+                                <span class="text-sm text-rose-800">思考と再検索を繰り返すため、回答までに時間がかかる。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 bg-rose-50 p-4 rounded-lg pro-con-card">
+                            <i class="fas fa-coins mt-1 text-rose-500"></i>
+                            <div>
+                                <span class="font-bold block text-rose-900">コストの増加</span>
+                                <span class="text-sm text-rose-800">LLMの呼び出し回数が増えるため、APIコストが高くなる。</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12 text-center">
+        <p class="text-sm">Generated by Gemini | Agentic RAG Overview</p>
+    </footer>
+
+    <script>
+        // Helper to create step element
+        function createStep(text, iconClass, colorClass) {
+            const div = document.createElement('div');
+            div.className = `flex items-center gap-3 p-3 rounded-lg border bg-white shadow-sm fade-in ${colorClass}`;
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 shrink-0">
+                    <i class="${iconClass} text-gray-600"></i>
+                </div>
+                <span class="text-sm font-medium">${text}</span>
+            `;
+            return div;
+        }
+
+        // Standard RAG Logic
+        async function runStandardRAG() {
+            const container = document.getElementById('standard-flow');
+            container.innerHTML = '';
+            
+            const steps = [
+                { text: 'ユーザー: 「最新のAIトレンドは？」', icon: 'fas fa-user', color: 'border-slate-200' },
+                { text: '検索: ベクトルDBを検索', icon: 'fas fa-search', color: 'border-slate-200' },
+                { text: '生成: 検索結果を元に回答作成', icon: 'fas fa-pen', color: 'border-slate-200' },
+                { text: '完了: ユーザーへ回答', icon: 'fas fa-check-circle', color: 'border-green-200 bg-green-50' }
+            ];
+
+            for (const step of steps) {
+                container.appendChild(createStep(step.text, step.icon, step.color));
+                await new Promise(r => setTimeout(r, 600)); // Delay for effect
+            }
+        }
+
+        // Agentic RAG Logic
+        async function runAgenticRAG() {
+            const container = document.getElementById('agentic-flow');
+            container.innerHTML = '';
+
+            const steps = [
+                { text: 'ユーザー: 「A社とB社の売上比較して」', icon: 'fas fa-user', color: 'border-blue-200' },
+                { text: '計画: 「まずはA社の売上を検索しよう」', icon: 'fas fa-brain', color: 'border-purple-200 bg-purple-50' },
+                { text: '実行: A社の売上を検索...', icon: 'fas fa-search', color: 'border-slate-200' },
+                { text: '検証: 「データ取得成功。次はB社」', icon: 'fas fa-check', color: 'border-amber-200 bg-amber-50' },
+                { text: '実行: B社の売上を検索...', icon: 'fas fa-search', color: 'border-slate-200' },
+                { text: '検証: 「B社のデータが古い...年を指定して再検索」', icon: 'fas fa-exclamation-circle', color: 'border-rose-200 bg-rose-50' },
+                { text: '修正実行: B社 2023年 売上 検索', icon: 'fas fa-redo', color: 'border-slate-200' },
+                { text: '生成: 情報を統合して比較レポート作成', icon: 'fas fa-pen-fancy', color: 'border-blue-200' },
+                { text: '完了: 高精度な回答を出力', icon: 'fas fa-star', color: 'border-blue-500 bg-blue-100 ring-2 ring-blue-300' }
+            ];
+
+            for (const step of steps) {
+                container.appendChild(createStep(step.text, step.icon, step.color));
+                await new Promise(r => setTimeout(r, 800)); // Slower delay for effect
+                
+                // Auto scroll to bottom
+                if(container.scrollHeight > container.clientHeight) {
+                   // container.scrollTop = container.scrollHeight; 
+                }
+            }
+        }
+    </script>
+</body>
+</html>

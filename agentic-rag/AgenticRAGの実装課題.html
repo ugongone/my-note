@@ -473,6 +473,141 @@
             </div>
         </section>
 
+        <!-- Complexity & Observability (Deep Dive) -->
+        <section class="bg-slate-900 text-slate-300 rounded-2xl p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <i class="fas fa-microscope text-9xl"></i>
+            </div>
+            
+            <!-- Intro -->
+            <div class="relative z-10 mb-8">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                    <i class="fas fa-bug text-blue-400"></i>
+                    Deep Dive: 可観測性 (Observability)
+                </h2>
+                <p class="text-sm leading-relaxed max-w-3xl">
+                    Agentic RAGの実装では、従来のログ（`print`文）だけでは「なぜエージェントがその行動を選んだのか」を理解できません。<br>
+                    専用の<strong>LLM Observability Tools</strong>を導入することで、以下の「見えないもの」が見えるようになります。
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 relative z-10">
+                
+                <!-- What you can see (Visual Demo) -->
+                <div>
+                    <h3 class="text-sm font-bold text-blue-300 uppercase tracking-wider mb-4 border-b border-slate-700 pb-2">
+                        1. トレース画面で見えること
+                    </h3>
+                    
+                    <!-- Trace UI Mockup -->
+                    <div class="bg-slate-950 rounded-lg border border-slate-700 p-4 font-mono text-xs overflow-hidden shadow-2xl">
+                        <!-- Trace Header -->
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+                            <span class="text-green-400 font-bold">✔ SUCCESS</span>
+                            <span class="text-slate-500">Latency: 4.2s | Tokens: 1,240</span>
+                        </div>
+
+                        <!-- Trace Tree -->
+                        <div class="space-y-3 relative">
+                            <!-- Root -->
+                            <div class="relative pl-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-blue-400 font-bold">Agent Executor</span>
+                                    <span class="text-slate-600">chain</span>
+                                </div>
+                                <div class="text-[10px] text-slate-500 truncate">Input: "東京の天気と、おすすめのカフェは？"</div>
+                                
+                                <!-- Child 1: Planner -->
+                                <div class="relative pl-6 mt-2">
+                                    <div class="trace-line"></div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-purple-400 font-bold">LLM (Planner)</span>
+                                        <span class="bg-slate-800 text-slate-400 px-1 rounded text-[9px]">0.8s</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400">Output: Action: Search("東京 天気"), Search("東京 カフェ")</div>
+                                </div>
+
+                                <!-- Child 2: Tool Call -->
+                                <div class="relative pl-6 mt-2">
+                                    <div class="trace-line"></div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-amber-400 font-bold">Tool: Google Search</span>
+                                        <span class="bg-slate-800 text-slate-400 px-1 rounded text-[9px]">1.2s</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400">Input: "東京 天気"</div>
+                                    <div class="text-[10px] text-green-700">Output: "晴れ, 24℃..."</div>
+                                </div>
+
+                                <!-- Child 3: Final Generation -->
+                                <div class="relative pl-6 mt-2">
+                                    <div class="trace-line"></div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-blue-400 font-bold">LLM (Writer)</span>
+                                        <span class="bg-slate-800 text-slate-400 px-1 rounded text-[9px]">2.1s</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400">Output: "本日の東京は晴れです。カフェは..."</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 text-center">↑ 誰が、いつ、何を呼び出し、何秒かかったかが一目瞭然になる</p>
+                </div>
+
+                <!-- Tools Comparison -->
+                <div>
+                    <h3 class="text-sm font-bold text-blue-300 uppercase tracking-wider mb-4 border-b border-slate-700 pb-2">
+                        2. 主要ツールの選び方
+                    </h3>
+                    <div class="space-y-3">
+                        
+                        <!-- Tool 1: LangSmith -->
+                        <div class="bg-slate-800 p-3 rounded border border-slate-700 hover:border-blue-500 transition-colors cursor-default">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-white">🦜 LangSmith</h4>
+                                <span class="bg-blue-900 text-blue-300 text-[9px] px-2 py-0.5 rounded">All-in-One</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">
+                                <strong>LangChain公式。</strong>デバッグ、評価、プロンプト管理まで全て揃う。LangChain/LangGraphを使っているなら第一選択肢。
+                            </p>
+                        </div>
+
+                        <!-- Tool 2: Arize Phoenix -->
+                        <div class="bg-slate-800 p-3 rounded border border-slate-700 hover:border-amber-500 transition-colors cursor-default">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-white">🔥 Arize Phoenix</h4>
+                                <span class="bg-amber-900 text-amber-300 text-[9px] px-2 py-0.5 rounded">Open Source</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">
+                                <strong>OSSでローカル実行可能。</strong>データのプライバシーを気にする場合に最適。LlamaIndexとも親和性が高い。
+                            </p>
+                        </div>
+
+                        <!-- Tool 3: Weights & Biases -->
+                        <div class="bg-slate-800 p-3 rounded border border-slate-700 hover:border-yellow-500 transition-colors cursor-default">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-white">🐝 Weights & Biases</h4>
+                                <span class="bg-yellow-900 text-yellow-300 text-[9px] px-2 py-0.5 rounded">Experiment</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">
+                                <strong>実験管理のデファクト。</strong>「プロンプトAとBでどちらが良いか？」という比較実験（Weave）に強い。学習寄り。
+                            </p>
+                        </div>
+
+                    </div>
+                    
+                    <div class="mt-4 bg-slate-800/50 p-3 rounded border border-slate-700">
+                        <h4 class="text-xs font-bold text-slate-300 mb-2">導入のメリット</h4>
+                        <ul class="text-xs text-slate-400 space-y-1 list-disc pl-4">
+                            <li><span class="text-white">コスト分析:</span> 「どの処理でお金がかかっているか」を特定</li>
+                            <li><span class="text-white">データ蓄積:</span> ユーザーとの会話ログを「テストデータ」として保存</li>
+                            <li><span class="text-white">リグレッションテスト:</span> 改修後に精度が落ちていないかを自動評価</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
     <footer class="bg-white border-t border-slate-200 py-8 text-center text-slate-500 text-sm">

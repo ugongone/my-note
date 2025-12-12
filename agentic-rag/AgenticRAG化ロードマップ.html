@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic RAG 実装ロードマップ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #334155; /* Slate 700 */
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .roadmap-line {
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #3b82f6, #8b5cf6, #ec4899);
+            z-index: 0;
+        }
+        .phase-card {
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0; /* Slate 200 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        .phase-card:hover {
+            border-color: #60a5fa;
+            transform: translateX(5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .tech-tag {
+            background-color: #f1f5f9; /* Slate 100 */
+            border: 1px solid #cbd5e1; /* Slate 300 */
+            color: #475569; /* Slate 600 */
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Reveal Animation */
+        details[open] summary ~ * {
+            animation: slideDown 0.3s ease-in-out;
+        }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased pb-20">
+
+    <!-- Header -->
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white w-8 h-8 rounded flex items-center justify-center font-bold">R</div>
+                <h1 class="font-bold text-lg text-slate-800 tracking-wider">AGENTIC RAG <span class="text-blue-600">ROADMAP</span></h1>
+            </div>
+            <div class="text-xs font-mono text-slate-400">v1.0.0</div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-12">
+
+        <!-- Intro -->
+        <section class="mb-16 text-center">
+            <h2 class="text-3xl md:text-5xl font-black mb-6 leading-tight text-slate-800">
+                From <span class="text-slate-400">Static Retrieval</span><br>
+                To <span class="gradient-text">Autonomous Agents</span>
+            </h2>
+            <p class="text-slate-500 max-w-2xl mx-auto text-lg">
+                単純な検索システムから、自律的に思考・行動するエージェントシステムへの進化プロセス。<br>
+                技術スタックと実装ステップを定義したエンジニア向けロードマップ。
+            </p>
+        </section>
+
+        <!-- Roadmap Container -->
+        <div class="relative pl-4 md:pl-10 space-y-12">
+            <div class="roadmap-line md:left-[43px]"></div>
+
+            <!-- PHASE 0: Foundation -->
+            <div class="relative z-10">
+                <div class="absolute -left-3 md:left-2 w-10 h-10 bg-white border-4 border-slate-300 rounded-full flex items-center justify-center z-10 text-slate-500 font-bold text-xs shadow-sm">
+                    0
+                </div>
+                <div class="ml-10 md:ml-20 phase-card rounded-xl p-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Phase 0</span>
+                            <h3 class="text-2xl font-bold text-slate-800">Foundation (基盤整備)</h3>
+                            <p class="text-sm text-slate-500 mt-1">これなくしてAgent化は不可能。まずは「まともなRAG」を作る。</p>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="tech-tag">LangChain</span>
+                            <span class="tech-tag">Vector DB</span>
+                            <span class="tech-tag">Evaluation</span>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 border-t border-slate-100 pt-4">
+                        <div>
+                            <h4 class="text-blue-600 font-bold text-sm mb-2"><i class="fas fa-code-branch mr-2"></i>実装タスク</h4>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-green-500 mt-1"></i>
+                                    <div>
+                                        <strong class="text-slate-700">Chunking戦略の最適化</strong><br>
+                                        <span class="text-xs text-slate-400">固定長だけでなく、Semantic ChunkingやParent Document Retrieverを導入。</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-green-500 mt-1"></i>
+                                    <div>
+                                        <strong class="text-slate-700">メタデータの整備</strong><br>
+                                        <span class="text-xs text-slate-400">日付、著者、カテゴリを付与し、Self-Queryingの準備をする。</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-green-500 mt-1"></i>
+                                    <div>
+                                        <strong class="text-slate-700">評価パイプラインの構築 (Ragas/LangSmith)</strong><br>
+                                        <span class="text-xs text-slate-400">「精度が悪い」を数値化（Context Recall/Precision）できないと次に進めない。</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded border border-slate-700 font-mono text-xs text-green-300 overflow-x-auto shadow-inner">
+                            <div class="text-slate-400 mb-2"># 必須: 評価セットの作成</div>
+                            dataset = {<br>
+                            &nbsp;&nbsp;"question": ["A社の売上は？", ...],<br>
+                            &nbsp;&nbsp;"ground_truth": ["10億円です", ...],<br>
+                            &nbsp;&nbsp;"contexts": [["A社決算資料p1...", ...]]<br>
+                            }<br>
+                            evaluate(dataset, metrics=[context_precision, answer_relevancy])
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 1: Advanced RAG -->
+            <div class="relative z-10">
+                <div class="absolute -left-3 md:left-2 w-10 h-10 bg-white border-4 border-blue-500 rounded-full flex items-center justify-center z-10 text-blue-600 font-bold text-xs shadow-md">
+                    1
+                </div>
+                <div class="ml-10 md:ml-20 phase-card rounded-xl p-6 border-l-4 border-l-blue-500">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Phase 1</span>
+                            <h3 class="text-2xl font-bold text-slate-800">Router & Transformation</h3>
+                            <p class="text-sm text-slate-500 mt-1">ユーザーの意図を汲み取り、検索クエリを最適化する。</p>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="tech-tag">Semantic Router</span>
+                            <span class="tech-tag">HyDE</span>
+                            <span class="tech-tag">Multi-Query</span>
+                        </div>
+                    </div>
+
+                    <details class="group">
+                        <summary class="flex items-center justify-between cursor-pointer list-none bg-blue-50 p-3 rounded-lg hover:bg-blue-100 transition-colors">
+                            <span class="font-bold text-sm text-blue-700">詳細: インテリジェントな検索前処理</span>
+                            <i class="fas fa-chevron-down text-blue-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="mt-4 grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-slate-700 font-bold text-sm mb-3">実装機能</h4>
+                                <ul class="space-y-3 text-sm text-slate-600">
+                                    <li class="pl-4 border-l-2 border-blue-300">
+                                        <strong class="text-slate-800">Query Routing (振り分け)</strong><br>
+                                        ユーザーの質問を分類。「一般会話」「製品検索」「トラブルシューティング」など、意図に合わせてデータソースやプロンプトを切り替える。
+                                    </li>
+                                    <li class="pl-4 border-l-2 border-blue-300">
+                                        <strong class="text-slate-800">Query Transformation (書き換え)</strong><br>
+                                        曖昧な質問「あれってどうやるの？」を、会話履歴を使って「VPNの接続方法は？」に具体化してから検索する。
+                                    </li>
+                                    <li class="pl-4 border-l-2 border-blue-300">
+                                        <strong class="text-slate-800">Reranking (再順位付け)</strong><br>
+                                        Cohere Rerank等を導入し、検索上位50件をAIで精査してTop 5に絞る。これだけで精度が劇的に向上する。
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-slate-800 p-4 rounded border border-slate-700 font-mono text-xs overflow-x-auto shadow-inner text-slate-200">
+                                <span class="text-purple-300">from</span> langchain <span class="text-purple-300">import</span> SemanticRouter<br><br>
+                                <span class="text-slate-400"># 定義したルートへ振り分け</span><br>
+                                router = SemanticRouter(routes=[<br>
+                                &nbsp;&nbsp;Route(name=<span class="text-green-300">"pricing"</span>, utters=[<span class="text-yellow-200">"いくら？"</span>, <span class="text-yellow-200">"費用"</span>]),<br>
+                                &nbsp;&nbsp;Route(name=<span class="text-green-300">"tech"</span>, utters=[<span class="text-yellow-200">"仕様は？"</span>, <span class="text-yellow-200">"スペック"</span>])<br>
+                                ])<br><br>
+                                classification = router(query)<br>
+                                <span class="text-purple-300">if</span> classification.name == <span class="text-green-300">"pricing"</span>:<br>
+                                &nbsp;&nbsp;retrieve_from_sales_db()<br>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- PHASE 2: Simple Agent -->
+            <div class="relative z-10">
+                <div class="absolute -left-3 md:left-2 w-10 h-10 bg-white border-4 border-purple-500 rounded-full flex items-center justify-center z-10 text-purple-600 font-bold text-xs shadow-md">
+                    2
+                </div>
+                <div class="ml-10 md:ml-20 phase-card rounded-xl p-6 border-l-4 border-l-purple-500">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-purple-500 uppercase tracking-widest">Phase 2</span>
+                            <h3 class="text-2xl font-bold text-slate-800">Tool Use & Single Agent</h3>
+                            <p class="text-sm text-slate-500 mt-1">「読む」だけでなく「使う」能力。Function Callingの解禁。</p>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="tech-tag">OpenAI Functions</span>
+                            <span class="tech-tag">ReAct Pattern</span>
+                            <span class="tech-tag">Tools</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-50 p-4 rounded-lg border border-purple-100 mb-4">
+                        <h4 class="text-purple-700 font-bold text-sm mb-2"><i class="fas fa-robot mr-2"></i>エージェント化の第一歩</h4>
+                        <p class="text-xs text-purple-900 leading-relaxed">
+                            LLMに「ツール（関数）」を持たせます。LLMは自ら考え、「検索ツールを使うべきか」「計算機を使うべきか」「もう回答していいか」を判断します。
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 mb-1">Tool 1</div>
+                            <div class="font-bold text-slate-800 mb-1">Vector Search</div>
+                            <p class="text-[10px] text-slate-500">社内文書を検索する関数</p>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 mb-1">Tool 2</div>
+                            <div class="font-bold text-slate-800 mb-1">Internet Search</div>
+                            <p class="text-[10px] text-slate-500">Tavily/Google検索 (最新情報)</p>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 mb-1">Tool 3</div>
+                            <div class="font-bold text-slate-800 mb-1">Calculator / API</div>
+                            <p class="text-[10px] text-slate-500">正確な計算や在庫確認API</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 3: Autonomous Loop -->
+            <div class="relative z-10">
+                <div class="absolute -left-3 md:left-2 w-10 h-10 bg-white border-4 border-pink-500 rounded-full flex items-center justify-center z-10 text-pink-600 font-bold text-xs shadow-md">
+                    3
+                </div>
+                <div class="ml-10 md:ml-20 phase-card rounded-xl p-6 border-l-4 border-l-pink-500">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-pink-500 uppercase tracking-widest">Phase 3</span>
+                            <h3 class="text-2xl font-bold text-slate-800">Planning & Reflection</h3>
+                            <p class="text-sm text-slate-500 mt-1">「考え、振り返る」ループの実装。自己修正能力。</p>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="tech-tag">LangGraph</span>
+                            <span class="tech-tag">Self-Correction</span>
+                            <span class="tech-tag">Human-in-the-loop</span>
+                        </div>
+                    </div>
+
+                    <details class="group">
+                        <summary class="flex items-center justify-between cursor-pointer list-none bg-pink-50 p-3 rounded-lg hover:bg-pink-100 transition-colors">
+                            <span class="font-bold text-sm text-pink-700">詳細: ステートフルな循環フロー</span>
+                            <i class="fas fa-chevron-down text-pink-400 group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-center py-4 relative">
+                                <!-- Flow Diagram -->
+                                <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                                    <div class="bg-blue-100 border border-blue-200 px-3 py-1 rounded">Plan</div>
+                                    <i class="fas fa-arrow-right text-slate-400"></i>
+                                    <div class="bg-purple-100 border border-purple-200 px-3 py-1 rounded">Act</div>
+                                    <i class="fas fa-arrow-right text-slate-400"></i>
+                                    <div class="bg-yellow-100 border border-yellow-200 px-3 py-1 rounded">Observe</div>
+                                    <i class="fas fa-arrow-right text-slate-400"></i>
+                                    <div class="bg-pink-100 border border-pink-200 px-3 py-1 rounded relative">
+                                        Reflect
+                                        <div class="absolute -top-2 -right-2 w-2 h-2 bg-pink-500 rounded-full animate-ping"></div>
+                                    </div>
+                                    <i class="fas fa-undo text-slate-400 ml-2"></i>
+                                </div>
+                            </div>
+                            <div class="space-y-4 mt-2">
+                                <div class="flex gap-4">
+                                    <div class="w-1 bg-pink-400 rounded"></div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-sm">Self-Reflection (自己内省)</h4>
+                                        <p class="text-xs text-slate-600">検索結果を得た後に「これで質問に答えられるか？」をLLM自身に評価させます。Noなら検索クエリを変えてループします。</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="w-1 bg-pink-400 rounded"></div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-sm">Task Decomposition (タスク分解)</h4>
+                                        <p class="text-xs text-slate-600">「A社とB社を比較して」という問いを、「A社検索」「B社検索」「比較生成」というサブタスクに分解して順次実行します。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- PHASE 4: Multi-Agent -->
+            <div class="relative z-10">
+                <div class="absolute -left-3 md:left-2 w-10 h-10 bg-white border-4 border-amber-500 rounded-full flex items-center justify-center z-10 text-amber-600 font-bold text-xs shadow-md">
+                    4
+                </div>
+                <div class="ml-10 md:ml-20 phase-card rounded-xl p-6 border-l-4 border-l-amber-500">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Phase 4</span>
+                            <h3 class="text-2xl font-bold text-slate-800">Multi-Agent Orchestration</h3>
+                            <p class="text-sm text-slate-500 mt-1">「組織」を作る。専門家エージェントの分業体制。</p>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <span class="tech-tag">LangGraph (Subgraphs)</span>
+                            <span class="tech-tag">CrewAI</span>
+                            <span class="tech-tag">AutoGen</span>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <p class="text-sm text-slate-600">
+                                1つのエージェントに全てを詰め込むとコンテキストが汚染され、精度が落ちます。<br>
+                                役割ごとにエージェントを分割し、<strong>「Supervisor（監督）」</strong>が指揮を執る構成にします。
+                            </p>
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <h5 class="text-xs font-bold text-amber-600 mb-2">構成例: 社内ヘルプデスク</h5>
+                                <ul class="text-xs text-slate-600 space-y-1">
+                                    <li>👑 <strong>Router/Supervisor</strong> (受付)</li>
+                                    <li class="pl-4">├ 🤖 <strong>RAG Agent</strong> (規定検索担当)</li>
+                                    <li class="pl-4">├ 🤖 <strong>ServiceNow Agent</strong> (申請・チケット担当)</li>
+                                    <li class="pl-4">└ 🤖 <strong>HR Agent</strong> (人事DB照会担当)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded border border-slate-200 flex items-center justify-center shadow-inner">
+                            <!-- Visualizing Multi-agent -->
+                            <div class="relative w-full h-32 flex items-center justify-center">
+                                <div class="absolute top-0 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center z-10 text-white text-xs font-bold shadow">Sup</div>
+                                <div class="absolute bottom-0 left-4 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs shadow">A</div>
+                                <div class="absolute bottom-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs shadow">B</div>
+                                <div class="absolute bottom-0 right-4 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs shadow">C</div>
+                                
+                                <!-- Lines -->
+                                <svg class="absolute inset-0 w-full h-full pointer-events-none">
+                                    <line x1="50%" y1="10%" x2="20%" y2="90%" stroke="#cbd5e1" stroke-width="2" />
+                                    <line x1="50%" y1="10%" x2="50%" y2="90%" stroke="#cbd5e1" stroke-width="2" />
+                                    <line x1="50%" y1="10%" x2="80%" y2="90%" stroke="#cbd5e1" stroke-width="2" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Warning Section -->
+        <section class="mt-20 border-t border-slate-200 pt-10">
+            <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle text-rose-500"></i>
+                実装の落とし穴 (Pitfalls)
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-rose-50 p-5 rounded-lg border border-rose-200">
+                    <h4 class="font-bold text-rose-700 text-sm mb-2">ループ地獄</h4>
+                    <p class="text-xs text-rose-900">エージェントが「完璧な回答」を求め続けて検索を繰り返し、APIコストが爆発する。<br>→ <strong>最大ループ回数 (Recursion Limit)</strong> の設定が必須。</p>
+                </div>
+                <div class="bg-amber-50 p-5 rounded-lg border border-amber-200">
+                    <h4 class="font-bold text-amber-700 text-sm mb-2">コンテキスト溢れ</h4>
+                    <p class="text-xs text-amber-900">試行錯誤の履歴がすべてプロンプトに残るため、トークン上限に達する。<br>→ <strong>メモリの要約・圧縮 (Memory Pruning)</strong> が必要。</p>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-lg border border-blue-200">
+                    <h4 class="font-bold text-blue-700 text-sm mb-2">遅すぎる応答</h4>
+                    <p class="text-xs text-blue-900">高機能にしすぎて回答に30秒以上かかるとユーザーは離脱する。<br>→ <strong>ストリーミング表示</strong>と<strong>途中経過の可視化</strong>がUXの鍵。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white text-slate-500 py-10 text-center text-xs font-mono border-t border-slate-200">
+        Agentic RAG Implementation Roadmap | Generated by Gemini
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "buildCommand": "node scripts/generate-structure.js",
+  "outputDirectory": ".",
+  "installCommand": "echo 'No dependencies to install'"
+}

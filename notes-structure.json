@@ -1,5 +1,5 @@
 {
-  "generated": "2025-12-22T02:46:04.257Z",
+  "generated": "2025-12-22T02:54:13.181Z",
   "notes": [
     {
       "type": "folder",
@@ -61,18 +61,6 @@
               "path": "ai-coding/claude-code/サブエージェント機能のベストプラクティス.html"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "folder",
-      "name": "design",
-      "path": "design",
-      "children": [
-        {
-          "type": "file",
-          "name": "画像検索",
-          "path": "design/画像検索.html"
         }
       ]
     },

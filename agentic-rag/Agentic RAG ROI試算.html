@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic RAG ROI & P/L Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        /* Grid Layout Fixes */
+        .matrix-grid {
+            display: grid;
+            /* Header(Title) | Header(Label) | Content | Content */
+            grid-template-columns: 40px 40px 1fr 1fr;
+            grid-template-rows: 40px 40px 1fr 1fr;
+            gap: 6px;
+            height: 500px; /* Ensure enough height */
+        }
+        
+        /* X-Axis Header: Agentできる？ (Top Row, spanning content cols) */
+        .matrix-header-x { 
+            grid-column: 3 / 5; 
+            grid-row: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            background: #e5e7eb; 
+            border-radius: 8px; 
+            font-size: 0.9rem;
+        }
+
+        /* Y-Axis Header: 普通できる？ (Left Col, spanning content rows) */
+        .matrix-header-y { 
+            grid-column: 1; 
+            grid-row: 3 / 5; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            writing-mode: vertical-rl; 
+            /* transform: rotate(180deg); Removed rotation for better readability with JP text direction */
+            background: #e5e7eb; 
+            border-radius: 8px; 
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .matrix-cell { padding: 1.5rem; border-radius: 8px; position: relative; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; }
+        .matrix-cell:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 10; }
+        
+        /* Label Styling */
+        .label-x { display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; font-weight: bold; font-size: 1.1rem; }
+        .label-y { display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-weight: bold; font-size: 1.1rem; }
+
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-slate-800 text-white p-8">
+            <h1 class="text-3xl font-bold mb-2"><i class="fas fa-robot mr-2"></i>Agentic RAG 導入効果分析</h1>
+            <p class="text-slate-300">2026年度版：コスト構造の変化と投資対効果（ROI）の試算</p>
+        </div>
+
+        <div class="p-8 space-y-12">
+
+            <!-- Section 1: ROI Calculation -->
+            <section>
+                <div class="border-l-4 border-blue-600 pl-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">1. ROI（費用対効果）試算モデル</h2>
+                    <p class="text-gray-600 mt-1">単純な検索時間の短縮だけでなく、高単価な「調査・分析業務」の代行による利益創出を主眼とします。</p>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-lg mb-8 border border-blue-100">
+                    <h3 class="font-bold text-lg mb-3 text-blue-800"><i class="fas fa-calculator mr-2"></i>試算のロジック</h3>
+                    <p class="mb-2">
+                        APIコストは従来の数倍（約1.5〜3倍）に増加しますが、人間が数時間かけていた業務を代行することで、差し引きの利益は劇的に向上します。
+                        特に<b>「レベル3（重い業務）」</b>の攻略がROI最大化の鍵となります。
+                    </p>
+                    <div class="text-sm text-gray-600 mt-2 bg-white p-3 rounded border border-blue-100 inline-block">
+                        <strong>計算式：</strong> (削減できた人件費) - (Agent APIコスト) = <strong>純利益</strong>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700 border-b-2 border-gray-300">
+                                <th class="p-4 w-1/6">業務レベル</th>
+                                <th class="p-4 w-1/4">タスク例</th>
+                                <th class="p-4 w-1/6">人間の所要時間<br><span class="text-xs font-normal text-gray-500">(@4,000円/時)</span></th>
+                                <th class="p-4 w-1/6">Agentコスト<br><span class="text-xs font-normal text-gray-500">(API単価)</span></th>
+                                <th class="p-4 w-1/4">ROI判定</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Level 1 -->
+                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="p-4">
+                                    <span class="inline-block px-2 py-1 bg-gray-200 text-gray-700 text-xs font-bold rounded">Level 1</span>
+                                    <div class="font-bold mt-1">単純事実確認</div>
+                                </td>
+                                <td class="p-4 text-sm">
+                                    「URL教えて」<br>「Wifiパスワードは？」
+                                </td>
+                                <td class="p-4">
+                                    <div class="font-bold text-gray-500">1〜5分</div>
+                                    <div class="text-xs text-gray-400">約70〜300円</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="text-red-500 font-bold">30円</div>
+                                    <div class="text-xs text-red-400">(過剰コスト)</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="flex items-center text-gray-500">
+                                        <i class="fas fa-minus-circle mr-2"></i>
+                                        <span class="font-bold">効果なし</span>
+                                    </div>
+                                    <p class="text-xs mt-1 text-gray-500">Routerで「普通の検索」へ誘導すべき領域。</p>
+                                </td>
+                            </tr>
+                            <!-- Level 2 -->
+                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="p-4">
+                                    <span class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">Level 2</span>
+                                    <div class="font-bold mt-1">集約・要約</div>
+                                </td>
+                                <td class="p-4 text-sm">
+                                    「A社の先月の議事録を全部読んで課題をまとめて」
+                                </td>
+                                <td class="p-4">
+                                    <div class="font-bold text-gray-700">15〜30分</div>
+                                    <div class="text-xs text-gray-500">約1,000〜2,000円</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="text-gray-700 font-bold">30〜50円</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="flex items-center text-blue-600">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        <span class="font-bold">黒字化</span>
+                                    </div>
+                                    <p class="text-xs mt-1 text-gray-600">広く浅く工数を削減。<br>「チリツモ」効果。</p>
+                                </td>
+                            </tr>
+                            <!-- Level 3 -->
+                            <tr class="bg-blue-50 border-b border-blue-200">
+                                <td class="p-4">
+                                    <span class="inline-block px-2 py-1 bg-indigo-600 text-white text-xs font-bold rounded">Level 3</span>
+                                    <div class="font-bold mt-1 text-indigo-900">調査・分析</div>
+                                </td>
+                                <td class="p-4 text-sm">
+                                    「過去3年の障害報告書とシステム構成図を突き合わせてリスク分析して」
+                                </td>
+                                <td class="p-4">
+                                    <div class="font-bold text-indigo-900">2〜3時間</div>
+                                    <div class="text-xs text-indigo-700">約8,000〜12,000円</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="text-indigo-900 font-bold">100〜200円</div>
+                                    <div class="text-xs text-indigo-700">(複数回検索)</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="flex items-center text-indigo-700">
+                                        <i class="fas fa-gem mr-2"></i>
+                                        <span class="font-bold text-lg">特大のROI</span>
+                                    </div>
+                                    <p class="text-xs mt-1 text-indigo-800">1回で1万円以上の利益。<br>本来のターゲット領域。</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <hr class="border-gray-200">
+
+            <!-- Section 2: P&L Matrix -->
+            <section>
+                <div class="border-l-4 border-red-500 pl-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">2. 損益マトリクス（リスクと勝機）</h2>
+                    <p class="text-gray-600 mt-1">導入において発生しうる4つのケースと、それぞれの経済的インパクトの可視化。</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Text Explanation -->
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-600">
+                            導入の成否は、右上の「高価な空振り」を避け、左上の「勝利エリア」を最大化できるかにかかっています。
+                            <br><br>
+                            <span class="text-xs bg-gray-200 px-2 py-1 rounded">更新</span> 軸の配置を修正し、重要な「勝利エリア」を左上に配置しました。
+                        </p>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-trophy text-indigo-600 mt-1 mr-2"></i>
+                                <div>
+                                    <strong>勝利エリア (Victory Zone):</strong><br>
+                                    普通のRAGでは無理だが、Agentなら解ける領域。ここに該当する「比較・分析」業務を狙います。
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                                <div>
+                                    <strong>オーバーキル (Overkill):</strong><br>
+                                    簡単な質問に高価なAgentを使ってしまう状態。Router（振り分けAI）で防ぎます。
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-bomb text-red-500 mt-1 mr-2"></i>
+                                <div>
+                                    <strong>高価な空振り (Expensive Miss):</strong><br>
+                                    Agentが何度検索してもデータがなく、高いAPIコストだけがかかる状態。
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- The Matrix Visualization -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <div class="matrix-grid w-full h-full text-sm">
+                            <!-- Axis Headers -->
+                            <div class="matrix-header-x text-gray-600">Agentなら解決できる？</div>
+                            <div class="matrix-header-y text-gray-600">普通のRAGで解決できる？</div>
+                            
+                            <!-- X-Axis Labels (Row 2) -->
+                            <div class="label-x col-start-3 row-start-2 text-indigo-600">YES</div>
+                            <div class="label-x col-start-4 row-start-2 text-red-500">NO</div>
+
+                            <!-- Y-Axis Labels (Col 2) -->
+                            <!-- Reordered: NO at Top (Row 3), YES at Bottom (Row 4) -->
+                            <div class="label-y col-start-2 row-start-3 text-red-500">NO</div>
+                            <div class="label-y col-start-2 row-start-4 text-green-600">YES</div>
+
+                            <!-- Matrix Cells -->
+                            
+                            <!-- 1. Victory Zone (Agent: YES / Normal: NO) -> Row 3, Col 3 -->
+                            <div class="matrix-cell bg-indigo-100 border-2 border-indigo-400 col-start-3 row-start-3 shadow-md relative overflow-hidden">
+                                <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] px-2 py-1 rounded-bl">Target</div>
+                                <div class="font-bold text-indigo-900 mb-1 text-lg">🏆 勝利エリア</div>
+                                <p class="text-xs text-indigo-800 font-medium">ROI最大化ポイント。<br>ここを狙う。</p>
+                                <div class="absolute bottom-2 right-2 text-indigo-300 text-4xl opacity-50"><i class="fas fa-chart-line"></i></div>
+                            </div>
+
+                            <!-- 2. Expensive Miss (Agent: NO / Normal: NO) -> Row 3, Col 4 -->
+                            <div class="matrix-cell bg-red-50 border-2 border-red-200 col-start-4 row-start-3">
+                                <div class="font-bold text-red-800 mb-1">💸 高価な空振り</div>
+                                <p class="text-xs text-gray-600">データ不備が原因。<br>事前の整備が必要。</p>
+                                <div class="absolute top-2 right-2 text-red-200 text-3xl opacity-50"><i class="fas fa-search-minus"></i></div>
+                            </div>
+
+                            <!-- 3. Overkill (Agent: YES / Normal: YES) -> Row 4, Col 3 -->
+                            <div class="matrix-cell bg-yellow-50 border-2 border-yellow-200 col-start-3 row-start-4">
+                                <div class="font-bold text-yellow-800 mb-1">⚠️ オーバーキル</div>
+                                <p class="text-xs text-gray-600">無駄なコスト増。<br>Routerで回避。</p>
+                                <div class="absolute top-2 right-2 text-yellow-200 text-3xl opacity-50"><i class="fas fa-coins"></i></div>
+                            </div>
+
+                            <!-- 4. Impossible (Agent: NO / Normal: YES) -> Row 4, Col 4 -->
+                            <div class="matrix-cell bg-gray-100 border-2 border-gray-200 col-start-4 row-start-4 flex items-center justify-center">
+                                <span class="text-gray-400 text-xs text-center">(理論上発生しない)</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-gray-100 p-6 text-center text-gray-500 text-sm border-t border-gray-200">
+            <p>Generated for Agentic RAG Proposal Strategy | 2026.01.15</p>
+        </div>
+    </div>
+
+</body>
+</html>

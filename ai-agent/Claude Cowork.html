@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Cowork (Team Plan) 概要と比較</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .table-header {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 700;
+            text-align: left;
+            padding: 1rem;
+        }
+        .table-cell {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .highlight-box {
+            background: linear-gradient(to right, #eff6ff, #f8fafc);
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12 max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <header class="mb-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Claude Cowork (Team Plan) 概要</h1>
+        <p class="text-slate-600 text-lg">機能、他ツールとの違い、業務フローにおける位置付けの整理</p>
+    </header>
+
+    <!-- 0. Claude Coworkとは（新規追加） -->
+    <section class="mb-12">
+        <div class="bg-white border-l-8 border-indigo-500 rounded-r-lg shadow-sm p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-3">Claude Cowork (Team Plan) とは</h2>
+            <p class="text-lg text-slate-700 leading-relaxed">
+                セキュアな環境で、チーム固有の知識（ナレッジ）をAIに共有し、<br>
+                <strong>「みんなで使える優秀なAI秘書・相談役」</strong>を持つためのワークスペースです。<br>
+                <span class="text-sm text-slate-500 mt-2 block">※エンジニアだけでなく、ビジネス職（企画、マーケティング、事務など）を含む全職種向けです。</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 1. Coworkでできること -->
+    <section class="mb-12">
+        <h2 class="section-title">
+            <i class="fa-solid fa-check-circle text-emerald-500"></i>
+            Coworkでできること（主要メリット3選）
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card">
+                <div class="text-indigo-600 text-xl mb-3"><i class="fa-solid fa-users-viewfinder"></i></div>
+                <h3 class="font-bold text-lg mb-2">Projectsでの知識共有</h3>
+                <p class="text-sm text-slate-600">
+                    特定の資料や指示（プロンプト）を「Project」として登録し、チーム全員で共有可能。全員が同じ前提知識を持ったAIアシスタントを利用できます。
+                </p>
+            </div>
+            <div class="card">
+                <div class="text-indigo-600 text-xl mb-3"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3 class="font-bold text-lg mb-2">学習利用なし（安心）</h3>
+                <p class="text-sm text-slate-600">
+                    入力データや添付ファイルはAIの学習に一切使用されません。社外秘の情報も安心して取り扱えます。
+                </p>
+            </div>
+            <div class="card">
+                <div class="text-indigo-600 text-xl mb-3"><i class="fa-solid fa-gauge-high"></i></div>
+                <h3 class="font-bold text-lg mb-2">利用上限が5倍</h3>
+                <p class="text-sm text-slate-600">
+                    個人版（Pro）と比較してメッセージ送信可能回数が約5倍。長文読解やチームでの集中利用でも制限にかかりにくくなります。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Claude Code との差分 -->
+    <section class="mb-12">
+        <h2 class="section-title">
+            <i class="fa-solid fa-code-compare text-blue-500"></i>
+            Claude Code との差分比較
+        </h2>
+        <p class="mb-4 text-slate-600">
+            「複数ファイルを参照できる」点は似ていますが、<strong>「実行力」</strong>に決定的な違いがあります。
+        </p>
+        <div class="card p-0 overflow-hidden">
+            <table class="w-full text-sm md:text-base">
+                <thead>
+                    <tr>
+                        <th class="table-header w-1/4">比較項目</th>
+                        <th class="table-header w-1/3 text-indigo-700 bg-indigo-50">Claude Cowork (Projects)</th>
+                        <th class="table-header w-1/3 text-slate-700">Claude Code (CLI)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="table-cell font-bold bg-slate-50">動作環境</td>
+                        <td class="table-cell text-indigo-900 bg-indigo-50/30">
+                            <strong>ブラウザの中</strong> (Sandbox)<br>
+                            <span class="text-xs text-slate-500">※PC内部にはアクセスできない</span>
+                        </td>
+                        <td class="table-cell">
+                            <strong>ターミナル</strong> (Local/Remote)<br>
+                            <span class="text-xs text-slate-500">※PC内部を直接操作する</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-cell font-bold bg-slate-50">ファイル操作</td>
+                        <td class="table-cell text-indigo-900 bg-indigo-50/30">
+                            <strong>読むだけ (Read Only)</strong><br>
+                            中身を読んで提案するのみ（文書・コード）。<br>ファイルの書き換えは手動。
+                        </td>
+                        <td class="table-cell">
+                            <strong>読み書き可能 (Read & Write)</strong><br>
+                            ファイルを直接編集・保存できる。
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-cell font-bold bg-slate-50">主な役割</td>
+                        <td class="table-cell text-indigo-900 bg-indigo-50/30">
+                            <strong>知識共有・文書作成</strong><br>
+                            非エンジニア含むチーム全体の「相談役」。
+                        </td>
+                        <td class="table-cell">
+                            <strong>実装・デバッグ</strong><br>
+                            エンジニアのための「自律型開発ツール」。
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 3. SharePoint / Teams との差分 -->
+    <section class="mb-12">
+        <h2 class="section-title">
+            <i class="fa-brands fa-microsoft text-sky-600"></i>
+            SharePoint / Teams との差分比較
+        </h2>
+        <p class="mb-4 text-slate-600">
+            これらは競合するものではなく、<strong>「併用するもの（役割が全く違う）」</strong>です。
+        </p>
+        <div class="card p-0 overflow-hidden">
+            <table class="w-full text-sm md:text-base">
+                <thead>
+                    <tr>
+                        <th class="table-header w-1/4">比較項目</th>
+                        <th class="table-header w-1/3 text-indigo-700 bg-indigo-50">Claude Cowork</th>
+                        <th class="table-header w-1/3 text-sky-800 bg-sky-50">SharePoint / Teams</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="table-cell font-bold bg-slate-50">本質的な役割</td>
+                        <td class="table-cell text-indigo-900 bg-indigo-50/30">
+                            <strong>処理・生成（エンジン）</strong><br>
+                            情報をこねて新しい成果物を作る場所。
+                        </td>
+                        <td class="table-cell text-sky-900 bg-sky-50/30">
+                            <strong>保管・連絡（基盤）</strong><br>
+                            情報を貯める倉庫、人と話す会議室。
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-cell font-bold bg-slate-50">コミュニケーション</td>
+                        <td class="table-cell text-indigo-900 bg-indigo-50/30">
+                            <strong>人 vs AI</strong><br>
+                            人間同士のチャット機能はない。
+                        </td>
+                        <td class="table-cell text-sky-900 bg-sky-50/30">
+                            <strong>人 vs 人</strong><br>
+                            連絡、相談、Web会議の場所。
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-cell font-bold bg-slate-50">データの規模</td>
+                        <td class="table-cell text-indigo-900 bg-indigo-50/30">
+                            <strong>手持ちカバン サイズ</strong><br>
+                            必要な資料だけを一時的に入れる。
+                        </td>
+                        <td class="table-cell text-sky-900 bg-sky-50/30">
+                            <strong>巨大倉庫 サイズ</strong><br>
+                            全社の過去ログを全て保存する。
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 4. 業務イメージ -->
+    <section>
+        <h2 class="section-title">
+            <i class="fa-solid fa-sitemap text-orange-500"></i>
+            業務フローのイメージ
+        </h2>
+        
+        <div class="card highlight-box mb-6">
+            <p class="text-lg font-medium text-slate-700 leading-relaxed">
+                「<strong>Teams</strong>で連絡を取り合い、<strong>SharePoint</strong>から資料を取り出し、<br>
+                <span class="text-indigo-600 font-bold text-xl">Cowork（ホワイトボード）</span>に貼り付けて、<br>
+                みんなでAIと一緒に議論・作成する」
+            </p>
+        </div>
+
+        <!-- Flow Visual -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center items-stretch">
+            <!-- Step 1 -->
+            <div class="bg-white p-4 rounded-lg border border-slate-200 flex flex-col items-center justify-center relative">
+                <div class="text-sky-600 text-3xl mb-2"><i class="fa-solid fa-comments"></i></div>
+                <div class="font-bold text-slate-700">Teams</div>
+                <div class="text-xs text-slate-500 mt-1">「今度の件、資料ある？」<br>（人間同士の連絡）</div>
+                
+                <!-- Arrow for Desktop -->
+                <div class="hidden md:block absolute -right-3 top-1/2 transform -translate-y-1/2 text-slate-300 z-10">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white p-4 rounded-lg border border-slate-200 flex flex-col items-center justify-center relative">
+                <div class="text-sky-600 text-3xl mb-2"><i class="fa-solid fa-database"></i></div>
+                <div class="font-bold text-slate-700">SharePoint</div>
+                <div class="text-xs text-slate-500 mt-1">資料を取り出す<br>（巨大倉庫から検索）</div>
+
+                 <!-- Arrow for Desktop -->
+                 <div class="hidden md:block absolute -right-3 top-1/2 transform -translate-y-1/2 text-slate-300 z-10">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- Step 3 (Main) -->
+            <div class="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-200 flex flex-col items-center justify-center relative shadow-md transform md:scale-105 z-0">
+                <div class="text-indigo-600 text-3xl mb-2"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <div class="font-bold text-indigo-800">Cowork</div>
+                <div class="text-xs text-indigo-600 mt-1 font-bold">AIと共同作業<br>（共有ホワイトボード）</div>
+
+                 <!-- Arrow for Desktop -->
+                 <div class="hidden md:block absolute -right-3 top-1/2 transform -translate-y-1/2 text-slate-300 z-10">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="bg-white p-4 rounded-lg border border-slate-200 flex flex-col items-center justify-center">
+                <div class="text-emerald-500 text-3xl mb-2"><i class="fa-solid fa-file-export"></i></div>
+                <div class="font-bold text-slate-700">成果物</div>
+                <div class="text-xs text-slate-500 mt-1">完成した文書やコードを<br>Teams/SPに戻す</div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Agent Teams</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .code-snippet {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            color: #e2e8f0;
+        }
+        .keyword { color: #818cf8; }
+        .string { color: #f0abfc; }
+        .comment { color: #94a3b8; }
+        .property { color: #67e8f9; }
+    </style>
+</head>
+<body class="antialiased selection:bg-violet-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="users" class="w-6 h-6 text-violet-500"></i>
+                <span class="text-lg font-bold tracking-tight">Claude Code <span class="text-gray-400 font-normal">| Agent Teams</span></span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
+                <a href="#overview" class="hover:text-violet-600 transition">概要</a>
+                <a href="#comparison" class="hover:text-violet-600 transition">Subagents比較</a>
+                <a href="#features" class="hover:text-violet-600 transition">追加機能</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="py-16 text-center border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-600 text-xs font-medium mb-6">
+                <i data-lucide="sparkles" class="w-3 h-3 mr-2"></i>
+                Experimental Feature
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">
+                <span class="gradient-text">Claude Code Agent Teams</span>
+            </h1>
+            <p class="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                複数のClaude Codeインスタンスを協調させ、<br>
+                並列作業で複雑なタスクを効率的に解決する実験的機能。
+            </p>
+        </div>
+    </section>
+
+    <!-- Section 1: Overview -->
+    <section id="overview" class="py-16">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <i data-lucide="layout-grid" class="w-6 h-6 mr-3 text-violet-500"></i>
+                Agent Teamsとは
+            </h2>
+
+            <!-- Architecture -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-8">
+                <p class="text-gray-600 mb-8 text-center font-medium">
+                    Team Lead + Teammates + 共有タスクリスト + メッセージングで構成される協調システム
+                </p>
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div class="bg-violet-50 border border-violet-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="crown" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">Team Lead</h3>
+                        <p class="text-xs text-gray-500">メインセッション。チーム作成・調整・統合を担当</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">Teammates</h3>
+                        <p class="text-xs text-gray-500">独立したClaude Codeインスタンス。各自が個別コンテキストで作業</p>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="list-checks" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">Task List</h3>
+                        <p class="text-xs text-gray-500">共有タスクリスト。依存関係管理と自動unblock</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">Mailbox</h3>
+                        <p class="text-xs text-gray-500">エージェント間メッセージング。直接通信が可能</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Setup -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-8">
+                <h3 class="font-bold text-lg mb-4 flex items-center">
+                    <i data-lucide="settings" class="w-5 h-5 mr-2 text-violet-500"></i>
+                    セットアップ
+                </h3>
+                <div class="code-snippet text-sm mb-4">
+                    <span class="comment">// settings.json</span><br>
+                    {<br>
+                    &nbsp;&nbsp;<span class="property">"env"</span>: {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="property">"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"</span>: <span class="string">"1"</span><br>
+                    &nbsp;&nbsp;}<br>
+                    }
+                </div>
+                <p class="text-sm text-gray-500">自然言語でチーム作成を指示するだけで、Claude が自動的にチーム構造を決定し、チームメイトをspawnします。</p>
+            </div>
+
+            <!-- Display Modes -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-violet-100 text-violet-600 rounded-lg flex items-center justify-center mr-3">
+                            <i data-lucide="monitor" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800">In-process Mode</h3>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-3">1つのターミナル内で全チームメイトが実行。Shift+Up/Downで切り替え。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">セットアップ不要</span>
+                        <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">どのターミナルでもOK</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3">
+                            <i data-lucide="columns-2" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800">Split Panes Mode</h3>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-3">各チームメイトが独立ペインで実行。全員の出力を同時に表示。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs bg-amber-50 text-amber-600 px-2 py-1 rounded">tmux / iTerm2 必須</span>
+                        <span class="text-xs bg-red-50 text-red-500 px-2 py-1 rounded">VS Code非対応</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Cases -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <h3 class="font-bold text-lg mb-4 flex items-center">
+                    <i data-lucide="target" class="w-5 h-5 mr-2 text-violet-500"></i>
+                    適したユースケース
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-sm font-bold text-emerald-600 mb-3 flex items-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>向いている
+                        </h4>
+                        <ul class="text-sm text-gray-600 space-y-2">
+                            <li class="flex items-start"><span class="text-emerald-400 mr-2">-</span>並列コードレビュー（複数観点）</li>
+                            <li class="flex items-start"><span class="text-emerald-400 mr-2">-</span>競合仮説によるバグ調査</li>
+                            <li class="flex items-start"><span class="text-emerald-400 mr-2">-</span>独立モジュールの並列開発</li>
+                            <li class="flex items-start"><span class="text-emerald-400 mr-2">-</span>Cross-layer変更（前後端+テスト）</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-red-500 mb-3 flex items-center">
+                            <i data-lucide="x-circle" class="w-4 h-4 mr-2"></i>向いていない
+                        </h4>
+                        <ul class="text-sm text-gray-600 space-y-2">
+                            <li class="flex items-start"><span class="text-red-400 mr-2">-</span>順序依存タスク</li>
+                            <li class="flex items-start"><span class="text-red-400 mr-2">-</span>同一ファイルの複数編集</li>
+                            <li class="flex items-start"><span class="text-red-400 mr-2">-</span>単純なタスク（オーバーヘッド大）</li>
+                            <li class="flex items-start"><span class="text-red-400 mr-2">-</span>依存関係が多い作業</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Comparison with Subagents -->
+    <section id="comparison" class="py-16 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <i data-lucide="git-compare" class="w-6 h-6 mr-3 text-violet-500"></i>
+                Subagentsとの違い
+            </h2>
+
+            <!-- Architecture Diagrams -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <!-- Subagents Diagram -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-blue-600 mb-5 text-center">Subagents のアーキテクチャ</h3>
+                    <div class="flex flex-col items-center">
+                        <!-- Main Agent -->
+                        <div class="bg-blue-100 border-2 border-blue-400 rounded-xl px-6 py-3 text-sm font-bold text-blue-700 flex items-center">
+                            <i data-lucide="user" class="w-4 h-4 mr-2"></i>
+                            Main Agent
+                        </div>
+                        <!-- Arrows down -->
+                        <div class="flex items-center gap-12 my-2">
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-4 bg-blue-300"></div>
+                                <i data-lucide="arrow-down" class="w-4 h-4 text-blue-400"></i>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-4 bg-blue-300"></div>
+                                <i data-lucide="arrow-down" class="w-4 h-4 text-blue-400"></i>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-4 bg-blue-300"></div>
+                                <i data-lucide="arrow-down" class="w-4 h-4 text-blue-400"></i>
+                            </div>
+                        </div>
+                        <!-- Subagents -->
+                        <div class="flex gap-3">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-600 text-center">
+                                <i data-lucide="search" class="w-3 h-3 mx-auto mb-1"></i>
+                                Explore
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-600 text-center">
+                                <i data-lucide="map" class="w-3 h-3 mx-auto mb-1"></i>
+                                Plan
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-xs text-blue-600 text-center">
+                                <i data-lucide="wrench" class="w-3 h-3 mx-auto mb-1"></i>
+                                Custom
+                            </div>
+                        </div>
+                        <!-- Return arrows -->
+                        <div class="flex items-center gap-12 my-2">
+                            <div class="flex flex-col items-center">
+                                <i data-lucide="arrow-up" class="w-4 h-4 text-gray-300"></i>
+                                <div class="w-0.5 h-4 bg-gray-200"></div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <i data-lucide="arrow-up" class="w-4 h-4 text-gray-300"></i>
+                                <div class="w-0.5 h-4 bg-gray-200"></div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <i data-lucide="arrow-up" class="w-4 h-4 text-gray-300"></i>
+                                <div class="w-0.5 h-4 bg-gray-200"></div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-medium bg-gray-50 rounded-full px-3 py-1">結果のみ返す（一方向）</div>
+                    </div>
+                </div>
+
+                <!-- Agent Teams Diagram -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-violet-600 mb-5 text-center">Agent Teams のアーキテクチャ</h3>
+                    <div class="flex flex-col items-center">
+                        <!-- Lead -->
+                        <div class="bg-violet-100 border-2 border-violet-400 rounded-xl px-6 py-3 text-sm font-bold text-violet-700 flex items-center">
+                            <i data-lucide="crown" class="w-4 h-4 mr-2"></i>
+                            Team Lead
+                        </div>
+                        <!-- Bidirectional arrows -->
+                        <div class="flex items-center gap-12 my-2">
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-3 bg-violet-300"></div>
+                                <i data-lucide="arrow-down-up" class="w-4 h-4 text-violet-400"></i>
+                                <div class="w-0.5 h-3 bg-violet-300"></div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-3 bg-violet-300"></div>
+                                <i data-lucide="arrow-down-up" class="w-4 h-4 text-violet-400"></i>
+                                <div class="w-0.5 h-3 bg-violet-300"></div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-3 bg-violet-300"></div>
+                                <i data-lucide="arrow-down-up" class="w-4 h-4 text-violet-400"></i>
+                                <div class="w-0.5 h-3 bg-violet-300"></div>
+                            </div>
+                        </div>
+                        <!-- Teammates -->
+                        <div class="flex gap-3 mb-3">
+                            <div class="bg-violet-50 border border-violet-200 rounded-lg px-3 py-2 text-xs text-violet-600 text-center">
+                                <i data-lucide="user" class="w-3 h-3 mx-auto mb-1"></i>
+                                Mate A
+                            </div>
+                            <div class="bg-violet-50 border border-violet-200 rounded-lg px-3 py-2 text-xs text-violet-600 text-center">
+                                <i data-lucide="user" class="w-3 h-3 mx-auto mb-1"></i>
+                                Mate B
+                            </div>
+                            <div class="bg-violet-50 border border-violet-200 rounded-lg px-3 py-2 text-xs text-violet-600 text-center">
+                                <i data-lucide="user" class="w-3 h-3 mx-auto mb-1"></i>
+                                Mate C
+                            </div>
+                        </div>
+                        <!-- Peer communication -->
+                        <div class="w-full max-w-[200px] border-t-2 border-dashed border-violet-300 relative">
+                            <div class="flex justify-between mt-[-8px]">
+                                <i data-lucide="arrow-left-right" class="w-4 h-4 text-violet-300 bg-white"></i>
+                                <i data-lucide="arrow-left-right" class="w-4 h-4 text-violet-300 bg-white"></i>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-medium bg-gray-50 rounded-full px-3 py-1 mt-2">双方向 + チームメイト間通信</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="text-left px-6 py-4 font-bold text-gray-600">項目</th>
+                            <th class="text-left px-6 py-4 font-bold text-blue-600">Subagents</th>
+                            <th class="text-left px-6 py-4 font-bold text-violet-600">Agent Teams</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="px-6 py-3 font-medium text-gray-700">コンテキスト</td>
+                            <td class="px-6 py-3 text-gray-500">親と共有、結果のみ返す</td>
+                            <td class="px-6 py-3 text-gray-500">完全に独立</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 font-medium text-gray-700">通信</td>
+                            <td class="px-6 py-3 text-gray-500">親への報告のみ</td>
+                            <td class="px-6 py-3 text-gray-500">チームメイト同士が直接メッセージ</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 font-medium text-gray-700">調整</td>
+                            <td class="px-6 py-3 text-gray-500">親が完全制御</td>
+                            <td class="px-6 py-3 text-gray-500">共有タスクリストで自己組織化</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 font-medium text-gray-700">トークンコスト</td>
+                            <td class="px-6 py-3 text-gray-500">低〜中</td>
+                            <td class="px-6 py-3 text-gray-500">高（複数セッション）</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 font-medium text-gray-700">最適用途</td>
+                            <td class="px-6 py-3 text-gray-500">フォーカスされた単一タスク</td>
+                            <td class="px-6 py-3 text-gray-500">複雑な協働作業</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 font-medium text-gray-700">ステータス</td>
+                            <td class="px-6 py-3"><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">本番利用可</span></td>
+                            <td class="px-6 py-3"><span class="text-xs bg-amber-50 text-amber-600 px-2 py-1 rounded">実験的</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decision Guide -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <h3 class="font-bold text-lg mb-6 flex items-center">
+                    <i data-lucide="signpost" class="w-5 h-5 mr-2 text-violet-500"></i>
+                    選択ガイド
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-blue-600 mb-2">Subagentsを選ぶ場合</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                                <span>単一ファイルの修正・コード探索</span>
+                            </div>
+                            <div class="flex items-start text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                                <span>PRレビュー（1人のレビュアー）</span>
+                            </div>
+                            <div class="flex items-start text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                                <span>バグ調査（1つの仮説）</span>
+                            </div>
+                            <div class="flex items-start text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                                <span>コスト効率を重視するタスク</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-violet-600 mb-2">Agent Teamsを選ぶ場合</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start text-sm text-gray-600 bg-violet-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-violet-400 mt-0.5 flex-shrink-0"></i>
+                                <span>PRレビュー（複数観点で同時確認）</span>
+                            </div>
+                            <div class="flex items-start text-sm text-gray-600 bg-violet-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-violet-400 mt-0.5 flex-shrink-0"></i>
+                                <span>バグ調査（複数仮説を並列検証）</span>
+                            </div>
+                            <div class="flex items-start text-sm text-gray-600 bg-violet-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-violet-400 mt-0.5 flex-shrink-0"></i>
+                                <span>複数モジュールの並列開発</span>
+                            </div>
+                            <div class="flex items-start text-sm text-gray-600 bg-violet-50 rounded-lg p-3">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-violet-400 mt-0.5 flex-shrink-0"></i>
+                                <span>チームメイト間の議論が必要なタスク</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                    <span class="font-bold text-gray-700">併用も可能：</span>
+                    Agent Teams内の各チームメイトがSubagentsを使用できます。段階的に Subagents から始めて、必要に応じて Agent Teams へ移行するのが推奨パターンです。
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Advanced Features -->
+    <section id="features" class="py-16 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <i data-lucide="puzzle" class="w-6 h-6 mr-3 text-violet-500"></i>
+                知っておくべき追加機能
+            </h2>
+
+            <!-- Plan Approval -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-violet-50 border-b border-violet-100 flex justify-between items-center">
+                    <h3 class="font-bold text-violet-700 flex items-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 mr-2"></i>
+                        Plan Approval（計画承認）
+                    </h3>
+                    <span class="text-xs bg-violet-100 text-violet-600 px-2 py-1 rounded font-medium">安全機能</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-4">
+                        チームメイトが実装前にリードの承認を得る仕組み。複雑またはリスキーなタスクに有効。
+                    </p>
+                    <div class="code-snippet text-xs mb-4">
+                        <span class="comment"># チームメイトを計画承認モードでspawn</span><br>
+                        Spawn an architect teammate to refactor the authentication module.<br>
+                        Require plan approval before they make any changes.
+                    </div>
+                    <div class="grid md:grid-cols-4 gap-3">
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs font-bold text-gray-700 mb-1">Step 1</div>
+                            <div class="text-xs text-gray-500">Read-onlyで計画作成</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs font-bold text-gray-700 mb-1">Step 2</div>
+                            <div class="text-xs text-gray-500">リードに承認リクエスト</div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center">
+                            <div class="text-xs font-bold text-gray-700 mb-1">Step 3</div>
+                            <div class="text-xs text-gray-500">承認 or 修正フィードバック</div>
+                        </div>
+                        <div class="bg-emerald-50 rounded-lg p-3 text-center">
+                            <div class="text-xs font-bold text-emerald-700 mb-1">Step 4</div>
+                            <div class="text-xs text-emerald-600">承認後に実装開始</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delegate Mode -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex justify-between items-center">
+                    <h3 class="font-bold text-blue-700 flex items-center">
+                        <i data-lucide="hand" class="w-5 h-5 mr-2"></i>
+                        Delegate Mode（委譲モード）
+                    </h3>
+                    <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">Shift+Tab</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-4">
+                        リードを調整専任にし、コード実装させない機能。オーケストレーションに専念させたい場合に有効。
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-emerald-50 rounded-lg p-4">
+                            <h4 class="text-xs font-bold text-emerald-700 mb-2">使用可能</h4>
+                            <ul class="text-xs text-gray-600 space-y-1">
+                                <li>- チームメイトのspawn / シャットダウン</li>
+                                <li>- メッセージング</li>
+                                <li>- タスク管理</li>
+                                <li>- 結果の統合・検証</li>
+                            </ul>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <h4 class="text-xs font-bold text-red-600 mb-2">使用不可</h4>
+                            <ul class="text-xs text-gray-600 space-y-1">
+                                <li>- ファイル編集（Edit / Write）</li>
+                                <li>- Bash実行</li>
+                                <li>- その他の実装ツール</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hooks -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-amber-50 border-b border-amber-100 flex justify-between items-center">
+                    <h3 class="font-bold text-amber-700 flex items-center">
+                        <i data-lucide="webhook" class="w-5 h-5 mr-2"></i>
+                        Hooks連携（品質ゲート）
+                    </h3>
+                    <span class="text-xs bg-amber-100 text-amber-600 px-2 py-1 rounded font-medium">自動化</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-5">
+                        チームメイトの作業完了やタスク完了時にシェルスクリプトを自動実行し、テスト通過やビルド成功などの品質基準を強制できる仕組み。
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-700 mb-3">TeammateIdle</h4>
+                            <p class="text-xs text-gray-500 mb-3">チームメイトがアイドル状態になる前に発動。exit code 2 で続行させる。</p>
+                            <div class="code-snippet text-xs">
+                                <span class="comment">#!/bin/bash</span><br>
+                                <span class="keyword">if</span> [ ! -f <span class="string">"./dist/output.js"</span> ]; <span class="keyword">then</span><br>
+                                &nbsp;&nbsp;<span class="keyword">echo</span> <span class="string">"Build artifact missing."</span> >&2<br>
+                                &nbsp;&nbsp;<span class="keyword">exit</span> 2 <span class="comment"># 続行させる</span><br>
+                                <span class="keyword">fi</span><br>
+                                <span class="keyword">exit</span> 0
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-700 mb-3">TaskCompleted</h4>
+                            <p class="text-xs text-gray-500 mb-3">タスク完了マーク時に発動。exit code 2 で完了をブロック。</p>
+                            <div class="code-snippet text-xs">
+                                <span class="comment">#!/bin/bash</span><br>
+                                <span class="keyword">if</span> ! npm test 2>&1; <span class="keyword">then</span><br>
+                                &nbsp;&nbsp;<span class="keyword">echo</span> <span class="string">"Tests not passing."</span> >&2<br>
+                                &nbsp;&nbsp;<span class="keyword">exit</span> 2 <span class="comment"># 完了をブロック</span><br>
+                                <span class="keyword">fi</span><br>
+                                <span class="keyword">exit</span> 0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Management -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
+                    <h3 class="font-bold text-emerald-700 flex items-center">
+                        <i data-lucide="kanban" class="w-5 h-5 mr-2"></i>
+                        タスク管理
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-5">
+                        チーム全体で共有されるタスクリストにより、誰が何を担当しているかを可視化し、依存関係の自動解決やタスクの自己請求を実現する仕組み。
+                    </p>
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <div class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium">pending</div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-400"></i>
+                        <div class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium">in progress</div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-400"></i>
+                        <div class="bg-emerald-100 text-emerald-600 px-4 py-2 rounded-lg text-sm font-medium">completed</div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="text-xs font-bold text-gray-700 mb-2">ファイルロック</h4>
+                            <p class="text-xs text-gray-500">複数チームメイトが同時にタスクを請求する競合を防止</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="text-xs font-bold text-gray-700 mb-2">依存関係管理</h4>
+                            <p class="text-xs text-gray-500">依存先完了時に自動でunblock。手動介入不要</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="text-xs font-bold text-gray-700 mb-2">自己請求</h4>
+                            <p class="text-xs text-gray-500">チームメイトがタスク完了後、次の未割り当てタスクを自動選択</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-violet-50 rounded-lg p-3 text-xs text-violet-600">
+                        <span class="font-bold">推奨タスク粒度:</span> 1チームメイトあたり5-6タスク。自己完結単位（関数、テストファイル、レビュー等）が最適。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-700 flex items-center">
+                        <i data-lucide="lightbulb" class="w-5 h-5 mr-2 text-amber-500"></i>
+                        ベストプラクティス
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="border border-gray-100 rounded-lg p-4 hover:border-violet-300 transition">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2">コンテキスト供給</h4>
+                            <p class="text-xs text-gray-500">リードの会話履歴は継承されない。spawn promptに詳細を含めること。CLAUDE.md、MCP、Skillsは自動読み込み。</p>
+                        </div>
+                        <div class="border border-gray-100 rounded-lg p-4 hover:border-violet-300 transition">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2">ファイル競合回避</h4>
+                            <p class="text-xs text-gray-500">各チームメイトが異なるファイルセットを担当。同一ファイル編集は上書きリスクあり。</p>
+                        </div>
+                        <div class="border border-gray-100 rounded-lg p-4 hover:border-violet-300 transition">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2">コスト最適化</h4>
+                            <p class="text-xs text-gray-500">チームサイズは3-4人に限定。モデルをSonnetに指定。不要時にクリーンアップ。</p>
+                        </div>
+                        <div class="border border-gray-100 rounded-lg p-4 hover:border-violet-300 transition">
+                            <h4 class="text-sm font-bold text-gray-700 mb-2">段階的導入</h4>
+                            <p class="text-xs text-gray-500">まずResearch & Reviewタスクから開始。コード実装は慣れてから。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Limitations -->
+    <section class="py-12 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="text-lg font-bold mb-6 flex items-center text-gray-600">
+                <i data-lucide="alert-triangle" class="w-5 h-5 mr-2 text-amber-500"></i>
+                既知の制限事項
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="bg-amber-50 rounded-lg p-3 text-xs text-amber-700 border border-amber-100">
+                    <span class="font-bold block mb-1">セッション再開不可</span>
+                    /resume でチームメイトは復元されない
+                </div>
+                <div class="bg-amber-50 rounded-lg p-3 text-xs text-amber-700 border border-amber-100">
+                    <span class="font-bold block mb-1">1チーム / セッション</span>
+                    複数チームの同時管理は不可
+                </div>
+                <div class="bg-amber-50 rounded-lg p-3 text-xs text-amber-700 border border-amber-100">
+                    <span class="font-bold block mb-1">ネスト不可</span>
+                    チームメイトは自身のチームを作れない
+                </div>
+                <div class="bg-amber-50 rounded-lg p-3 text-xs text-amber-700 border border-amber-100">
+                    <span class="font-bold block mb-1">Split panes制限</span>
+                    VS Code / Windows Terminal 非対応
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+        <p>Claude Code Agent Teams - Experimental Feature Documentation</p>
+        <p class="mt-1 text-xs text-gray-300">Curated from official docs & research by agent teams</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

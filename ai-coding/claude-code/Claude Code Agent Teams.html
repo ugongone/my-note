@@ -45,6 +45,7 @@
             <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
                 <a href="#overview" class="hover:text-violet-600 transition">概要</a>
                 <a href="#comparison" class="hover:text-violet-600 transition">Subagents比較</a>
+                <a href="#usage" class="hover:text-violet-600 transition">使い方</a>
                 <a href="#features" class="hover:text-violet-600 transition">追加機能</a>
             </nav>
         </div>
@@ -60,25 +61,25 @@
             <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">
                 <span class="gradient-text">Claude Code Agent Teams</span>
             </h1>
-            <p class="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                複数のClaude Codeインスタンスを協調させ、<br>
-                並列作業で複雑なタスクを効率的に解決する実験的機能。
-            </p>
         </div>
     </section>
 
     <!-- Section 1: Overview -->
     <section id="overview" class="py-16">
         <div class="max-w-5xl mx-auto px-4">
-            <h2 class="text-2xl font-bold mb-8 flex items-center">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
                 <i data-lucide="layout-grid" class="w-6 h-6 mr-3 text-violet-500"></i>
                 Agent Teamsとは
             </h2>
 
             <!-- Architecture -->
             <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-8">
-                <p class="text-gray-600 mb-8 text-center font-medium">
-                    Team Lead + Teammates + 共有タスクリスト + メッセージングで構成される協調システム
+                <p class="text-gray-500 mb-4 leading-relaxed">
+                    複数のClaude Codeインスタンスを協調させ、並列作業で複雑なタスクを効率的に解決する実験的機能。
+                </p>
+                <hr class="border-gray-100 mb-6">
+                <p class="text-sm text-gray-400 mb-6 text-center tracking-wide">
+                    Team Lead + Teammates + 共有タスクリスト + メッセージングで構成
                 </p>
                 <div class="grid md:grid-cols-4 gap-4">
                     <div class="bg-violet-50 border border-violet-200 p-4 rounded-xl text-center hover:shadow-md transition">
@@ -108,53 +109,6 @@
                         </div>
                         <h3 class="font-bold text-gray-800 mb-1">Mailbox</h3>
                         <p class="text-xs text-gray-500">エージェント間メッセージング。直接通信が可能</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Setup -->
-            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-8">
-                <h3 class="font-bold text-lg mb-4 flex items-center">
-                    <i data-lucide="settings" class="w-5 h-5 mr-2 text-violet-500"></i>
-                    セットアップ
-                </h3>
-                <div class="code-snippet text-sm mb-4">
-                    <span class="comment">// settings.json</span><br>
-                    {<br>
-                    &nbsp;&nbsp;<span class="property">"env"</span>: {<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="property">"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"</span>: <span class="string">"1"</span><br>
-                    &nbsp;&nbsp;}<br>
-                    }
-                </div>
-                <p class="text-sm text-gray-500">自然言語でチーム作成を指示するだけで、Claude が自動的にチーム構造を決定し、チームメイトをspawnします。</p>
-            </div>
-
-            <!-- Display Modes -->
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                    <div class="flex items-center mb-3">
-                        <div class="w-8 h-8 bg-violet-100 text-violet-600 rounded-lg flex items-center justify-center mr-3">
-                            <i data-lucide="monitor" class="w-4 h-4"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800">In-process Mode</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mb-3">1つのターミナル内で全チームメイトが実行。Shift+Up/Downで切り替え。</p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">セットアップ不要</span>
-                        <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">どのターミナルでもOK</span>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                    <div class="flex items-center mb-3">
-                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3">
-                            <i data-lucide="columns-2" class="w-4 h-4"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800">Split Panes Mode</h3>
-                    </div>
-                    <p class="text-sm text-gray-500 mb-3">各チームメイトが独立ペインで実行。全員の出力を同時に表示。</p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-xs bg-amber-50 text-amber-600 px-2 py-1 rounded">tmux / iTerm2 必須</span>
-                        <span class="text-xs bg-red-50 text-red-500 px-2 py-1 rounded">VS Code非対応</span>
                     </div>
                 </div>
             </div>
@@ -418,8 +372,123 @@
         </div>
     </section>
 
+    <!-- Section: How to Use -->
+    <section id="usage" class="py-16 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <i data-lucide="rocket" class="w-6 h-6 mr-3 text-violet-500"></i>
+                使い方
+            </h2>
+
+            <!-- Setup -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-8">
+                <h3 class="font-bold text-lg mb-4 flex items-center">
+                    <i data-lucide="settings" class="w-5 h-5 mr-2 text-violet-500"></i>
+                    セットアップ
+                </h3>
+                <div class="code-snippet text-sm mb-4">
+                    <span class="comment">// settings.json</span><br>
+                    {<br>
+                    &nbsp;&nbsp;<span class="property">"env"</span>: {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="property">"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"</span>: <span class="string">"1"</span><br>
+                    &nbsp;&nbsp;}<br>
+                    }
+                </div>
+                <p class="text-sm text-gray-500">自然言語でチーム作成を指示するだけで、Claude が自動的にチーム構造を決定し、チームメイトをspawnします。</p>
+            </div>
+
+            <!-- Display Modes -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <h3 class="font-bold text-lg mb-6 flex items-center">
+                    <i data-lucide="app-window" class="w-5 h-5 mr-2 text-violet-500"></i>
+                    表示モード
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                        <div class="flex items-center p-4 border-b border-gray-100">
+                            <div class="w-8 h-8 bg-violet-100 text-violet-600 rounded-lg flex items-center justify-center mr-3">
+                                <i data-lucide="monitor" class="w-4 h-4"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800">In-process Mode</h4>
+                        </div>
+                        <!-- Terminal Diagram -->
+                        <div class="bg-gray-900 mx-4 mt-4 rounded-lg overflow-hidden text-xs font-mono">
+                            <div class="flex items-center gap-1.5 px-3 py-2 bg-gray-800 border-b border-gray-700">
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                                <span class="ml-2 text-gray-400 text-[10px]">Terminal</span>
+                            </div>
+                            <div class="p-3 space-y-1.5 text-gray-300 leading-relaxed">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-violet-400 font-bold">Lead</span>
+                                    <span class="text-gray-500">|</span>
+                                    <span class="text-blue-400">Mate A</span>
+                                    <span class="text-gray-500">|</span>
+                                    <span class="text-gray-500">Mate B</span>
+                                </div>
+                                <div class="border-t border-gray-700 pt-1.5"></div>
+                                <div><span class="text-blue-400">Mate A&gt;</span> Fixing auth module...</div>
+                                <div class="text-emerald-400">&#10003; Updated login.ts</div>
+                                <div class="text-gray-500 text-[10px] mt-1">Shift+Up/Down で切り替え</div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-gray-500 mb-3">1つのターミナル内で全チームメイトが実行。タブ切り替えで各メイトの出力を確認。</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">セットアップ不要</span>
+                                <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded">どのターミナルでもOK</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                        <div class="flex items-center p-4 border-b border-gray-100">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                <i data-lucide="columns-2" class="w-4 h-4"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-800">Split Panes Mode</h4>
+                        </div>
+                        <!-- Terminal Diagram -->
+                        <div class="bg-gray-900 mx-4 mt-4 rounded-lg overflow-hidden text-xs font-mono">
+                            <div class="flex items-center gap-1.5 px-3 py-2 bg-gray-800 border-b border-gray-700">
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                                <span class="ml-2 text-gray-400 text-[10px]">tmux / iTerm2</span>
+                            </div>
+                            <div class="flex divide-x divide-gray-700">
+                                <div class="flex-1 p-2 space-y-1 text-gray-300 leading-relaxed">
+                                    <div class="text-violet-400 font-bold text-[10px]">Lead</div>
+                                    <div class="text-[10px]">Coordinating...</div>
+                                    <div class="text-[10px] text-emerald-400">&#10003; Task assigned</div>
+                                </div>
+                                <div class="flex-1 p-2 space-y-1 text-gray-300 leading-relaxed">
+                                    <div class="text-blue-400 font-bold text-[10px]">Mate A</div>
+                                    <div class="text-[10px]">Fixing auth...</div>
+                                    <div class="text-[10px] text-amber-400">&#9998; login.ts</div>
+                                </div>
+                                <div class="flex-1 p-2 space-y-1 text-gray-300 leading-relaxed">
+                                    <div class="text-cyan-400 font-bold text-[10px]">Mate B</div>
+                                    <div class="text-[10px]">Writing tests...</div>
+                                    <div class="text-[10px] text-amber-400">&#9998; test.ts</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-gray-500 mb-3">各チームメイトが独立ペインで実行。全員の出力を同時に確認可能。</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-xs bg-amber-50 text-amber-600 px-2 py-1 rounded">tmux / iTerm2 必須</span>
+                                <span class="text-xs bg-red-50 text-red-500 px-2 py-1 rounded">VS Code非対応</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Section 3: Advanced Features -->
-    <section id="features" class="py-16 border-t border-gray-200">
+    <section id="features" class="py-16 bg-gray-50 border-t border-gray-200">
         <div class="max-w-5xl mx-auto px-4">
             <h2 class="text-2xl font-bold mb-8 flex items-center">
                 <i data-lucide="puzzle" class="w-6 h-6 mr-3 text-violet-500"></i>

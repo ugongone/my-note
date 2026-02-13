@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIに判断を委ねる柔軟なシステム設計</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .code-snippet {
+            font-family: Menlo, Monaco, monospace;
+        }
+        .code-snippet .keyword { color: #818cf8; }
+        .code-snippet .string { color: #f0abfc; }
+        .code-snippet .comment { color: #94a3b8; }
+        .code-snippet .property { color: #67e8f9; }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1e293b;">
+
+    <!-- Header -->
+    <header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="brain-circuit" class="w-6 h-6 text-blue-500"></i>
+                <span class="text-lg font-bold tracking-tight">AI柔軟設計 <span class="text-gray-400 font-normal">| 設計パターンガイド</span></span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
+                <a href="#background" class="hover:text-blue-600 transition">背景</a>
+                <a href="#boundary" class="hover:text-blue-600 transition">責任分界</a>
+                <a href="#granularity" class="hover:text-blue-600 transition">指示の粒度</a>
+                <a href="#tooluse" class="hover:text-blue-600 transition">Tool Use</a>
+                <a href="#practice" class="hover:text-blue-600 transition">実践例</a>
+                <a href="#tradeoff" class="hover:text-blue-600 transition">メリットとリスク</a>
+                <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 text-sm text-gray-400 mb-4">
+                <i data-lucide="bookmark" class="w-4 h-4"></i>
+                <span>設計パターン</span>
+                <span class="text-gray-300">|</span>
+                <span>システムアーキテクチャ</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+                <span class="gradient-text">AIに判断を委ねる柔軟なシステム設計</span>
+            </h1>
+            <p class="text-lg text-gray-500 max-w-2xl">LLMの判断力を活かして、仕様のコーディング量を減らす設計パターン</p>
+        </div>
+    </section>
+
+    <!-- Section 1: Background -->
+    <section id="background" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-6">
+                <i data-lucide="git-compare" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">背景 -- 従来開発との違い</h2>
+            </div>
+
+            <!-- 2-column comparison -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Traditional Approach -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="code-2" class="w-5 h-5 text-gray-500"></i>
+                            <h3 class="font-semibold text-gray-600">従来のアプローチ</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <!-- Terminal mockup -->
+                        <div class="bg-[#1e293b] rounded-lg border border-[#334155] p-4 mb-4">
+                            <div class="flex items-center space-x-2 mb-3">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <pre class="code-snippet text-sm leading-relaxed"><span class="keyword">if</span> <span class="property">category</span> == <span class="string">"返品"</span>:
+    <span class="property">handle_return</span>()
+<span class="keyword">elif</span> <span class="property">category</span> == <span class="string">"配送"</span>:
+    <span class="property">handle_shipping</span>()
+<span class="keyword">elif</span> <span class="property">category</span> == <span class="string">"支払い"</span>:
+    <span class="property">handle_payment</span>()
+<span class="keyword">else</span>:
+    <span class="property">handle_unknown</span>()  <span class="comment"># 想定外...</span></pre>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start space-x-2"><span class="text-red-500 font-bold mt-0.5">--</span><span>全パターンの事前定義が必要</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-red-500 font-bold mt-0.5">--</span><span>表現のゆらぎに対応できない</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-red-500 font-bold mt-0.5">--</span><span>新ケース追加のたびにコード変更</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- AI Approach -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-blue-500"></i>
+                            <h3 class="font-semibold text-blue-600">AIに委ねるアプローチ</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <!-- Terminal mockup -->
+                        <div class="bg-[#1e293b] rounded-lg border border-[#334155] p-4 mb-4">
+                            <div class="flex items-center space-x-2 mb-3">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                            </div>
+                            <pre class="code-snippet text-sm leading-relaxed"><span class="comment"># system prompt</span>
+<span class="string">"あなたはカスタマーサポート担当です。
+ユーザーの問い合わせの意図を判断し、
+適切なツールを使って対応してください。
+推測で回答せず、必ずナレッジベースを
+検索してから回答してください。"</span></pre>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start space-x-2"><span class="text-emerald-500 font-bold mt-0.5">--</span><span>多様な表現を柔軟に理解</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-emerald-500 font-bold mt-0.5">--</span><span>未知のケースにも対応可能</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-emerald-500 font-bold mt-0.5">--</span><span>仕様変更はプロンプト修正が中心</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3-column icon cards -->
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm text-center">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="message-square-text" class="w-6 h-6 text-blue-500"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">入力の理解</h4>
+                    <p class="text-sm text-gray-500">自然言語の曖昧さをAIが吸収し、意図を正確に把握する</p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm text-center">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="route" class="w-6 h-6 text-blue-500"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">判断の委譲</h4>
+                    <p class="text-sm text-gray-500">分岐ロジックをAIに委ね、ルール定義の負担を削減する</p>
+                </div>
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm text-center">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="shapes" class="w-6 h-6 text-blue-500"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">出力の柔軟化</h4>
+                    <p class="text-sm text-gray-500">文脈に応じた最適な形式・文体で情報を出力する</p>
+                </div>
+            </div>
+
+            <!-- Claude note -->
+            <div class="flex items-start space-x-3 text-sm text-gray-400 mt-4">
+                <i data-lucide="info" class="w-4 h-4 mt-0.5 shrink-0"></i>
+                <p>本記事はClaude APIに絞って解説しています。設計思想は他APIでも通用します。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Boundary (Core) -->
+    <section id="boundary" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="split" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">何をAIに委ね、何をコードで制御すべきか</h2>
+            </div>
+            <p class="text-gray-500 mb-6">「全部AIに任せる」のではなく、<strong class="text-gray-700">責任分界を引くこと</strong>が設計の本質です。</p>
+
+            <!-- 2-column comparison cards -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- AI side -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-emerald-50 border-b border-emerald-200">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-emerald-600"></i>
+                            <h3 class="font-semibold text-emerald-600">AIに委ねてよいもの</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>意図解釈・自然言語の理解</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>検索クエリの組み立て</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>文脈に応じた回答生成</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>複数情報の統合・優先順位判断</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>言い回し・トーンの調整</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code side -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-amber-50 border-b border-amber-100">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-amber-600"></i>
+                            <h3 class="font-semibold text-amber-700">コードで制御すべきもの</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="lock" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                                <span>認証・認可</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="database" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                                <span>データの永続化・トランザクション</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="plug" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                                <span>外部APIの呼び出し実行</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="calculator" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                                <span>金額計算・在庫管理等の正確性必須処理</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="file-text" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                                <span>監査ログ・コンプライアンス</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decision flow -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h4 class="font-semibold text-center mb-6">判断基準フロー</h4>
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="bg-gray-50 rounded-xl px-6 py-4 border border-gray-200 text-center">
+                        <i data-lucide="help-circle" class="w-6 h-6 text-gray-500 mx-auto mb-2"></i>
+                        <p class="text-sm font-medium">間違えたときの<br>影響は?</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-gray-300 hidden md:block"></i>
+                    <i data-lucide="arrow-down" class="w-5 h-5 text-gray-300 md:hidden"></i>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <div class="bg-amber-50 rounded-xl px-6 py-4 border border-amber-100 text-center">
+                            <div class="flex items-center justify-center space-x-2 mb-1">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600"></i>
+                                <span class="text-sm font-semibold text-amber-700">大きい</span>
+                            </div>
+                            <p class="text-xs text-amber-600">コードで確実に制御</p>
+                        </div>
+                        <div class="bg-emerald-50 rounded-xl px-6 py-4 border border-emerald-200 text-center">
+                            <div class="flex items-center justify-center space-x-2 mb-1">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-sm font-semibold text-emerald-600">小さい</span>
+                            </div>
+                            <p class="text-xs text-emerald-600">AIに委ねてOK</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 設計の出発点 -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h4 class="font-semibold mb-4 flex items-center space-x-2">
+                    <i data-lucide="compass" class="w-5 h-5 text-blue-500"></i>
+                    <span>設計の出発点 -- 先に決めること・後で決めてよいこと</span>
+                </h4>
+                <p class="text-sm text-gray-600 mb-4">「AIに委ねる」設計の本質は、<strong class="text-gray-800">ゴール（What）は人間が決め、プロセス（How）はAIに委ねる</strong>ということ。だからこそ、ゴールの明確化が最初の一歩になる。</p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <p class="text-xs font-semibold text-blue-600 mb-2 flex items-center space-x-1">
+                            <i data-lucide="target" class="w-3.5 h-3.5"></i>
+                            <span>先に決める</span>
+                        </p>
+                        <ul class="text-sm text-gray-600 space-y-1.5">
+                            <li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">-</span><span><strong class="text-gray-700">入力</strong>: 何が来るのか（問い合わせ、フォーム、ファイル等）</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">-</span><span><strong class="text-gray-700">出力</strong>: 何を返すのか（回答、分類結果、構造化データ等）</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">-</span><span><strong class="text-gray-700">品質基準</strong>: 最低限満たすべき条件（出典明示、禁止事項等）</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-xs font-semibold text-gray-500 mb-2 flex items-center space-x-1">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                            <span>後で決めてよい</span>
+                        </p>
+                        <ul class="text-sm text-gray-600 space-y-1.5">
+                            <li class="flex items-start space-x-2"><span class="text-gray-400 font-bold">-</span><span>入力をどう解釈するか（AIに委ねる）</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-gray-400 font-bold">-</span><span>どのツールをどの順番で使うか（AIに委ねる）</span></li>
+                            <li class="flex items-start space-x-2"><span class="text-gray-400 font-bold">-</span><span><strong class="text-gray-700">利用API</strong>: ざっくり選べばOK。設計思想はプロバイダー共通</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supplementary box -->
+            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+                <div class="flex items-start space-x-3">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-blue-500 mt-0.5 shrink-0"></i>
+                    <p class="text-sm text-blue-600">柔軟な処理の源泉は<strong>モデル自体の能力</strong>です。Tool Useは道具の渡し方を提供しているだけであり、判断力そのものはLLMが持っています。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Granularity -->
+    <section id="granularity" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="sliders-horizontal" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">指示の粒度 -- どこまで細かく仕様を決めるか</h2>
+            </div>
+            <p class="text-gray-500 mb-6">「完璧な仕様書」は不要。<strong class="text-gray-700">方針 → テスト → 制約追加</strong>のイテレーションで育てます。</p>
+
+            <!-- 2-column comparison -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="ruler" class="w-5 h-5 text-blue-500"></i>
+                            <h3 class="font-semibold text-blue-600">厳密に指定すべき</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="target" class="w-4 h-4 text-blue-500 mt-0.5 shrink-0"></i>
+                                <div>
+                                    <span class="font-medium text-gray-700">ゴール（入力と出力の定義）</span>
+                                    <p class="text-gray-400 text-xs mt-0.5">何が来て、何を返すのかを明確に</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="pin" class="w-4 h-4 text-blue-500 mt-0.5 shrink-0"></i>
+                                <div>
+                                    <span class="font-medium text-gray-700">出力フォーマット</span>
+                                    <p class="text-gray-400 text-xs mt-0.5">例: 【出典: 〇〇】形式</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="ban" class="w-4 h-4 text-blue-500 mt-0.5 shrink-0"></i>
+                                <div>
+                                    <span class="font-medium text-gray-700">禁止行動</span>
+                                    <p class="text-gray-400 text-xs mt-0.5">推測禁止、個人情報禁止</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="shield" class="w-4 h-4 text-blue-500 mt-0.5 shrink-0"></i>
+                                <div>
+                                    <span class="font-medium text-gray-700">安全性ガードレール</span>
+                                    <p class="text-gray-400 text-xs mt-0.5">法的助言は専門家へ案内</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="hand" class="w-5 h-5 text-gray-500"></i>
+                            <h3 class="font-semibold text-gray-600">曖昧に任せてよい</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="search" class="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
+                                <span>検索クエリの組み立て方</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="list-ordered" class="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
+                                <span>複数ドキュメントの優先順位判断</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="pen-line" class="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
+                                <span>回答の言い回し・文体</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="minimize-2" class="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
+                                <span>情報の要約度合い</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
+                                <span>ツールを使う順番・組み合わせ</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step flow -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h4 class="font-semibold text-center mb-6">イテレーティブな設計フロー</h4>
+                <div class="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3">
+                    <div class="flex items-center space-x-2 bg-blue-50 rounded-lg px-4 py-3 border border-blue-200">
+                        <span class="text-xs font-bold text-blue-500 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center">1</span>
+                        <span class="text-sm font-medium text-blue-600">シンプルに書く</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 hidden sm:block"></i>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-300 sm:hidden"></i>
+                    <div class="flex items-center space-x-2 bg-blue-50 rounded-lg px-4 py-3 border border-blue-200">
+                        <span class="text-xs font-bold text-blue-500 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center">2</span>
+                        <span class="text-sm font-medium text-blue-600">テストする</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 hidden sm:block"></i>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-300 sm:hidden"></i>
+                    <div class="flex items-center space-x-2 bg-blue-50 rounded-lg px-4 py-3 border border-blue-200">
+                        <span class="text-xs font-bold text-blue-500 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center">3</span>
+                        <span class="text-sm font-medium text-blue-600">制約を追加</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 hidden sm:block"></i>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-300 sm:hidden"></i>
+                    <div class="flex items-center space-x-2 bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+                        <i data-lucide="repeat" class="w-4 h-4 text-gray-500"></i>
+                        <span class="text-sm font-medium text-gray-600">繰り返す</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Design tips box -->
+            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+                <div class="flex items-start space-x-3">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-blue-500 mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-blue-600 mb-1">実践のヒント</p>
+                        <p class="text-sm text-blue-600">制約は「品質が下がったケース」に対してピンポイントで追加するのが効果的です。最初から網羅的に書こうとせず、<strong>テスト結果から逆算して必要な制約だけを足す</strong>と、プロンプトの見通しがよくなります。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Tool Use -->
+    <section id="tooluse" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="wrench" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">実現手段としての Tool Use</h2>
+            </div>
+            <p class="text-gray-500 mb-6">この設計思想をClaudeで実装する標準手段が<strong class="text-gray-700">Tool Use</strong>です。</p>
+
+            <!-- 3-column element cards -->
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-violet-50 border-b border-violet-200">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="file-code" class="w-5 h-5 text-violet-500"></i>
+                            <h3 class="text-sm font-semibold text-violet-600">System Prompt</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-500 mb-3">AIの役割・方針・制約を定義</p>
+                        <div class="bg-[#1e293b] rounded-lg border border-[#334155] p-3">
+                            <pre class="code-snippet text-xs leading-relaxed"><span class="string">"あなたはサポート担当です。
+推測で回答しないでください。
+必ずナレッジベースを検索して
+ください。"</span></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="boxes" class="w-5 h-5 text-blue-500"></i>
+                            <h3 class="text-sm font-semibold text-blue-600">Tools 定義</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-500 mb-3">AIが使える道具を宣言</p>
+                        <div class="bg-[#1e293b] rounded-lg border border-[#334155] p-3">
+                            <pre class="code-snippet text-xs leading-relaxed"><span class="property">search_knowledge</span>
+<span class="comment">  # ナレッジベース検索</span>
+<span class="property">get_order_status</span>
+<span class="comment">  # 注文状況の取得</span>
+<span class="property">create_ticket</span>
+<span class="comment">  # チケット作成</span></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-amber-50 border-b border-amber-100">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="repeat" class="w-5 h-5 text-amber-600"></i>
+                            <h3 class="text-sm font-semibold text-amber-700">Agent Loop</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-500 mb-3">判断→ツール実行→応答の繰り返し</p>
+                        <div class="bg-[#1e293b] rounded-lg border border-[#334155] p-3">
+                            <pre class="code-snippet text-xs leading-relaxed"><span class="keyword">while</span> <span class="property">not done</span>:
+  <span class="property">response</span> = <span class="property">call_claude</span>()
+  <span class="keyword">if</span> <span class="property">tool_use</span>:
+    <span class="property">execute</span> &amp; <span class="property">feed_back</span>
+  <span class="keyword">else</span>:
+    <span class="keyword">return</span> <span class="property">response</span></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Funnel convergence -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center space-x-6 mb-4">
+                        <div class="text-center">
+                            <div class="w-10 h-10 rounded-lg bg-violet-50 flex items-center justify-center mx-auto border border-violet-200">
+                                <i data-lucide="file-code" class="w-5 h-5 text-violet-500"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">指示</p>
+                        </div>
+                        <span class="text-gray-300 text-lg">+</span>
+                        <div class="text-center">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mx-auto border border-blue-200">
+                                <i data-lucide="boxes" class="w-5 h-5 text-blue-500"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">ツール</p>
+                        </div>
+                        <span class="text-gray-300 text-lg">+</span>
+                        <div class="text-center">
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center mx-auto border border-amber-100">
+                                <i data-lucide="repeat" class="w-5 h-5 text-amber-600"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">ループ</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-6 h-6 text-gray-300 mb-3"></i>
+                    <div class="bg-emerald-50 rounded-xl px-8 py-4 border border-emerald-200 text-center">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="bot" class="w-5 h-5 text-emerald-600"></i>
+                            <span class="font-semibold text-emerald-600">AIエージェント</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supplementary -->
+            <div class="flex items-start space-x-3 text-sm text-gray-400 mb-6">
+                <i data-lucide="info" class="w-4 h-4 mt-0.5 shrink-0"></i>
+                <p>業界共通パターン: エージェント ≈ LLM + ツール + ループ。Anthropic・OpenAI・Google いずれも同様の構成を採用しています。</p>
+            </div>
+
+            <!-- Link box -->
+            <a href="claude-tooluse-guide.html" class="block bg-white rounded-2xl p-6 border border-blue-200 shadow-sm hover:border-blue-300 hover:shadow-md transition group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                            <i data-lucide="arrow-right-circle" class="w-5 h-5 text-blue-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-700 group-hover:text-blue-600 transition">Claude Tool Use 実践ガイド</p>
+                            <p class="text-sm text-gray-400">Tool Useの実装詳細はこちら</p>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Section 5: Practice -->
+    <section id="practice" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-2">
+                <i data-lucide="flask-conical" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">実践例 -- 設計判断の実際</h2>
+            </div>
+            <p class="text-gray-500 mb-6">ユースケース: <strong class="text-gray-700">問い合わせ対応エージェント</strong></p>
+
+            <!-- Architecture diagram -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-gray-50 border-b border-gray-200">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="network" class="w-5 h-5 text-gray-500"></i>
+                        <h3 class="font-semibold text-gray-600">アーキテクチャ概要</h3>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                        <div class="bg-gray-50 rounded-xl px-5 py-3 border border-gray-200 text-center">
+                            <i data-lucide="monitor" class="w-5 h-5 text-gray-500 mx-auto mb-1"></i>
+                            <p class="text-xs font-medium text-gray-600">ブラウザ</p>
+                        </div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-300 hidden sm:block"></i>
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-gray-300 sm:hidden"></i>
+                        <div class="bg-blue-50 rounded-xl px-5 py-3 border border-blue-200 text-center">
+                            <i data-lucide="server" class="w-5 h-5 text-blue-500 mx-auto mb-1"></i>
+                            <p class="text-xs font-medium text-blue-600">Webサーバー</p>
+                        </div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-300 hidden sm:block"></i>
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-gray-300 sm:hidden"></i>
+                        <div class="bg-blue-50 rounded-xl px-5 py-3 border border-blue-200 text-center">
+                            <i data-lucide="brain-circuit" class="w-5 h-5 text-blue-500 mx-auto mb-1"></i>
+                            <p class="text-xs font-medium text-blue-600">Claude API</p>
+                        </div>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-300 hidden sm:block"></i>
+                        <i data-lucide="arrow-down" class="w-4 h-4 text-gray-300 sm:hidden"></i>
+                        <div class="bg-amber-50 rounded-xl px-5 py-3 border border-amber-100 text-center">
+                            <i data-lucide="wrench" class="w-5 h-5 text-amber-600 mx-auto mb-1"></i>
+                            <p class="text-xs font-medium text-amber-700">Tools</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Design decision mapping -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="map" class="w-5 h-5 text-blue-500"></i>
+                        <h3 class="font-semibold text-blue-600">設計判断マッピング</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 pr-4 font-semibold text-gray-600">処理</th>
+                                    <th class="text-left py-3 pr-4 font-semibold text-gray-600">担当</th>
+                                    <th class="text-left py-3 font-semibold text-gray-600">理由</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600">
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-3 pr-4">問い合わせの意図解釈</td>
+                                    <td class="py-3 pr-4"><span class="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full text-xs font-medium"><i data-lucide="sparkles" class="w-3 h-3"></i><span>AI</span></span></td>
+                                    <td class="py-3 text-gray-500">多様な表現を柔軟に理解</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-3 pr-4">検索クエリの組み立て</td>
+                                    <td class="py-3 pr-4"><span class="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full text-xs font-medium"><i data-lucide="sparkles" class="w-3 h-3"></i><span>AI</span></span></td>
+                                    <td class="py-3 text-gray-500">文脈に応じた最適なクエリ生成</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-3 pr-4">ナレッジベースAPIの呼び出し</td>
+                                    <td class="py-3 pr-4"><span class="inline-flex items-center space-x-1 text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-xs font-medium"><i data-lucide="code-2" class="w-3 h-3"></i><span>コード</span></span></td>
+                                    <td class="py-3 text-gray-500">認証・エラーハンドリングが必要</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-3 pr-4">回答ドラフト生成</td>
+                                    <td class="py-3 pr-4"><span class="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full text-xs font-medium"><i data-lucide="sparkles" class="w-3 h-3"></i><span>AI</span></span></td>
+                                    <td class="py-3 text-gray-500">情報の統合・自然な文章化</td>
+                                </tr>
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-3 pr-4">出典表記フォーマット</td>
+                                    <td class="py-3 pr-4"><span class="inline-flex items-center space-x-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full text-xs font-medium"><i data-lucide="file-code" class="w-3 h-3"></i><span>Prompt</span></span></td>
+                                    <td class="py-3 text-gray-500">一貫性を担保</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 pr-4">回答の送信</td>
+                                    <td class="py-3 pr-4"><span class="inline-flex items-center space-x-1 text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-xs font-medium"><i data-lucide="code-2" class="w-3 h-3"></i><span>コード</span></span></td>
+                                    <td class="py-3 text-gray-500">承認フロー・ログ記録が必要</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: Tradeoff -->
+    <section id="tradeoff" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-6">
+                <i data-lucide="scale" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">メリットとリスク</h2>
+            </div>
+
+            <!-- Merits -->
+            <h3 class="text-sm font-semibold text-emerald-600 uppercase tracking-wide mb-4">メリット</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
+                    <i data-lucide="minus-circle" class="w-6 h-6 text-emerald-600 mb-3"></i>
+                    <h4 class="font-semibold text-emerald-600 text-sm mb-1">コーディング量削減</h4>
+                    <p class="text-xs text-emerald-600/70">分岐ロジックをAIに移譲し、記述量を大幅に削減</p>
+                </div>
+                <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
+                    <i data-lucide="shield-question" class="w-6 h-6 text-emerald-600 mb-3"></i>
+                    <h4 class="font-semibold text-emerald-600 text-sm mb-1">未知ケースへの対応力</h4>
+                    <p class="text-xs text-emerald-600/70">事前定義していないパターンにも柔軟に対応</p>
+                </div>
+                <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
+                    <i data-lucide="pencil-ruler" class="w-6 h-6 text-emerald-600 mb-3"></i>
+                    <h4 class="font-semibold text-emerald-600 text-sm mb-1">仕様変更の容易さ</h4>
+                    <p class="text-xs text-emerald-600/70">プロンプト修正だけで挙動変更が可能</p>
+                </div>
+                <div class="bg-emerald-50 rounded-2xl p-6 border border-emerald-200">
+                    <i data-lucide="rocket" class="w-6 h-6 text-emerald-600 mb-3"></i>
+                    <h4 class="font-semibold text-emerald-600 text-sm mb-1">プロトタイプ高速化</h4>
+                    <p class="text-xs text-emerald-600/70">アイデア検証から動くPoCまでの時間を短縮</p>
+                </div>
+            </div>
+
+            <!-- Risks -->
+            <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-4">リスク</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                    <i data-lucide="ghost" class="w-6 h-6 text-amber-600 mb-3"></i>
+                    <h4 class="font-semibold text-amber-700 text-sm mb-1">ハルシネーション</h4>
+                    <p class="text-xs text-amber-600/70">事実と異なる内容を生成するリスク</p>
+                </div>
+                <div class="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                    <i data-lucide="shuffle" class="w-6 h-6 text-amber-600 mb-3"></i>
+                    <h4 class="font-semibold text-amber-700 text-sm mb-1">再現性の低さ</h4>
+                    <p class="text-xs text-amber-600/70">同じ入力でも出力が毎回変わる可能性</p>
+                </div>
+                <div class="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                    <i data-lucide="coins" class="w-6 h-6 text-amber-600 mb-3"></i>
+                    <h4 class="font-semibold text-amber-700 text-sm mb-1">コスト (トークン課金)</h4>
+                    <p class="text-xs text-amber-600/70">API呼び出しごとに課金が発生</p>
+                </div>
+                <div class="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6 text-amber-600 mb-3"></i>
+                    <h4 class="font-semibold text-amber-700 text-sm mb-1">評価の難しさ</h4>
+                    <p class="text-xs text-amber-600/70">正解が一意でないため品質測定が困難</p>
+                </div>
+            </div>
+
+            <!-- Risk mitigation -->
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                <div class="flex items-start space-x-3">
+                    <i data-lucide="shield" class="w-5 h-5 text-gray-500 mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-600 mb-2">リスク対処のポイント</p>
+                        <div class="grid sm:grid-cols-2 gap-2 text-sm text-gray-500">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-gray-400 shrink-0"></i>
+                                <span>ガードレール設置</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-gray-400 shrink-0"></i>
+                                <span>ログ・モニタリング</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-gray-400 shrink-0"></i>
+                                <span>人間によるレビューフロー</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-gray-400 shrink-0"></i>
+                                <span>テストケースの蓄積</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 7: FAQ -->
+    <section id="faq" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-2 mb-6">
+                <i data-lucide="message-circle-question" class="w-5 h-5 text-blue-500"></i>
+                <h2 class="text-2xl font-bold">FAQ</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Q1 -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                    <div class="flex items-start space-x-3 mb-3">
+                        <span class="text-blue-500 font-bold text-sm mt-0.5">Q</span>
+                        <h4 class="font-semibold">全部AIに任せていいの?</h4>
+                    </div>
+                    <div class="flex items-start space-x-3 ml-0 pl-6">
+                        <span class="text-gray-400 font-bold text-sm mt-0.5">A</span>
+                        <p class="text-sm text-gray-600"><strong class="text-gray-700">No。</strong>認証・決済・データ永続化などの正確性が必須な処理はコードで制御すべきです。<a href="#boundary" class="text-blue-500 hover:text-blue-600 underline underline-offset-2">セクション2の責任分界</a>を参照してください。</p>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                    <div class="flex items-start space-x-3 mb-3">
+                        <span class="text-blue-500 font-bold text-sm mt-0.5">Q</span>
+                        <h4 class="font-semibold">プロンプトが仕様書になるだけでは?</h4>
+                    </div>
+                    <div class="flex items-start space-x-3 ml-0 pl-6">
+                        <span class="text-gray-400 font-bold text-sm mt-0.5">A</span>
+                        <p class="text-sm text-gray-600">本質的に違います。プロンプトは<strong class="text-gray-700">「方針」</strong>であり「全ケースの定義」ではありません。AIが方針を解釈して<strong class="text-gray-700">未定義のケースにも対応できる</strong>のが、従来の仕様書との決定的な違いです。</p>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                    <div class="flex items-start space-x-3 mb-3">
+                        <span class="text-blue-500 font-bold text-sm mt-0.5">Q</span>
+                        <h4 class="font-semibold">実装の詳細は?</h4>
+                    </div>
+                    <div class="flex items-start space-x-3 ml-0 pl-6">
+                        <span class="text-gray-400 font-bold text-sm mt-0.5">A</span>
+                        <p class="text-sm text-gray-600">Tool Useの具体的な実装方法は <a href="claude-tooluse-guide.html" class="text-blue-500 hover:text-blue-600 underline underline-offset-2">Claude Tool Use 実践ガイド</a> で詳しく解説しています。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p>AIに判断を委ねる柔軟なシステム設計 -- 設計パターンガイド</p>
+        </div>
+    </footer>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

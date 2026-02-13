@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Tool Use 実践ガイド — AIエージェントを構築するための実装パターン</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .code-snippet {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            white-space: pre;
+        }
+        .keyword { color: #818cf8; }
+        .string { color: #f0abfc; }
+        .comment { color: #94a3b8; }
+        .property { color: #67e8f9; }
+        .number { color: #fbbf24; }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: #f8fafc; color: #1e293b;">
+
+    <!-- ==================== Header ==================== -->
+    <header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="wrench" class="w-6 h-6 text-blue-500"></i>
+                <span class="text-lg font-bold tracking-tight">Claude Tool Use <span class="text-gray-400 font-normal">| 実践ガイド</span></span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
+                <a href="#tool-use" class="hover:text-blue-600 transition">Tool Use とは</a>
+                <a href="#tool-definition" class="hover:text-blue-600 transition">ツール定義</a>
+                <a href="#agent-loop" class="hover:text-blue-600 transition">エージェントループ</a>
+                <a href="#system-prompt" class="hover:text-blue-600 transition">system prompt</a>
+                <a href="#example" class="hover:text-blue-600 transition">構成例</a>
+                <a href="#tips" class="hover:text-blue-600 transition">運用Tips</a>
+                <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ==================== Hero ==================== -->
+    <section class="py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight gradient-text mb-3">Claude Tool Use 実践ガイド</h1>
+            <p class="text-lg text-gray-500 font-light">AIエージェントを構築するための実装パターン</p>
+        </div>
+    </section>
+
+    <!-- ==================== 1. Tool Use とは ==================== -->
+    <section id="tool-use" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">01</span>
+                <h2 class="text-2xl font-bold">Tool Use とは</h2>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">Claudeに<strong class="text-gray-800">道具（関数）を渡し</strong>、いつ・どの道具を使うかの判断をClaudeに委ねる仕組みです。</p>
+
+            <!-- 2カラムカード: 開発者が用意するもの -->
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                        <i data-lucide="message-square" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">system prompt</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 text-sm leading-relaxed">Claudeへの指示。<strong class="text-gray-700">何をすべきか、どう判断すべきか</strong>を定義する。エージェントの振る舞いの根幹を決めるパラメータ。</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                        <i data-lucide="box" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">tools パラメータ</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 text-sm leading-relaxed">道具の定義。<strong class="text-gray-700">名前・説明・JSON Schemaの入力スキーマ</strong>を含む配列。Claudeが利用可能な道具の一覧を伝える。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 補足 -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <div class="flex items-start space-x-3">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-gray-600 text-sm leading-relaxed">ツールの<strong class="text-gray-800">実際の実行は開発者側で行います</strong>。Claudeは「何を呼ぶか、どの入力で呼ぶか」を判断するだけです。実行環境・認証・エラーハンドリングはすべて開発者のコードが担います。</p>
+                </div>
+            </div>
+
+            <!-- リンクボックス -->
+            <a href="ai-flexible-design.html" class="block bg-blue-50 rounded-2xl p-6 border border-blue-200 mb-6 hover:shadow-sm transition group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-blue-500 group-hover:translate-x-1 transition-transform"></i>
+                        <span class="text-blue-600 font-medium text-sm">設計思想の詳細は → AIに判断を委ねる柔軟なシステム設計</span>
+                    </div>
+                    <i data-lucide="external-link" class="w-4 h-4 text-blue-400"></i>
+                </div>
+            </a>
+
+            <!-- Claude限定注意書き -->
+            <p class="text-xs text-gray-400 leading-relaxed">※ 本記事はClaude APIに絞って解説しています。Tool Use（Function Calling）は各プロバイダー共通のパターンです。</p>
+        </div>
+    </section>
+
+    <!-- ==================== 2. ツール定義 ==================== -->
+    <section id="tool-definition" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">02</span>
+                <h2 class="text-2xl font-bold">ツール定義</h2>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">ツールは<strong class="text-gray-800">3つの要素</strong>で定義します。</p>
+
+            <!-- 3要素 -->
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm text-center">
+                    <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-200">
+                        <i data-lucide="tag" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <h4 class="font-semibold text-sm mb-1">name</h4>
+                    <p class="text-xs text-gray-500">ツールの識別名</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm text-center">
+                    <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-200">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <h4 class="font-semibold text-sm mb-1">description</h4>
+                    <p class="text-xs text-gray-500">ツールの機能説明</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm text-center">
+                    <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-200">
+                        <i data-lucide="braces" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <h4 class="font-semibold text-sm mb-1">input_schema</h4>
+                    <p class="text-xs text-gray-500">JSON Schemaの入力定義</p>
+                </div>
+            </div>
+
+            <!-- JSON Schema 例 -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h3 class="font-semibold text-sm mb-4 flex items-center space-x-2">
+                    <i data-lucide="code-2" class="w-4 h-4 text-gray-400"></i>
+                    <span>ツール定義の例</span>
+                </h3>
+                <div class="code-snippet"><span class="comment">// tools 配列の1要素</span>
+{
+  <span class="property">"name"</span>: <span class="string">"search_knowledge"</span>,
+  <span class="property">"description"</span>: <span class="string">"ナレッジベースからドキュメントを検索する"</span>,
+  <span class="property">"input_schema"</span>: {
+    <span class="property">"type"</span>: <span class="string">"object"</span>,
+    <span class="property">"properties"</span>: {
+      <span class="property">"query"</span>: {
+        <span class="property">"type"</span>: <span class="string">"string"</span>,
+        <span class="property">"description"</span>: <span class="string">"検索クエリ"</span>
+      }
+    },
+    <span class="property">"required"</span>: [<span class="string">"query"</span>]
+  }
+}</div>
+            </div>
+
+            <!-- tool_choice: 4カラム -->
+            <h3 class="font-semibold mb-4 flex items-center space-x-2">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 text-gray-400"></i>
+                <span>tool_choice による制御</span>
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded inline-block mb-2 border border-blue-200">auto</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">Claudeが自律的に判断（デフォルト）</p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded inline-block mb-2 border border-blue-200">any</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">いずれかのツールを必ず使用</p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded inline-block mb-2 border border-blue-200">tool</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">特定ツールを強制使用</p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                    <div class="text-xs font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded inline-block mb-2 border border-blue-200">none</div>
+                    <p class="text-xs text-gray-600 leading-relaxed">ツール使用を禁止</p>
+                </div>
+            </div>
+
+            <!-- Structured Outputs -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-emerald-50 border-b border-emerald-200 flex items-center space-x-2">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i>
+                    <span class="font-semibold text-emerald-600 text-sm">Structured Outputs</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-3">ツール定義に <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">"strict": true</code> を追加すると、Claudeのツール入力がスキーマに<strong class="text-gray-800">厳密に準拠</strong>することが保証されます。バリデーション不要で安全にパースできます。<code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">input_schema</code> 内に <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">"additionalProperties": false</code> の指定が必要です。</p>
+                    <div class="code-snippet">{
+  <span class="property">"name"</span>: <span class="string">"search_knowledge"</span>,
+  <span class="property">"description"</span>: <span class="string">"..."</span>,
+  <span class="property">"strict"</span>: <span class="keyword">true</span>,   <span class="comment">// スキーマ準拠を保証</span>
+  <span class="property">"input_schema"</span>: {
+    <span class="property">"type"</span>: <span class="string">"object"</span>,
+    <span class="property">"properties"</span>: { ... },
+    <span class="property">"required"</span>: [...],
+    <span class="property">"additionalProperties"</span>: <span class="keyword">false</span>  <span class="comment">// 必須</span>
+  }
+}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 3. エージェントループ ==================== -->
+    <section id="agent-loop" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">03</span>
+                <h2 class="text-2xl font-bold">エージェントループ</h2>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">Tool Use の単発の呼び出しだけではエージェントにはなりません。Claudeがツールを<strong class="text-gray-800">何度も呼びながら、自律的にタスクを遂行する</strong>のがエージェントループです。</p>
+
+            <!-- 実行フロー -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h3 class="font-semibold text-sm mb-6 flex items-center space-x-2">
+                    <i data-lucide="workflow" class="w-4 h-4 text-gray-400"></i>
+                    <span>実行フロー</span>
+                </h3>
+                <div class="space-y-4">
+                    <!-- Step 1 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500">1</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-xs font-semibold text-gray-500">開発者 → API</span>
+                            </div>
+                            <p class="text-sm text-gray-600">tools定義 + system prompt + ユーザーメッセージを送信</p>
+                        </div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-blue-200">
+                            <span class="text-xs font-bold text-blue-500">2</span>
+                        </div>
+                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200 flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-xs font-semibold text-blue-600">Claude → 応答</span>
+                            </div>
+                            <p class="text-sm text-gray-600">stop_reason: <code class="text-xs bg-white px-1.5 py-0.5 rounded font-mono border border-blue-100">"tool_use"</code></p>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-amber-100">
+                            <span class="text-xs font-bold text-amber-600">3</span>
+                        </div>
+                        <div class="bg-amber-50 rounded-xl p-4 border border-amber-100 flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-xs font-semibold text-amber-700">開発者側</span>
+                            </div>
+                            <p class="text-sm text-gray-600">ツールを実行（API呼び出し、DB検索など）</p>
+                        </div>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200">
+                            <span class="text-xs font-bold text-gray-500">4</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-xs font-semibold text-gray-500">開発者 → API</span>
+                            </div>
+                            <p class="text-sm text-gray-600">ツール実行結果を <code class="text-xs bg-white px-1.5 py-0.5 rounded font-mono border border-gray-200">tool_result</code> として返送</p>
+                        </div>
+                    </div>
+                    <!-- Loop indicator -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="repeat" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                        <div class="rounded-xl p-4 border-2 border-dashed border-gray-300 flex-1">
+                            <p class="text-sm text-gray-500">stop_reason が <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">"tool_use"</code> なら 2〜4 を繰り返す</p>
+                        </div>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-emerald-200">
+                            <span class="text-xs font-bold text-emerald-600">5</span>
+                        </div>
+                        <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200 flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-xs font-semibold text-emerald-600">Claude → 最終応答</span>
+                            </div>
+                            <p class="text-sm text-gray-600">stop_reason: <code class="text-xs bg-white px-1.5 py-0.5 rounded font-mono border border-emerald-200">"end_turn"</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 補足ボックス -->
+            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+                <div class="flex items-start space-x-3">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-sm text-gray-600 leading-relaxed">このループが<strong class="text-gray-800">全てのAIエージェントの基盤</strong>です。Claudeは1回のループで複数のツールを同時に呼ぶこともあります（並列ツール呼び出し）。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 4. system prompt の設計パターン ==================== -->
+    <section id="system-prompt" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">04</span>
+                <h2 class="text-2xl font-bold">system prompt の設計パターン</h2>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">system prompt は<strong class="text-gray-800">3つの要素</strong>で構成します。</p>
+
+            <!-- カード1: 方針の指示 -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="compass" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">方針の指示 &mdash; 何をすべきか</span>
+                    </div>
+                    <span class="text-xs text-blue-400">1/3</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">エージェントの目的・手順・出力形式を明確に伝えます。</p>
+                    <div class="code-snippet"><span class="comment"># system prompt（方針部分）</span>
+
+あなたは問い合わせ対応エージェントです。
+
+<span class="comment">## 手順</span>
+<span class="number">1.</span> 問い合わせの意図を分析する
+<span class="number">2.</span> search_knowledge で関連ドキュメントを検索する
+<span class="number">3.</span> 必要に応じて get_document で詳細を取得する
+<span class="number">4.</span> 回答ドラフトを作成する
+<span class="number">5.</span> 回答には必ず根拠ドキュメントを【出典: 〇〇】形式で明示する</div>
+                </div>
+            </div>
+
+            <!-- カード2: 制約の指示 -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="shield-alert" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">制約の指示 &mdash; 何をすべきでないか</span>
+                    </div>
+                    <span class="text-xs text-blue-400">2/3</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">やってはいけないことを明示的に列挙し、安全な振る舞いを保証します。</p>
+                    <div class="code-snippet"><span class="comment">## 禁止事項</span>
+- 確信が持てない場合は推測せず<span class="string">「確認が必要」</span>と明記する
+- ナレッジベースに存在しない情報を捏造しない
+- 個人情報を含む回答は生成しない
+- 法的助言に該当する内容は<span class="string">「専門家にご確認ください」</span>と案内する</div>
+                </div>
+            </div>
+
+            <!-- カード3: ツールの使い分け -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="git-branch" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">ツールの使い分け指示 &mdash; どの道具をいつ使うか</span>
+                    </div>
+                    <span class="text-xs text-blue-400">3/3</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">ツールの優先順位と使用条件を具体的に指定します。</p>
+                    <div class="code-snippet"><span class="comment">## ツールの使い分け</span>
+- まず <span class="property">search_knowledge</span> でナレッジベースを検索する
+- 検索結果で該当ドキュメントが見つかったら
+  <span class="property">get_document</span> で全文を取得する
+- ナレッジベースに情報がない場合のみ
+  <span class="property">web_search</span> で補足情報を検索する
+- web_search は最大<span class="number">3</span>回まで。過度に頼らない</div>
+                </div>
+            </div>
+
+            <!-- 設計のコツ補足 -->
+            <div class="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+                <div class="flex items-start space-x-3">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <p class="text-sm font-semibold text-blue-600 mb-2">設計のコツ</p>
+                        <ul class="text-sm text-gray-600 space-y-1.5 leading-relaxed">
+                            <li>方針は「手順」形式で書くとClaudeが従いやすい</li>
+                            <li>制約は箇条書きで列挙する（曖昧な表現を避ける）</li>
+                            <li>ツールの使い分けは「まず A → 次に B → 最後に C」の優先順位を明示する</li>
+                            <li>system prompt は長くなりすぎないよう、重要な指示に絞る</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 5. 実践的な構成例 ==================== -->
+    <section id="example" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">05</span>
+                <h2 class="text-2xl font-bold">実践的な構成例 &mdash; 問い合わせ対応エージェント</h2>
+            </div>
+
+            <p class="text-gray-600 mb-6 leading-relaxed">ユーザーの問い合わせに対して、社内ナレッジベースを検索し、根拠のある回答を自動生成するエージェントの構成例です。</p>
+
+            <!-- アーキテクチャ図 -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h3 class="font-semibold text-sm mb-4 flex items-center space-x-2">
+                    <i data-lucide="layout" class="w-4 h-4 text-gray-400"></i>
+                    <span>アーキテクチャ</span>
+                </h3>
+                <div class="code-snippet"><span class="comment">ブラウザ (問い合わせフォーム)</span>
+  → Webサーバー (<span class="property">FastAPI</span> / <span class="property">Express</span> / <span class="property">Next.js</span>)
+    → Claude API (<span class="keyword">Messages API</span> + <span class="keyword">Tool Use</span>)
+      ├── <span class="property">search_knowledge</span> → 既存ナレッジベースAPI
+      ├── <span class="property">get_document</span>     → ドキュメント取得API
+      └── <span class="property">web_search</span>       → (Anthropicビルトインツール)</div>
+            </div>
+
+            <!-- 使用ツール: 3カラム -->
+            <h3 class="font-semibold mb-4 flex items-center space-x-2">
+                <i data-lucide="package" class="w-4 h-4 text-gray-400"></i>
+                <span>使用ツール</span>
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                        <i data-lucide="search" class="w-4 h-4 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">search_knowledge</span>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-gray-600 leading-relaxed">ナレッジベースをクエリで検索し、関連ドキュメントの一覧を返す。まず最初に呼ばれるツール。</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                        <i data-lucide="file" class="w-4 h-4 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">get_document</span>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-gray-600 leading-relaxed">ドキュメントIDを指定して全文を取得する。検索結果から特定の文書を深掘りする際に使用。</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                        <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">web_search</span>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-xs text-gray-600 leading-relaxed">Anthropicビルトインツール。ナレッジベースで見つからない場合の補足検索。最終手段として使用。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 実行の流れ: Turn 1/2/3 -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <h3 class="font-semibold text-sm mb-6 flex items-center space-x-2">
+                    <i data-lucide="arrow-right-circle" class="w-4 h-4 text-gray-400"></i>
+                    <span>実行の流れ</span>
+                </h3>
+                <div class="space-y-4">
+                    <!-- Turn 1 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-blue-200">
+                            <span class="text-xs font-bold text-blue-500">T1</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold text-gray-700 mb-1">Turn 1: 検索</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">ユーザーの質問を受け取り、Claude が <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">search_knowledge</code> を呼び出す。開発者がナレッジベースAPIを実行し、結果を返す。</p>
+                        </div>
+                    </div>
+                    <!-- Turn 2 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-blue-200">
+                            <span class="text-xs font-bold text-blue-500">T2</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold text-gray-700 mb-1">Turn 2: 詳細取得</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">検索結果から関連性の高いドキュメントを特定し、Claude が <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">get_document</code> を呼び出す。開発者がドキュメントAPIを実行し、全文を返す。</p>
+                        </div>
+                    </div>
+                    <!-- Turn 3 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-emerald-200">
+                            <span class="text-xs font-bold text-emerald-600">T3</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold text-gray-700 mb-1">Turn 3: 最終回答</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">取得した情報を元に、Claude が出典付きの回答を生成して返す。stop_reason: <code class="bg-gray-100 px-1 py-0.5 rounded font-mono">"end_turn"</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 6. 本番運用Tips ==================== -->
+    <section id="tips" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">06</span>
+                <h2 class="text-2xl font-bold">本番運用Tips</h2>
+            </div>
+
+            <!-- Extended Thinking -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                    <i data-lucide="brain" class="w-5 h-5 text-blue-500"></i>
+                    <span class="font-semibold text-blue-600 text-sm">Extended Thinking</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">複雑な判断が必要な場合、Claudeに「考える時間」を与えることで精度が向上します。<code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">thinking</code> パラメータを指定すると、Claudeはツール選択前に内部で推論を行います。</p>
+                    <div class="code-snippet mb-4">response = client.messages.create(
+    model=<span class="string">"claude-sonnet-4-5"</span>,
+    max_tokens=<span class="number">16000</span>,
+    <span class="property">thinking</span>={
+        <span class="property">"type"</span>: <span class="string">"enabled"</span>,
+        <span class="property">"budget_tokens"</span>: <span class="number">10000</span>   <span class="comment"># 思考に使えるトークン上限</span>
+    },
+    tools=tools,
+    messages=messages
+)</div>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="info" class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-xs text-gray-500 leading-relaxed"><strong class="text-gray-600">Interleaved Thinking:</strong> エージェントループの各ターンでClaudeが思考を行うため、ツール結果を受け取るたびに判断を深化させます。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prompt Caching -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="database" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-semibold text-blue-600 text-sm">Prompt Caching</span>
+                    </div>
+                    <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">最大90%コスト削減</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">system prompt やツール定義は毎回同じ内容を送信します。<code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">cache_control</code> を指定すると、これらをキャッシュして入力トークンコストを大幅に削減できます。</p>
+                    <div class="code-snippet">response = client.messages.create(
+    model=<span class="string">"claude-sonnet-4-5"</span>,
+    max_tokens=<span class="number">4096</span>,
+    system=[
+        {
+            <span class="property">"type"</span>: <span class="string">"text"</span>,
+            <span class="property">"text"</span>: system_prompt,
+            <span class="property">"cache_control"</span>: {<span class="property">"type"</span>: <span class="string">"ephemeral"</span>}  <span class="comment"># キャッシュ対象</span>
+        }
+    ],
+    tools=tools,
+    messages=messages
+)</div>
+                </div>
+            </div>
+
+            <!-- Structured Outputs -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
+                    <i data-lucide="check-square" class="w-5 h-5 text-blue-500"></i>
+                    <span class="font-semibold text-blue-600 text-sm">Structured Outputs</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">ツール入力が必ずスキーマに準拠することを保証する機能です。ツール定義に <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">strict: true</code> を指定し、<code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">input_schema</code> に <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">additionalProperties: false</code> を追加します。</p>
+                    <div class="code-snippet">tools = [
+    {
+        <span class="property">"name"</span>: <span class="string">"search_knowledge"</span>,
+        <span class="property">"description"</span>: <span class="string">"ナレッジベースからドキュメントを検索する"</span>,
+        <span class="property">"strict"</span>: <span class="keyword">true</span>,   <span class="comment"># スキーマ準拠を保証</span>
+        <span class="property">"input_schema"</span>: {
+            <span class="property">"type"</span>: <span class="string">"object"</span>,
+            <span class="property">"properties"</span>: {
+                <span class="property">"query"</span>: {<span class="property">"type"</span>: <span class="string">"string"</span>}
+            },
+            <span class="property">"required"</span>: [<span class="string">"query"</span>],
+            <span class="property">"additionalProperties"</span>: <span class="keyword">false</span>  <span class="comment"># 必須</span>
+        }
+    }
+]</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 7. FAQ ==================== -->
+    <section id="faq" class="py-10 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="text-sm font-semibold text-blue-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">07</span>
+                <h2 class="text-2xl font-bold">FAQ</h2>
+            </div>
+
+            <!-- FAQ 1: Agent SDK + Skills -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h3 class="font-semibold mb-4 flex items-center space-x-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-blue-500"></i>
+                    <span>Agent SDK + Skills を使えばもっと簡単にできるのでは？</span>
+                </h3>
+
+                <!-- 楽なのは事実 -->
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">確かに Skills は開発者の作業量が少ないです。SKILL.md に自然言語で手順を書くだけで、ツール実装も JSON Schema 定義も不要。<strong class="text-gray-800">「動くもの」を作るまでの速度は圧倒的に速い</strong>のは事実です。</p>
+
+                <!-- 核心：設計意図が違う -->
+                <div class="bg-amber-50 rounded-xl p-4 border border-amber-100 mb-4">
+                    <div class="flex items-start space-x-2">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                        <div class="text-sm text-amber-700 leading-relaxed">
+                            <strong>ただし、設計意図が違います。</strong>Skills は<strong>コーディングエージェント（Claude Code）のための機能</strong>です。ファイルを読み書きし、コマンドを実行する用途に設計されており、Agent SDK の内部で動いているのも Claude Code CLI プロセスそのものです。Web アプリのバックエンドとして使うのは、本来の設計意図から外れています。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 具体的な制約 -->
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-start space-x-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                        <i data-lucide="server" class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0"></i>
+                        <span><strong class="text-gray-700">アーキテクチャが重い</strong> &mdash; 1リクエスト = 1 CLI プロセス + コンテナサンドボックスが必要</span>
+                    </div>
+                    <div class="flex items-start space-x-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                        <i data-lucide="users" class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0"></i>
+                        <span><strong class="text-gray-700">スケールしにくい</strong> &mdash; 同時100ユーザー = 100プロセス。Tool Use なら HTTP API 呼び出しだけ</span>
+                    </div>
+                    <div class="flex items-start space-x-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                        <i data-lucide="plug" class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0"></i>
+                        <span><strong class="text-gray-700">ツールが合わない</strong> &mdash; 組み込みツールはファイル操作中心。既存の社内API（検索、DB等）を呼ぶには回りくどい</span>
+                    </div>
+                </div>
+
+                <!-- 併用戦略 -->
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                    <p class="text-xs font-semibold text-gray-500 mb-2">併用戦略</p>
+                    <div class="space-y-2">
+                        <div class="flex items-start space-x-2">
+                            <span class="text-xs font-semibold text-gray-400 mt-0.5">Phase 0</span>
+                            <p class="text-xs text-gray-600 leading-relaxed">Skills でプロンプト設計・処理フローをローカル検証（楽さを活かす）</p>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <span class="text-xs font-semibold text-gray-400 mt-0.5">Phase 1</span>
+                            <p class="text-xs text-gray-600 leading-relaxed">検証済みの SKILL.md の指示を system prompt に移植し、Tool Use で本番構築</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 2: MCP -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h3 class="font-semibold mb-4 flex items-center space-x-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-blue-500"></i>
+                    <span>MCP（Model Context Protocol）は使うべき？</span>
+                </h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start space-x-2">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                        <p class="text-sm text-gray-600 leading-relaxed"><strong class="text-gray-700">PoC段階ではTool Useで十分。</strong>ツール数が少ないうちは直接定義のほうがシンプル。</p>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                        <p class="text-sm text-gray-600 leading-relaxed"><strong class="text-gray-700">ツール数が増えた段階で検討。</strong>複数エージェント間でツールを共有したい場合にMCPが効果的。</p>
+                    </li>
+                    <li class="flex items-start space-x-2">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                        <p class="text-sm text-gray-600 leading-relaxed"><strong class="text-gray-700">既製MCPサーバーがある場合</strong>は最初から採用もあり。GitHub、Slack等の既製サーバーを活用できる。</p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- FAQ 3: Vercel AI SDK / LangChain -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+                <h3 class="font-semibold mb-4 flex items-center space-x-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-blue-500"></i>
+                    <span>Vercel AI SDK や LangChain は使うべき？</span>
+                </h3>
+                <p class="text-sm text-gray-600 leading-relaxed">これらは上位レイヤーのラッパーです。まずは<strong class="text-gray-700">公式SDK（anthropic Python/TypeScript）で直接構築</strong>するのが堅実です。Tool Use の仕組みを理解した上で、プロジェクトの要件に応じてラッパーの導入を検討してください。</p>
+            </div>
+
+            <!-- FAQ 4: どのモデルを使うべき？ -->
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <h3 class="font-semibold mb-4 flex items-center space-x-2">
+                    <i data-lucide="help-circle" class="w-5 h-5 text-blue-500"></i>
+                    <span>どのモデルを使うべき？</span>
+                </h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <p class="text-sm font-semibold text-blue-600 mb-1">Sonnet 4.5</p>
+                        <span class="text-xs text-blue-500 bg-blue-100 px-2 py-0.5 rounded-full mb-2 inline-block">推奨</span>
+                        <p class="text-xs text-gray-600 leading-relaxed">コスト・速度・品質のバランスが良い。多くのユースケースでまず試すべきモデル。</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-sm font-semibold text-gray-700 mb-1">Opus 4.6</p>
+                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full mb-2 inline-block">高品質</span>
+                        <p class="text-xs text-gray-600 leading-relaxed">複雑な推論や高い判断精度が求められる場合に。コストは高め。</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-sm font-semibold text-gray-700 mb-1">Haiku 4.5</p>
+                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full mb-2 inline-block">低コスト</span>
+                        <p class="text-xs text-gray-600 leading-relaxed">シンプルなツール呼び出しや大量処理向け。レスポンスが高速。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p>Claude Tool Use 実践ガイド &mdash; AIエージェント構築の実装パターン</p>
+        </div>
+    </footer>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

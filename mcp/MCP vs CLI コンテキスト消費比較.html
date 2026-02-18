@@ -48,6 +48,7 @@
                 <a href="#cli-advantage" class="hover:text-blue-600 transition">CLIの優位性</a>
                 <a href="#tool-search" class="hover:text-blue-600 transition">Tool Search</a>
                 <a href="#benchmark" class="hover:text-blue-600 transition">ベンチマーク</a>
+                <a href="#mcp-fit" class="hover:text-blue-600 transition">MCPの適性</a>
                 <a href="#guide" class="hover:text-blue-600 transition">使い分け</a>
             </nav>
         </div>
@@ -64,6 +65,7 @@
                 <span class="gradient-text">MCP vs CLI — コンテキスト消費の真実</span>
             </h1>
             <p class="text-gray-500 text-sm md:text-base">「MCPよりCLIの方がコンテキストを消費しない」という噂の検証</p>
+            <p class="text-gray-400 text-xs mt-2">本記事の情報は2026年2月16日時点のものです。Tool SearchやMCPプロトコルの進化により、状況は今後変わる可能性があります。</p>
         </div>
     </section>
 
@@ -180,10 +182,13 @@
                             <td class="px-6 py-3 text-right"><span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">4.6%</span></td>
                         </tr>
                         <tr class="bg-gray-50">
-                            <td class="px-6 py-3 font-medium text-gray-800">1ツールあたり平均</td>
+                            <td class="px-6 py-3 font-medium text-gray-800">1ツールあたり平均 <span class="text-xs text-gray-400 font-normal">*</span></td>
                             <td class="px-6 py-3 text-center text-gray-500">—</td>
                             <td class="px-6 py-3 text-right text-gray-600 font-bold">550〜850</td>
                             <td class="px-6 py-3 text-right"><span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">—</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="px-6 py-2 text-xs text-gray-400">* Anthropic公式ドキュメントによる一般的なツール定義の範囲。スキーマが複雑なサーバー（Slack等）では1ツールあたり1,000トークン超になるケースもある</td>
                         </tr>
                     </tbody>
                 </table>
@@ -194,7 +199,7 @@
                 <div class="p-4 bg-red-50 border-b border-red-100 flex justify-between items-center">
                     <h3 class="font-bold text-red-600 flex items-center">
                         <i data-lucide="flame" class="w-5 h-5 mr-2"></i>
-                        極端な実例：会話前にコンテキストの94%が消費
+                        極端な実例：MCPツール定義だけで41%、全体で94%が消費
                     </h3>
                     <span class="text-xs bg-red-100 text-red-500 px-2 py-1 rounded font-medium">Scott Spence氏の実測</span>
                 </div>
@@ -305,13 +310,13 @@
                             <i data-lucide="quote" class="w-4 h-4"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-sm text-gray-800">Geoffrey Huntley / Simon Willison</p>
-                            <p class="text-xs text-gray-400">Amp/Sourcegraph Engineer</p>
+                            <p class="font-bold text-sm text-gray-800">Geoffrey Huntley</p>
+                            <p class="text-xs text-gray-400">Engineer（Amp/元Sourcegraph）</p>
                         </div>
                     </div>
                     <p class="text-sm text-gray-600 italic">"If your coding agent can run terminal commands and you give it access to GitHub's gh tool it gains all of that functionality for a token cost close to zero."</p>
                     <p class="text-sm text-gray-500 mt-2">（コーディングエージェントがターミナルコマンドを実行でき、GitHubの gh ツールへのアクセスを与えれば、トークンコストほぼゼロでその全機能を手に入れられる）</p>
-                    <p class="text-xs text-gray-400 mt-2"><a href="https://simonwillison.net/2025/Aug/22/too-many-mcps/" class="text-blue-500 hover:underline">simonwillison.net</a></p>
+                    <p class="text-xs text-gray-400 mt-2">Simon Willison氏（独立系開発者、Datasette作者）の<a href="https://simonwillison.net/2025/Aug/22/too-many-mcps/" class="text-blue-500 hover:underline">ブログ記事</a>で引用</p>
                 </div>
                 <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                     <div class="flex items-center mb-3">
@@ -357,7 +362,8 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 mt-4">
-                        <span class="font-bold text-gray-700">LangSmithの比較:</span> MCP版 16,100トークン vs CLI/Skill版 91トークン — <strong class="text-red-500">177倍</strong>の差
+                        <span class="font-bold text-gray-700">LangSmithの比較:</span> MCP版 16,100トークン（常時ロード）vs CLI/Skill版 91トークン（起動時のみ）— <strong class="text-red-500">177倍</strong>の差
+                        <p class="text-xs text-gray-400 mt-1">出典: <a href="https://dev.to/aviad_rozenhek_cba37e0660/langsmith-cli-why-lightweight-skills-crush-heavy-mcp-servers-context-is-all-you-need-1aeb" class="text-blue-500 hover:underline">dev.to - LangSmith CLI: Why Lightweight Skills Crush Heavy MCP Servers</a></p>
                     </div>
                 </div>
             </div>
@@ -466,9 +472,9 @@
                         </div>
                         <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
                             <h4 class="font-bold text-amber-700 text-sm mb-2 flex items-center">
-                                <i data-lucide="terminal" class="w-4 h-4 mr-2"></i>CLIの根本的優位は不変
+                                <i data-lucide="terminal" class="w-4 h-4 mr-2"></i>定義コストに限ればCLIが優位
                             </h4>
-                            <p class="text-xs text-gray-600">CLIのツール定義コストは元から0。Tool Searchで~8,700になっても0には追いつかない</p>
+                            <p class="text-xs text-gray-600">CLIのツール定義コストは元から0。Tool Searchで~8,700になっても定義コスト単体では追いつかない。ただしトータルコスト（セキュリティチェック含む）では逆転するケースもある</p>
                         </div>
                     </div>
                 </div>
@@ -481,6 +487,10 @@
                 <i data-lucide="flask-conical" class="w-6 h-6 mr-3 text-blue-500"></i>ベンチマーク結果
             </h2>
 
+            <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 mb-6">
+                <span class="font-bold text-gray-700">注:</span> ここまでの議論はツール定義のトークンコストが中心でしたが、実際の開発ではセキュリティチェックのオーバーヘッドや実行時間も含めたトータルコストが重要です。以下のベンチマークでは、理論上の優位性が実測値と一致するとは限らないことが示されています。
+            </div>
+
             <!-- terminalcp ベンチマーク -->
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
                 <div class="p-4 bg-blue-50 border-b border-blue-100 flex justify-between items-center">
@@ -491,7 +501,7 @@
                     <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">MCP版とCLI版の直接比較</span>
                 </div>
                 <div class="p-6">
-                    <p class="text-sm text-gray-600 mb-4">Mario Zechner氏が自作ツール「terminalcp」のMCP版とCLI版を同一タスクで実行し、コスト・速度・成功率を直接比較した実験結果です。</p>
+                    <p class="text-sm text-gray-600 mb-4">Mario Zechner氏が自作ツール「terminalcp」のMCP版とCLI版を同一タスクで実行し、コスト・速度・成功率を直接比較した実験結果です。<span class="text-xs text-gray-400">（2025年8月実施、Tool Search導入前の環境）</span></p>
                     <table class="w-full text-sm mb-4">
                         <thead>
                             <tr class="bg-gray-50 border-b border-gray-200 rounded-t-lg">
@@ -517,12 +527,15 @@
                                 <td class="px-6 py-3 text-center text-gray-500">$19.95</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-3 font-medium text-gray-700">Haikuトークン使用</td>
+                                <td class="px-6 py-3 font-medium text-gray-700">Haikuトークン使用 <span class="text-xs text-gray-400 font-normal">**</span></td>
                                 <td class="px-6 py-3 text-center"><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded font-bold">35k</span></td>
                                 <td class="px-6 py-3 text-center"><span class="text-xs bg-red-50 text-red-500 px-2 py-1 rounded">1.3M〜2M</span></td>
                             </tr>
                         </tbody>
                     </table>
+                    <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-500 mb-3">
+                        ** Haikuトークンは、Claude Codeが内部でBashコマンドの安全性を検証する際に消費される軽量モデル（Haiku）のトークンです。ユーザーが直接支払うメインモデル（Sonnet/Opus）のトークンとは異なります。
+                    </div>
                     <div class="bg-blue-50 rounded-lg p-4 text-sm text-blue-700">
                         <span class="font-bold">意外な発見:</span> MCPの方が23%速く安い。CLIはBash実行ごとにClaude Codeのセキュリティチェック（malicious command detection）が走るため、Haikuトークン消費が大きい。MCPはこれをバイパスする。
                     </div>
@@ -540,6 +553,7 @@
                     <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">トークン効率の比較</span>
                 </div>
                 <div class="p-6">
+                    <p class="text-sm text-gray-600 mb-4">bdgはChrome DevTools Protocol（CDP）に直接アクセスするCLIツールで、MCPのアクセシビリティツリーベースのアプローチと比較して、より選択的なデータ取得が可能です。</p>
                     <table class="w-full text-sm mb-4">
                         <thead>
                             <tr class="bg-gray-50 border-b border-gray-200">
@@ -570,7 +584,7 @@
         </section>
 
         <!-- MCPが適しているケース -->
-        <section class="py-10 border-t border-gray-200">
+        <section id="mcp-fit" class="py-10 border-t border-gray-200">
             <h2 class="text-2xl font-bold mb-6 flex items-center">
                 <i data-lucide="shield-check" class="w-6 h-6 mr-3 text-blue-500"></i>それでもMCPが適しているケース
             </h2>
@@ -582,14 +596,14 @@
                             <i data-lucide="database" class="w-5 h-5"></i>
                         </div>
                         <h3 class="font-bold text-gray-800 mb-1">ステートフルな操作</h3>
-                        <p class="text-xs text-gray-500">ブラウザセッション（Playwright）、DB接続、デバッガなど。複数呼び出しで参照できるハンドルを提供</p>
+                        <p class="text-xs text-gray-500">ブラウザセッション（Playwright）、DB接続、デバッガなど。複数呼び出しで参照できるハンドルを提供。例: Playwright MCPでログイン後のセッションを維持しながら複数ページを操作するケースはCLIでは再現困難</p>
                     </div>
                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
                         <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3">
                             <i data-lucide="braces" class="w-5 h-5"></i>
                         </div>
                         <h3 class="font-bold text-gray-800 mb-1">構造化された出力</h3>
-                        <p class="text-xs text-gray-500">CLIの生テキストより{"errors": [...]}のような構造化レスポンスが効率的なケース</p>
+                        <p class="text-xs text-gray-500">CLIの生テキストより構造化レスポンスが効率的なケース。例: Xcodeビルドの数千行の出力をMCPが{"errors": [...], "warnings": [...]}に変換し、コンテキスト消費を大幅削減</p>
                     </div>
                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
                         <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3">
@@ -711,7 +725,7 @@
                         <span class="font-bold text-blue-500 mr-3 text-lg">2</span>
                         <div>
                             <p class="font-bold text-gray-800">Tool Search以後（2026年〜）: 差は大幅に縮小</p>
-                            <p class="text-gray-500 mt-1">MCPのコンテキストコストは85〜95%削減。ただしCLIの「定義コスト0」には追いつかない</p>
+                            <p class="text-gray-500 mt-1">MCPのコンテキストコストは85〜95%削減。ただし定義コスト単体ではCLIの「0トークン」に追いつかない</p>
                         </div>
                     </div>
                     <div class="flex items-start text-sm text-gray-600 bg-gray-50 rounded-lg p-4">

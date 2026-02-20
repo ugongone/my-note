@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPデザイン：low-fi vs high-fi — Agent Teamsディベートレポート</title>
+    <title>RPデザイン：Lo-Fi vs Hi-Fi — Agent Teamsディベートレポート</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -44,7 +44,7 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <i data-lucide="message-square" class="w-6 h-6 text-blue-500"></i>
-                <span class="text-lg font-bold tracking-tight">RP Design Debate <span class="text-gray-400 font-normal">| low-fi vs high-fi</span></span>
+                <span class="text-lg font-bold tracking-tight">RP Design Debate <span class="text-gray-400 font-normal">| Lo-Fi vs Hi-Fi</span></span>
             </div>
             <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
                 <a href="#background" class="hover:text-blue-600 transition">背景</a>
@@ -65,7 +65,7 @@
                 Claude Code — Agent Teams ディベートレポート
             </div>
             <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
-                <span class="gradient-text">low-fi vs high-fi</span>
+                <span class="gradient-text">Lo-Fi vs Hi-Fi</span>
             </h1>
             <p class="text-gray-500 text-sm md:text-base">RPにおけるプロトタイピング手法の論争を、AIエージェント同士に議論させて検証した</p>
         </div>
@@ -79,15 +79,99 @@
                 <i data-lucide="info" class="w-6 h-6 mr-3 text-blue-500"></i>
                 背景
             </h2>
+            <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-6">
+                <p class="text-sm font-bold text-blue-700 mb-3 flex items-center">
+                    <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                    Rapid Prototyping（RP）とは
+                </p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    ソフトウェア開発において、完成品を作る前に<strong>「簡易的な試作品（プロトタイプ）を素早く作り、クライアントや関係者にフィードバックをもらう」</strong>プロセスのこと。要件の認識ズレや方向性のミスを早期に発見し、手戻りを最小化するために行う。
+                </p>
+                <div class="grid md:grid-cols-2 gap-4 mb-3">
+                    <!-- Lo-Fi example -->
+                    <div class="bg-white rounded-lg p-3 border border-blue-100">
+                        <p class="text-xs font-bold text-gray-700 mb-2">Lo-Fi（低忠実度）— ワイヤーフレーム例</p>
+                        <div class="bg-gray-50 border border-gray-200 rounded p-2 font-mono" style="font-size:10px; line-height:1.6;">
+                            <div class="border border-gray-300 rounded mb-1.5 px-2 py-0.5 flex justify-between items-center bg-white">
+                                <div class="flex gap-1.5 items-center">
+                                    <div class="w-12 h-2 bg-gray-300 rounded"></div>
+                                    <div class="w-8 h-2 bg-gray-200 rounded"></div>
+                                    <div class="w-8 h-2 bg-gray-200 rounded"></div>
+                                </div>
+                                <div class="w-10 h-4 bg-gray-300 rounded text-gray-500 text-center" style="font-size:8px; line-height:16px;">ログイン</div>
+                            </div>
+                            <div class="border border-dashed border-gray-300 rounded p-1.5 mb-1.5 bg-white">
+                                <div class="w-24 h-2 bg-gray-300 rounded mb-1"></div>
+                                <div class="w-full h-1.5 bg-gray-200 rounded mb-0.5"></div>
+                                <div class="w-4/5 h-1.5 bg-gray-200 rounded"></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-1">
+                                <div class="border border-dashed border-gray-300 rounded p-1 bg-white">
+                                    <div class="w-full h-6 bg-gray-200 rounded mb-1"></div>
+                                    <div class="w-3/4 h-1.5 bg-gray-200 rounded"></div>
+                                </div>
+                                <div class="border border-dashed border-gray-300 rounded p-1 bg-white">
+                                    <div class="w-full h-6 bg-gray-200 rounded mb-1"></div>
+                                    <div class="w-3/4 h-1.5 bg-gray-200 rounded"></div>
+                                </div>
+                                <div class="border border-dashed border-gray-300 rounded p-1 bg-white">
+                                    <div class="w-full h-6 bg-gray-200 rounded mb-1"></div>
+                                    <div class="w-3/4 h-1.5 bg-gray-200 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">ワイヤーフレームや手書きスケッチ。見た目の完成度は低いが、素早く作れて変更しやすい。</p>
+                    </div>
+                    <!-- Hi-Fi example -->
+                    <div class="bg-white rounded-lg p-3 border border-blue-100">
+                        <p class="text-xs font-bold text-gray-700 mb-2">Hi-Fi（高忠実度）— 画面イメージ例</p>
+                        <div class="bg-slate-800 rounded p-2" style="font-size:10px; line-height:1.6;">
+                            <div class="bg-slate-900 rounded mb-1.5 px-2 py-0.5 flex justify-between items-center">
+                                <div class="flex gap-1.5 items-center">
+                                    <div class="w-12 h-2 bg-blue-400 rounded"></div>
+                                    <div class="w-8 h-2 bg-slate-600 rounded"></div>
+                                    <div class="w-8 h-2 bg-slate-600 rounded"></div>
+                                </div>
+                                <div class="bg-blue-500 text-white px-1.5 rounded text-center" style="font-size:8px; line-height:14px; padding-top:1px; padding-bottom:1px;">ログイン</div>
+                            </div>
+                            <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded p-1.5 mb-1.5">
+                                <div class="w-24 h-2 bg-white rounded mb-1 opacity-90"></div>
+                                <div class="w-full h-1.5 bg-blue-300 rounded mb-0.5 opacity-60"></div>
+                                <div class="w-4/5 h-1.5 bg-blue-300 rounded opacity-60"></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-1">
+                                <div class="bg-slate-700 rounded p-1">
+                                    <div class="w-full h-6 bg-slate-600 rounded mb-1"></div>
+                                    <div class="w-3/4 h-1.5 bg-slate-500 rounded"></div>
+                                </div>
+                                <div class="bg-slate-700 rounded p-1">
+                                    <div class="w-full h-6 bg-slate-600 rounded mb-1"></div>
+                                    <div class="w-3/4 h-1.5 bg-slate-500 rounded"></div>
+                                </div>
+                                <div class="bg-slate-700 rounded p-1">
+                                    <div class="w-full h-6 bg-slate-600 rounded mb-1"></div>
+                                    <div class="w-3/4 h-1.5 bg-slate-500 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">実際の画面に近いデザインや動作するHTML。見た目・操作感まで検証できる。</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-3 border border-blue-100">
+                    <p class="text-xs font-bold text-gray-700 mb-1">このディベートの問い</p>
+                    <p class="text-xs text-gray-500">AIによりHi-Fiの作成コストが激減した今、どちらから始めるのが最適か？</p>
+                </div>
+            </div>
+
             <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <p class="text-sm font-bold text-gray-700 mb-2 flex items-center">
                             <i data-lucide="trending-up" class="w-4 h-4 mr-2 text-blue-500"></i>
-                            AIによるhigh-fiの高速化
+                            AIによるHi-Fiの高速化
                         </p>
                         <p class="text-sm text-gray-600 leading-relaxed">
-                            昨今のAIの進化により、完成物に近いHTMLを数分で生成できるようになった。ワイヤーフレーム（low-fi）との作成工数差はほぼゼロになりつつある。
+                            昨今のAIの進化により、完成物に近いHTMLを数分で生成できるようになった。ワイヤーフレーム（Lo-Fi）との作成工数差はほぼゼロになりつつある。
                         </p>
                     </div>
                     <div>
@@ -96,7 +180,7 @@
                             残る問い
                         </p>
                         <p class="text-sm text-gray-600 leading-relaxed">
-                            一方で「RPではlow-fiなワイヤーフレームをクライアントに見せる方が良い」というアイデアもある。工数差がなくなった今、それでもlow-fiを選ぶ理由はあるのか？
+                            一方で「RPではLo-Fiなワイヤーフレームをクライアントに見せる方が良い」というアイデアもある。工数差がなくなった今、それでもLo-Fiを選ぶ理由はあるのか？
                         </p>
                     </div>
                 </div>
@@ -124,29 +208,50 @@
                 <p class="text-sm text-gray-600 leading-relaxed mb-3">
                     Agent Teams は Claude Code のチーム機能で、複数のAIエージェントを並列に起動し、メッセージを送り合いながら協調・議論させることができる。今回はこれを使い、対立する立場を持つ2エージェントに非同期でターン制のディベートを行わせた。
                 </p>
-                <p class="text-xs text-gray-400">各エージェントは独立したコンテキストを持ち、team-lead（自分）がメッセージを転送・仲裁する形で議論を進行。</p>
+                <p class="text-xs text-gray-400">各エージェントは独立したコンテキストを持ち、team-leadがメッセージを転送・仲裁する形で議論を進行。</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-4">
                 <div class="bg-blue-50 border border-blue-200 p-5 rounded-xl">
                     <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 font-bold text-sm">A</div>
                     <h3 class="font-bold text-gray-800 mb-1 text-sm">agent-A</h3>
-                    <p class="text-xs text-gray-500 mb-2">low-fi 支持</p>
-                    <p class="text-xs text-gray-600">ワイヤーフレームなどのlow-fi案を支持。機能・フロー議論への集中、方向転換コストの低さを主軸に論じる。</p>
+                    <p class="text-xs text-gray-500 mb-2">Lo-Fi 支持</p>
+                    <p class="text-xs text-gray-600">ワイヤーフレームなどのLo-Fi案を支持。機能・フロー議論への集中、方向転換コストの低さを主軸に論じる。</p>
                 </div>
                 <div class="bg-emerald-50 border border-emerald-200 p-5 rounded-xl">
                     <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-3 font-bold text-sm">B</div>
                     <h3 class="font-bold text-gray-800 mb-1 text-sm">agent-B</h3>
-                    <p class="text-xs text-gray-500 mb-2">high-fi 支持</p>
+                    <p class="text-xs text-gray-500 mb-2">Hi-Fi 支持</p>
                     <p class="text-xs text-gray-600">AIで完成物HTMLをいきなり作る案を支持。クライアントへの具体性・成果物の資産性・AIによるコスト革命を主軸に論じる。</p>
                 </div>
-                <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl">
-                    <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mb-3">
+                <div class="bg-red-50 border border-red-200 p-5 rounded-xl">
+                    <div class="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-3">
                         <i data-lucide="shield" class="w-5 h-5"></i>
                     </div>
                     <h3 class="font-bold text-gray-800 mb-1 text-sm">team-lead</h3>
                     <p class="text-xs text-gray-500 mb-2">進行・ジャッジ担当エージェント</p>
                     <p class="text-xs text-gray-600">各ターンの主張を相手に転送し、争点が揺れる論点についてユーザーに適宜質問しながら議論を深める。最終的にジャッジを下す。</p>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-100 rounded-xl p-5 mt-4">
+                <p class="text-sm font-bold text-amber-700 mb-2 flex items-center">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i>
+                    進行上の工夫と注意点
+                </p>
+                <div class="space-y-2 text-xs text-gray-600">
+                    <div class="flex items-start">
+                        <i data-lucide="arrow-right" class="w-3 h-3 mr-2 text-amber-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>各ターン終了後にユーザーへ質問：</strong>争点が揺れそうな論点（「実際のセッション形式は？」「big pivotはどちらで起きやすいと思うか？」など）をターンごとにユーザーに確認し、回答を次のターンに反映した。ユーザーにとって重要でない部分で論争が長引くのを防ぐための工夫。</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-2 text-amber-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>注意：ユーザーのバイアスが入っている：</strong>質問への回答はユーザーの主観・経験・期待に基づくものであり、議論の方向がその回答に引き寄せられている。</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-2 text-amber-500 mt-0.5 flex-shrink-0"></i>
+                        <span><strong>注意：結論はこのコンテキスト限定：</strong>前提条件とQAによってピンポイント化された議論であるため、チーム構成・クライアントのリテラシー・開発フェーズが異なるケースにそのまま適用できるわけではない。</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -171,11 +276,11 @@
                     </div>
                     <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
                         <p class="text-xs font-bold text-gray-700 mb-1 flex items-center"><i data-lucide="zap" class="w-3 h-3 mr-1 text-blue-500"></i>工数差</p>
-                        <p class="text-xs text-gray-500">AIの進化により、ワイヤーフレームとhigh-fi HTMLの作成工数差はほぼゼロ。紙スケッチの方がむしろ作りづらい。</p>
+                        <p class="text-xs text-gray-500">AIの進化により、ワイヤーフレームとHi-Fi HTMLの作成工数差はほぼゼロ。紙スケッチの方がむしろ作りづらい。</p>
                     </div>
                     <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
                         <p class="text-xs font-bold text-gray-700 mb-1 flex items-center"><i data-lucide="trash-2" class="w-3 h-3 mr-1 text-blue-500"></i>変更への抵抗</p>
-                        <p class="text-xs text-gray-500">AIに直させるだけなのでhigh-fiを壊すことへの抵抗が全くない。</p>
+                        <p class="text-xs text-gray-500">AIに直させるだけなのでHi-Fiを壊すことへの抵抗が全くない。</p>
                     </div>
                     <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
                         <p class="text-xs font-bold text-gray-700 mb-1 flex items-center"><i data-lucide="sliders" class="w-3 h-3 mr-1 text-blue-500"></i>PoCの目的</p>
@@ -228,7 +333,7 @@
                         <div class="flex">
                             <div class="bg-gray-50 border-r border-gray-200 px-4 py-3 flex items-start min-w-0 w-1/2">
                                 <span class="text-xs font-bold text-gray-400 mr-2 mt-0.5 flex-shrink-0">Q</span>
-                                <p class="text-xs text-gray-600">「big pivotな発想（根本的な方向転換）」はhigh-fiとlow-fiのどちらで起きやすいと思いますか？</p>
+                                <p class="text-xs text-gray-600">「big pivotな発想（根本的な方向転換）」はHi-FiとLo-Fiのどちらで起きやすいと思いますか？</p>
                             </div>
                             <div class="px-4 py-3 flex items-start w-1/2">
                                 <span class="text-xs font-bold text-blue-500 mr-2 mt-0.5 flex-shrink-0">A</span>
@@ -240,7 +345,7 @@
                         <div class="flex">
                             <div class="bg-gray-50 border-r border-gray-200 px-4 py-3 flex items-start min-w-0 w-1/2">
                                 <span class="text-xs font-bold text-gray-400 mr-2 mt-0.5 flex-shrink-0">Q</span>
-                                <p class="text-xs text-gray-600">「グレースケールhigh-fiはlow-fiと実質的に同じでは？」という指摘についてどう思いますか？</p>
+                                <p class="text-xs text-gray-600">「グレースケールHi-FiはLo-Fiと実質的に同じでは？」という指摘についてどう思いますか？</p>
                             </div>
                             <div class="px-4 py-3 flex items-start w-1/2">
                                 <span class="text-xs font-bold text-blue-500 mr-2 mt-0.5 flex-shrink-0">A</span>
@@ -263,13 +368,13 @@
             <div class="space-y-6">
                 <!-- excerpt 1 -->
                 <div>
-                    <p class="text-xs font-bold text-blue-400 mb-2 flex items-center"><i data-lucide="chevron-right" class="w-3 h-3 mr-1"></i>agent-A の Opening Statement（low-fi支持）</p>
-                    <div class="debate-block"><span class="heading">## Opening Statement - agent-A（low-fi案支持）</span>
+                    <p class="text-xs font-bold text-blue-400 mb-2 flex items-center"><i data-lucide="chevron-right" class="w-3 h-3 mr-1"></i>agent-A の Opening Statement（Lo-Fi支持）</p>
+                    <div class="debate-block"><span class="heading">## Opening Statement - agent-A（Lo-Fi案支持）</span>
 
 <span class="heading">### 1. フィードバックループの質と速度</span>
-low-fiでは、見た目の完成度が低いため、クライアントは
+Lo-Fiでは、見た目の完成度が低いため、クライアントは
 UIの細部（色・フォント）ではなく<span class="speaker-a">機能・フロー・情報設計</span>に
-集中してフィードバックできます。high-fiのHTMLを最初に
+集中してフィードバックできます。Hi-FiのHTMLを最初に
 見せると「このボタンの色が気になる」といった表面的な意見が
 増え、本質的な要件の検証が後回しになりがちです。
 
@@ -286,20 +391,20 @@ PoCは仮説検証の場であり、方向転換が頻繁に起きます。
 
                 <!-- excerpt 2 -->
                 <div>
-                    <p class="text-xs font-bold text-emerald-400 mb-2 flex items-center"><i data-lucide="chevron-right" class="w-3 h-3 mr-1"></i>agent-B の反論（high-fi支持・ターン1）</p>
-                    <div class="debate-block"><span class="heading">### 反論2：AIによる修正コストはlow-fiと変わらないレベルまで下がっている</span>
+                    <p class="text-xs font-bold text-emerald-400 mb-2 flex items-center"><i data-lucide="chevron-right" class="w-3 h-3 mr-1"></i>agent-B の反論（Hi-Fi支持・ターン1）</p>
+                    <div class="debate-block"><span class="heading">### 反論2：AIによる修正コストはLo-Fiと変わらないレベルまで下がっている</span>
 
-「high-fiは変更コストが高い」という主張は、<span class="speaker-b">AIが登場する前の
+「Hi-Fiは変更コストが高い」という主張は、<span class="speaker-b">AIが登場する前の
 世界の常識</span>だ。現在はAIに「このページのナビゲーションを削除して、
 フローをA→B→Cに変えて」と指示すれば数分で修正できる。
 
-そして決定的な点として、<span class="speaker-b">low-fiで検証した後にhigh-fiを作る工程が
+そして決定的な点として、<span class="speaker-b">Lo-Fiで検証した後にHi-Fiを作る工程が
 丸ごと発生する</span>。これは「変更コストの削減」ではなく「工程の追加」だ。
-high-fiで始めれば、この二重投資が不要になる。
+Hi-Fiで始めれば、この二重投資が不要になる。
 
 <span class="heading">### 反論3：「もうほぼできている」という誤解は、資産になる</span>
 PoCの現実には「あれもこれも」というスコープクリープがある。
-high-fiで「この範囲でこれだけのものが作れる」と具体的に示すことで、
+Hi-Fiで「この範囲でこれだけのものが作れる」と具体的に示すことで、
 議論を現実的な範囲に<span class="speaker-b">収束させる効果</span>がある。</div>
                 </div>
 
@@ -308,18 +413,18 @@ high-fiで「この範囲でこれだけのものが作れる」と具体的に�
                     <p class="text-xs font-bold text-amber-400 mb-2 flex items-center"><i data-lucide="chevron-right" class="w-3 h-3 mr-1"></i>ターン2終了後の争点整理（team-lead）</p>
                     <div class="debate-block"><span class="speaker-lead">## ターン2終了後の注目点</span>
 
-<span class="dim">「low-fiかhigh-fiか」という二項対立が崩れ始めています。</span>
+<span class="dim">「Lo-FiかHi-Fiか」という二項対立が崩れ始めています。</span>
 
 agent-Bが「AI生成時にグレースケールを指定することで
 視覚的ノイズを排除できる」と主張。
 クライアントからは<span class="speaker-lead">「良いアイデアだ（中間状態として有効）」</span>という
 回答が得られました。
 
-これにより agent-A は「それはもはやlow-fiと同じではないか」
+これにより agent-A は「それはもはやLo-Fiと同じではないか」
 という反論を使える状況に。
 
 また「big pivot はどちらでも起きうる」という確認から、
-<span class="speaker-lead">両者の核心的な争点が崩れ</span>、「何をlow-fiと呼ぶかの定義争い」
+<span class="speaker-lead">両者の核心的な争点が崩れ</span>、「何をLo-Fiと呼ぶかの定義争い」
 にシフトしてきました。</div>
                 </div>
             </div>
@@ -337,40 +442,40 @@ agent-Bが「AI生成時にグレースケールを指定することで
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
                             <th class="text-left px-5 py-4 font-bold text-gray-600 w-1/4">論点</th>
-                            <th class="text-left px-5 py-4 font-bold text-blue-600 w-1/3">agent-A（low-fi）の主張</th>
-                            <th class="text-left px-5 py-4 font-bold text-emerald-600 w-1/3">agent-B（high-fi）の主張</th>
+                            <th class="text-left px-5 py-4 font-bold text-blue-600 w-1/3">agent-A（Lo-Fi）の主張</th>
+                            <th class="text-left px-5 py-4 font-bold text-emerald-600 w-1/3">agent-B（Hi-Fi）の主張</th>
                             <th class="text-left px-5 py-4 font-bold text-gray-600 w-20">評価</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <tr>
                             <td class="px-5 py-4 font-medium text-gray-700 text-xs">方向転換コスト</td>
-                            <td class="px-5 py-4 text-xs text-gray-500">誤方向でhigh-fiを作り直すコストは、low-fi確定後にhigh-fiを作るより常に大きい</td>
+                            <td class="px-5 py-4 text-xs text-gray-500">誤方向でHi-Fiを作り直すコストは、Lo-Fi確定後にHi-Fiを作るより常に大きい</td>
                             <td class="px-5 py-4 text-xs text-gray-500">AIで修正が数分。変更抵抗もゼロなら工数差は消える</td>
                             <td class="px-5 py-4"><span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded whitespace-nowrap">引き分け</span></td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-5 py-4 font-medium text-gray-700 text-xs">視覚的ノイズ</td>
-                            <td class="px-5 py-4 text-xs text-gray-500">high-fiを見せると色・フォントの議論に逸れ、機能の本質的な検証が後回しになる</td>
+                            <td class="px-5 py-4 text-xs text-gray-500">Hi-Fiを見せると色・フォントの議論に逸れ、機能の本質的な検証が後回しになる</td>
                             <td class="px-5 py-4 text-xs text-gray-500">グレースケール指定で排除できる。ファシリテーション次第で解決可能</td>
                             <td class="px-5 py-4"><span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded whitespace-nowrap">引き分け</span></td>
                         </tr>
                         <tr>
                             <td class="px-5 py-4 font-medium text-gray-700 text-xs">big pivot誘発</td>
-                            <td class="px-5 py-4 text-xs text-gray-500">low-fiの抽象性が「そもそも別のアプローチでは」という探索思考を促す</td>
+                            <td class="px-5 py-4 text-xs text-gray-500">Lo-Fiの抽象性が「そもそも別のアプローチでは」という探索思考を促す</td>
                             <td class="px-5 py-4 text-xs text-gray-500">具体的な体験こそがbig pivotを生む。どちらでも起きうる</td>
                             <td class="px-5 py-4"><span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded whitespace-nowrap">引き分け</span></td>
                         </tr>
                         <tr class="bg-gray-50">
                             <td class="px-5 py-4 font-medium text-gray-700 text-xs">UX非精通クライアント</td>
-                            <td class="px-5 py-4 text-xs text-gray-500">high-fiを完成品と誤認し、早期収束するリスクがある</td>
-                            <td class="px-5 py-4 text-xs text-gray-500">low-fiは「何が未決定か」を判断できない。実物の方が議論しやすい</td>
+                            <td class="px-5 py-4 text-xs text-gray-500">Hi-Fiを完成品と誤認し、早期収束するリスクがある</td>
+                            <td class="px-5 py-4 text-xs text-gray-500">Lo-Fiは「何が未決定か」を判断できない。実物の方が議論しやすい</td>
                             <td class="px-5 py-4"><span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded whitespace-nowrap">B微優位</span></td>
                         </tr>
                         <tr>
                             <td class="px-5 py-4 font-medium text-gray-700 text-xs">成果物の資産性</td>
                             <td class="px-5 py-4 text-xs text-gray-500">（議論なし）</td>
-                            <td class="px-5 py-4 text-xs text-gray-500">HTMLはPoC後もそのまま実装の土台になる。low-fiはPoC終了後に用途がなくなる</td>
+                            <td class="px-5 py-4 text-xs text-gray-500">HTMLはPoC後もそのまま実装の土台になる。Lo-FiはPoC終了後に用途がなくなる</td>
                             <td class="px-5 py-4"><span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded font-bold whitespace-nowrap">B優位★</span></td>
                         </tr>
                     </tbody>
@@ -391,12 +496,12 @@ agent-Bが「AI生成時にグレースケールを指定することで
                 <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
                     <h3 class="font-bold text-emerald-700 flex items-center">
                         <i data-lucide="trophy" class="w-5 h-5 mr-2"></i>
-                        判定：high-fi（agent-B）優位
+                        判定：Hi-Fi（agent-B）優位
                     </h3>
                     <span class="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded font-medium">決め手：成果物の資産性</span>
                 </div>
                 <div class="p-6 text-sm text-gray-600 leading-relaxed">
-                    工数差・変更コスト・big pivot・認知バイアスのほぼ全論点が「引き分け」に収束した結果、<strong>「作るたびに資産が積み上がるhigh-fi HTML」</strong>という唯一の差分が決め手となった。同じ議論品質が得られるなら、次のイテレーションで直接使える成果物を選ぶ方が合理的。
+                    工数差・変更コスト・big pivot・認知バイアスのほぼ全論点が「引き分け」に収束した結果、<strong>「作るたびに資産が積み上がるHi-Fi HTML」</strong>という唯一の差分が決め手となった。同じ議論品質が得られるなら、次のイテレーションで直接使える成果物を選ぶ方が合理的。
                 </div>
             </div>
 
@@ -405,7 +510,7 @@ agent-Bが「AI生成時にグレースケールを指定することで
                 <div class="p-4 bg-blue-50 border-b border-blue-100">
                     <h3 class="font-bold text-blue-700 flex items-center text-sm">
                         <i data-lucide="star" class="w-4 h-4 mr-2"></i>
-                        実務推奨：グレースケールhigh-fiで始める
+                        実務推奨：グレースケールHi-Fiで始める
                     </h3>
                 </div>
                 <div class="p-6">
@@ -428,11 +533,11 @@ agent-Bが「AI生成時にグレースケールを指定することで
                     <div class="grid md:grid-cols-2 gap-3">
                         <div class="flex items-start text-xs text-gray-600 bg-blue-50 rounded-lg p-3">
                             <i data-lucide="check" class="w-3 h-3 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
-                            <span>グレースケールで視覚的ノイズを排除 → 機能議論に集中（low-fiの利点）</span>
+                            <span>グレースケールで視覚的ノイズを排除 → 機能議論に集中（Lo-Fiの利点）</span>
                         </div>
                         <div class="flex items-start text-xs text-gray-600 bg-emerald-50 rounded-lg p-3">
                             <i data-lucide="check" class="w-3 h-3 mr-2 text-emerald-400 mt-0.5 flex-shrink-0"></i>
-                            <span>成果物のHTMLがそのまま次工程の土台に（high-fiの利点）</span>
+                            <span>成果物のHTMLがそのまま次工程の土台に（Hi-Fiの利点）</span>
                         </div>
                     </div>
                 </div>
@@ -447,11 +552,11 @@ agent-Bが「AI生成時にグレースケールを指定することで
                 <div class="space-y-2">
                     <div class="flex items-start text-sm text-gray-600">
                         <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-gray-400 mt-0.5 flex-shrink-0"></i>
-                        <span><strong>問いの変換：</strong>「low-fiかhigh-fiか」は二項対立ではなく、「どの視覚的完成度で始めるか」というスペクトラムの問題だった。</span>
+                        <span><strong>問いの変換：</strong>「Lo-FiかHi-Fiか」は二項対立ではなく、「どの視覚的完成度で始めるか」というスペクトラムの問題だった。</span>
                     </div>
                     <div class="flex items-start text-sm text-gray-600">
                         <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-gray-400 mt-0.5 flex-shrink-0"></i>
-                        <span><strong>コンテキスト依存：</strong>工数差・変更コスト・チーム文化・クライアントのリテラシーによって最適解は変わる。AIで工数差が消えた現在、具体的なコンテキストを与えるほどhigh-fiが有利になる傾向がある。</span>
+                        <span><strong>コンテキスト依存：</strong>工数差・変更コスト・チーム文化・クライアントのリテラシーによって最適解は変わる。AIで工数差が消えた現在、具体的なコンテキストを与えるほどHi-Fiが有利になる傾向がある。</span>
                     </div>
                     <div class="flex items-start text-sm text-gray-600">
                         <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-gray-400 mt-0.5 flex-shrink-0"></i>

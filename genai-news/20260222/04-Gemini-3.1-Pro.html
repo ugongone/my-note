@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini 3.1 Pro — 推論性能が2倍以上に | 生成AI Weekly News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- ヘッダー -->
+    <header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="newspaper" class="w-6 h-6 text-blue-500"></i>
+                <span class="text-lg font-bold tracking-tight">生成AI Weekly <span class="text-gray-400 font-normal">| 深掘り</span></span>
+            </div>
+            <a href="01-メインニュース.html" class="text-sm text-gray-400 hover:text-blue-600 transition flex items-center">
+                <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>メインニュースに戻る
+            </a>
+        </div>
+    </header>
+
+    <!-- ヒーロー -->
+    <section class="py-8 text-center border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-medium mb-4">
+                <i data-lucide="brain" class="w-3 h-3 mr-2"></i>
+                2026/02/19
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+                <span class="gradient-text">Gemini 3.1 Pro</span>
+            </h1>
+            <p class="text-gray-500 text-sm md:text-base">推論性能が2倍以上に — Googleが「最も複雑なタスク」に応えるモデルを投入</p>
+        </div>
+    </section>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- 概要 -->
+        <section class="py-10">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="info" class="w-6 h-6 mr-3 text-blue-500"></i>何が起きたのか
+            </h2>
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    2026年2月19日、Googleは Gemini 3.1 Pro を発表した。前モデル Gemini 3 Pro のリリース（2025年11月19日）からちょうど3ヶ月後のアップデートであり、Googleが示す「コア推論能力の一段の進化」を体現するモデルと位置づけられている。
+                </p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    最大の注目点は ARC-AGI-2 ベンチマークのスコアだ。このベンチマークは「モデルがまったく新しい論理パターンを解く能力」を評価するもので、Gemini 3.1 Pro は 77.1% を達成。前モデル Gemini 3 Pro の 31.1% から2倍以上の飛躍を遂げた。
+                </p>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Anthropicが Sonnet 4.6 をリリースしたわずか2日後の発表であり、2026年2月の「モデルラッシュ」を象徴する動きとなった。GitHub Copilot でも同日パブリックプレビューが開始されている。
+                </p>
+            </div>
+        </section>
+
+        <!-- ベンチマーク -->
+        <section class="py-10 border-t border-gray-200">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="bar-chart-3" class="w-6 h-6 mr-3 text-blue-500"></i>ARC-AGI-2での躍進
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b border-gray-200">
+                        <h3 class="font-bold text-gray-600 flex items-center">
+                            <i data-lucide="clock" class="w-5 h-5 mr-2"></i>
+                            Gemini 3 Pro（2025/11/19）
+                        </h3>
+                    </div>
+                    <div class="p-6 text-center">
+                        <div class="text-4xl font-bold text-gray-400 mb-2">31.1%</div>
+                        <p class="text-xs text-gray-500">ARC-AGI-2スコア</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-blue-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center">
+                            <i data-lucide="zap" class="w-5 h-5 mr-2"></i>
+                            Gemini 3.1 Pro（2026/02/19）
+                        </h3>
+                    </div>
+                    <div class="p-6 text-center">
+                        <div class="text-4xl font-bold text-blue-600 mb-2">77.1%</div>
+                        <p class="text-xs text-gray-500">ARC-AGI-2スコア — <span class="text-emerald-600 font-medium">+46.0pt / 2.5倍</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                <span class="font-bold text-gray-700">ARC-AGI-2とは:</span> Abstraction and Reasoning Corpus の第2版。モデルが訓練データに含まれない完全に新しい論理パターンを解けるかを評価するベンチマーク。単純な知識の暗記ではなく、抽象的推論能力を測定する点で、AIの「真の知能」に最も近い指標の一つとされる。
+            </div>
+        </section>
+
+        <!-- 主な特徴 -->
+        <section class="py-10 border-t border-gray-200">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="layers" class="w-6 h-6 mr-3 text-blue-500"></i>実用面での強化ポイント
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center">
+                            <i data-lucide="code" class="w-5 h-5 mr-2"></i>
+                            コードベースのアニメーション生成
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            テキストプロンプトからスケーラブルなSVGアニメーションを生成。品質を損なわずにWebサイトに直接追加可能な、実用的なコード出力を実現。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center">
+                            <i data-lucide="palette" class="w-5 h-5 mr-2"></i>
+                            クリエイティブコーディング
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            小説の登場人物が風景写真家だったら、というコンセプトからポートフォリオサイト全体を生成するなど、創造的なコード生成能力が向上。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center">
+                            <i data-lucide="globe" class="w-5 h-5 mr-2"></i>
+                            複雑なシステムの統合
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            公開テレメトリストリームを設定してISSの軌道をリアルタイム可視化するダッシュボードを構築するなど、複雑なAPIとUIの橋渡しを高度な推論で実現。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-4 bg-blue-50 border-b border-blue-100">
+                        <h3 class="font-bold text-blue-700 flex items-center">
+                            <i data-lucide="bird" class="w-5 h-5 mr-2"></i>
+                            インタラクティブデザイン
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            3Dインタラクティブなムクドリの群れシミュレーションを生成。群れの動きに連動して変化するサウンドスケープも同時に生成するなど、マルチモーダルな出力能力を実証。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 提供チャネル -->
+        <section class="py-10 border-t border-gray-200 bg-gray-50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i data-lucide="rocket" class="w-6 h-6 mr-3 text-blue-500"></i>提供チャネル
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">コンシューマー</h3>
+                        <p class="text-xs text-gray-500">Geminiアプリ、NotebookLM<br>（AI Pro/Ultraで上限拡大）</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="terminal" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">開発者</h3>
+                        <p class="text-xs text-gray-500">Gemini API、AI Studio<br>Gemini CLI、Antigravity<br>Android Studio</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="building" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">エンタープライズ</h3>
+                        <p class="text-xs text-gray-500">Vertex AI<br>Gemini Enterprise<br>GitHub Copilot（プレビュー）</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                    <span class="font-bold text-gray-700">GitHub Copilot対応:</span> Gemini 3.1 Proは同日、GitHub Copilotでもパブリックプレビューとして利用可能に。「効率的なedit-then-testループと高いツール精度で、少ないツールコールで高い解決成功率を達成」とGitHub公式が評価。VSCode、Visual Studio、github.com、GitHub Mobileに対応。
+                </div>
+            </div>
+        </section>
+
+        <!-- 競争環境の分析 -->
+        <section class="py-10 border-t border-gray-200">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="swords" class="w-6 h-6 mr-3 text-blue-500"></i>2月モデルラッシュの中での位置づけ
+            </h2>
+
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="text-left px-6 py-4 font-bold text-gray-600">リリース日</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600">モデル</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600">企業</th>
+                            <th class="text-left px-6 py-4 font-bold text-gray-600">特徴</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="px-6 py-3 text-gray-500">02/05</td>
+                            <td class="px-6 py-3 text-gray-700 font-medium">Claude Opus 4.6</td>
+                            <td class="px-6 py-3 text-gray-500">Anthropic</td>
+                            <td class="px-6 py-3 text-gray-500">エージェント・コーディング・金融で業界トップ</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-gray-500">02/17</td>
+                            <td class="px-6 py-3 text-gray-700 font-medium">Claude Sonnet 4.6</td>
+                            <td class="px-6 py-3 text-gray-500">Anthropic</td>
+                            <td class="px-6 py-3 text-gray-500">Opus級性能をSonnet価格で</td>
+                        </tr>
+                        <tr class="bg-blue-50">
+                            <td class="px-6 py-3 text-blue-600 font-medium">02/19</td>
+                            <td class="px-6 py-3 text-blue-700 font-bold">Gemini 3.1 Pro</td>
+                            <td class="px-6 py-3 text-blue-600">Google</td>
+                            <td class="px-6 py-3 text-blue-600">ARC-AGI-2で77.1%、推論2倍超</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-3 text-gray-500">02/下旬</td>
+                            <td class="px-6 py-3 text-gray-700 font-medium">DeepSeek V4</td>
+                            <td class="px-6 py-3 text-gray-500">DeepSeek</td>
+                            <td class="px-6 py-3 text-gray-500">コーディング特化、リリース間近</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                <h3 class="font-bold text-gray-800 mb-3">Googleの戦略的ポジション</h3>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">-</span><strong>3ヶ月サイクルの確立:</strong> Gemini 3 Pro（11月）→ 3.1 Pro（2月）で四半期ごとのアップデートリズムを示した。5月のGoogle I/O 2026で次の大型発表が期待される</li>
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">-</span><strong>推論特化の方向性:</strong> ARC-AGI-2での劇的改善は、Googleが「考える力」を最重要指標として位置づけていることを示す。これはOpenAIやAnthropicの「実務的タスク完遂能力」重視とは異なるアプローチ</li>
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">-</span><strong>エコシステムの広さが武器:</strong> Geminiアプリ、NotebookLM、Vertex AI、Android Studio、GitHub Copilotと、同一モデルを多様なチャネルで提供できるGoogleのプラットフォーム優位性が際立つ</li>
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">-</span><strong>開発者向けプレビュー:</strong> 現時点ではプレビュー段階であり、「先にアップデートを検証し、エージェント型ワークフローをさらに進化させる」というアプローチを取っている</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 引用 -->
+        <section class="py-10 border-t border-gray-200">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="quote" class="w-6 h-6 mr-3 text-blue-500"></i>一次情報からの引用
+            </h2>
+
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                    <span class="font-bold text-gray-700">Google公式ブログ:</span>「Building on the Gemini 3 series, 3.1 Pro represents a step forward in core reasoning. 3.1 Pro is a smarter, more capable baseline for complex problem-solving. This is reflected in our progress on rigorous benchmarks.」
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                    <span class="font-bold text-gray-700">Google公式ブログ:</span>「3.1 Pro is designed for tasks where a simple answer isn't enough. It uses advanced reasoning for your hardest challenges.」
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+                    <span class="font-bold text-gray-700">GitHub Blog:</span>「In early testing, this model excels on effective and efficient edit-then-test loops with high tool precision, achieving strong resolution success with fewer tool calls per benchmark.」
+                </div>
+            </div>
+        </section>
+
+        <!-- 情報ソース -->
+        <section class="py-10 border-t border-gray-200">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="link" class="w-6 h-6 mr-3 text-blue-500"></i>情報ソース
+            </h2>
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                <ul class="text-sm text-gray-600 space-y-3">
+                    <li class="flex items-start">
+                        <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded mr-3 flex-shrink-0">公式</span>
+                        <a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-pro/" target="_blank" class="text-blue-600 hover:underline">Gemini 3.1 Pro: A smarter model for your most complex tasks - Google Blog</a>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded mr-3 flex-shrink-0">メディア</span>
+                        <a href="https://www.cnet.com/tech/services-and-software/google-announces-gemini-3-1-pro/" target="_blank" class="text-blue-600 hover:underline">Google Rolls Out Latest AI Model, Gemini 3.1 Pro - CNET</a>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded mr-3 flex-shrink-0">メディア</span>
+                        <a href="https://www.gsmarena.com/google_rolls_out_gemini_31_pro_a_smarter_model_for_the_most_complex_tasks-news-71634.php" target="_blank" class="text-blue-600 hover:underline">Google rolls out Gemini 3.1 Pro - GSMArena</a>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded mr-3 flex-shrink-0">メディア</span>
+                        <a href="https://github.blog/changelog/2026-02-19-gemini-3-1-pro-is-now-in-public-preview-in-github-copilot/" target="_blank" class="text-blue-600 hover:underline">Gemini 3.1 Pro in GitHub Copilot - GitHub Blog</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 戻りリンク -->
+        <div class="py-6 text-center">
+            <a href="01-メインニュース.html" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition">
+                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>メインニュースに戻る
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+        <p>生成AI Weekly News - 2026/02/16〜02/22</p>
+        <p class="mt-1 text-xs text-gray-300">一次情報に基づく週間レポート</p>
+    </footer>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

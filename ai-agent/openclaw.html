@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw まとめ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* スムーズなアニメーション用 */
+        .hover-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* タブ切り替え時のアニメーション */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        /* スクロールバー非表示（Webkit系） */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="text-gray-800 leading-relaxed tracking-wide p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-12 text-white shadow-xl">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">AI Agent Framework</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">OpenClaw まとめ</h1>
+            <p class="text-blue-100 text-lg md:text-xl max-w-2xl">
+                世界最速で成長する、セルフホスト型のオープンソース自律AIエージェントフレームワークの全体像と現状。
+            </p>
+        </header>
+
+        <!-- 1. OpenClawとは -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-lg"><i class="fa-solid fa-robot text-xl"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900">1. OpenClawとは</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-3 border-b pb-2">プロジェクト概要</h3>
+                    <p class="mb-4 text-gray-600 leading-relaxed">
+                        <strong class="text-blue-700 bg-blue-50 px-1">「AIがあなたの代わりにPCを自動操作する」</strong>体験を提供するフレームワーク。<br>
+                        ユーザーのローカルマシン上で常時稼働し、WhatsAppやSlackなど50以上のアプリからチャットで指示を出すだけで、まるで透明な人間が座っているかのように、AIが自律的にPCやブラウザを動かしてタスクを代行してくれます。
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-md border border-gray-200">MITライセンス</span>
+                        <span class="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-md border border-gray-200">TypeScript</span>
+                        <span class="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-md border border-gray-200">Swift</span>
+                        <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md border border-blue-200">セルフホスト型</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">自律的に実行可能なタスク</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded shadow-sm"><i class="fa-solid fa-terminal text-gray-400 w-5"></i>シェルコマンド</div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded shadow-sm"><i class="fa-solid fa-folder-open text-yellow-500 w-5"></i>ファイル管理</div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded shadow-sm"><i class="fa-brands fa-chrome text-blue-400 w-5"></i>ブラウザ操作</div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded shadow-sm"><i class="fa-solid fa-envelope text-red-400 w-5"></i>メール送受信</div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded shadow-sm"><i class="fa-regular fa-calendar-check text-green-500 w-5"></i>カレンダー</div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded shadow-sm"><i class="fa-solid fa-lightbulb text-orange-400 w-5"></i>IoTデバイス</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-indigo-50 rounded-xl p-5 border border-indigo-100 flex flex-col md:flex-row gap-4 items-start md:items-center">
+                <div class="bg-indigo-100 p-3 rounded-full text-indigo-600"><i class="fa-solid fa-user-astronaut text-xl"></i></div>
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">開発者: Peter Steinberger</h3>
+                    <p class="text-sm text-gray-600">
+                        PSPDFKit創業者。個人の週末プロジェクトとして開始したが、2026年2月にOpenAI入社に伴い、プロジェクトを独立した<strong>501(c)(3)オープンソース財団</strong>に移管。（OpenAIは財政スポンサーのみで所有権は持たない）
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. どのくらい話題なのか -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-orange-100 text-orange-600 p-3 rounded-lg"><i class="fa-solid fa-fire text-xl"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900">2. 驚異的な話題性と成長</h2>
+            </div>
+            
+            <!-- 統計ダッシュボード -->
+            <div class="mb-8">
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">GitHub 統計（2026/3/23時点）</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover-card text-center">
+                        <div class="text-yellow-500 mb-1"><i class="fa-solid fa-star"></i></div>
+                        <div class="text-2xl font-black text-gray-900">330,249</div>
+                        <div class="text-xs text-gray-500 font-medium mt-1">スター数</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover-card text-center">
+                        <div class="text-gray-400 mb-1"><i class="fa-solid fa-code-branch"></i></div>
+                        <div class="text-2xl font-black text-gray-900">64,215</div>
+                        <div class="text-xs text-gray-500 font-medium mt-1">フォーク数</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover-card text-center">
+                        <div class="text-blue-400 mb-1"><i class="fa-solid fa-users"></i></div>
+                        <div class="text-2xl font-black text-gray-900">1,099<span class="text-sm font-normal">人</span></div>
+                        <div class="text-xs text-gray-500 font-medium mt-1">コントリビューター</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover-card text-center">
+                        <div class="text-green-500 mb-1"><i class="fa-solid fa-download"></i></div>
+                        <div class="text-xl font-black text-gray-900">165万<span class="text-sm font-normal">回/週</span></div>
+                        <div class="text-xs text-gray-500 font-medium mt-1">npmダウンロード</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 成長速度 -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">成長の記録</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <div class="bg-orange-100 text-orange-600 rounded-full w-8 h-8 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-rocket text-sm"></i></div>
+                            <div>
+                                <p class="font-bold text-gray-900">72時間で60,000スター</p>
+                                <p class="text-sm text-gray-500">GitHub史上最速の記録</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-bolt text-sm"></i></div>
+                            <div>
+                                <p class="font-bold text-gray-900">60日で250,000スター</p>
+                                <p class="text-sm text-gray-500">Reactが同じ数に到達するまで約10年かかった</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="bg-yellow-100 text-yellow-600 rounded-full w-8 h-8 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-trophy text-sm"></i></div>
+                            <div>
+                                <p class="font-bold text-gray-900">GitHub No.1 プロジェクト</p>
+                                <p class="text-sm text-gray-500">2026年3月3日、Reactを抜いて最もスターの多いリポジトリに</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 比較グラフ -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">他プロジェクトとの比較 (Stars)</h3>
+                    <div class="space-y-4">
+                        <!-- OpenClaw -->
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="font-bold text-blue-700">OpenClaw</span>
+                                <span class="font-bold text-gray-900">330,000+</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <!-- Ollama -->
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="font-medium text-gray-700">Ollama</span>
+                                <span class="text-gray-600">162,000+</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gray-400 h-2 rounded-full" style="width: 49%"></div>
+                            </div>
+                        </div>
+                        <!-- n8n -->
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="font-medium text-gray-700">n8n</span>
+                                <span class="text-gray-600">150,000+</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gray-400 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <!-- Dify -->
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="font-medium text-gray-700">Dify</span>
+                                <span class="text-gray-600">134,000+</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gray-300 h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <!-- superpowers -->
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="font-medium text-gray-700">superpowers</span>
+                                <span class="text-gray-500">94,300</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-gray-300 h-2 rounded-full" style="width: 28%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-xs text-gray-500 text-right">※2位のOllamaと比較しても2倍以上の差</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 何ができるのか & 特徴 -->
+        <div class="space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-green-100 text-green-600 p-3 rounded-lg"><i class="fa-solid fa-layer-group text-xl"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900">3. 何ができるのか（コア機能とユースケース）</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 基本機能 -->
+                <section class="md:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-microchip text-green-500 mr-2"></i>システムの強み</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="flex gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <i class="fa-brands fa-whatsapp text-2xl text-green-500 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">多様なインターフェース</h4>
+                                <p class="text-xs text-gray-600 mt-1">WhatsApp, Slack, Discordなど50以上のアプリに常駐。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <i class="fa-solid fa-brain text-2xl text-purple-500 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">マルチLLM接続</h4>
+                                <p class="text-xs text-gray-600 mt-1">Claude, GPT, DeepSeekなど、用途に応じてモデルを切り替え。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <i class="fa-solid fa-clock text-2xl text-blue-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">Cronジョブ (定期実行)</h4>
+                                <p class="text-xs text-gray-600 mt-1">指定日時にエージェントが自律的に起動し、ルーチンタスクを処理。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <i class="fa-solid fa-network-wired text-2xl text-orange-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">サブエージェント連携</h4>
+                                <p class="text-xs text-gray-600 mt-1">目的別の複数エージェントを立ち上げ、複雑なタスクを並列で実行。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 md:col-span-2">
+                            <i class="fa-solid fa-puzzle-piece text-2xl text-blue-500 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">拡張スキルシステム & モバイルノード</h4>
+                                <p class="text-xs text-gray-600 mt-1">ClawHubでの機能拡張に加え、スマホをノード化してカメラやセンサーを利用した物理的なタスクも実行可能。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- アーキテクチャ -->
+                <section class="bg-gray-900 rounded-2xl shadow-sm p-6 text-white flex flex-col justify-center">
+                    <h3 class="text-lg font-bold mb-6 text-green-400 border-b border-gray-700 pb-2">アーキテクチャの特徴</h3>
+                    <ul class="space-y-5">
+                        <li class="flex items-center gap-3">
+                            <div class="bg-gray-800 p-2 rounded-full text-green-400"><i class="fa-solid fa-check w-4 text-center"></i></div>
+                            <span class="font-medium text-gray-200">完全オープンソース<br><span class="text-xs text-gray-400 font-normal">MIT License</span></span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <div class="bg-gray-800 p-2 rounded-full text-green-400"><i class="fa-solid fa-check w-4 text-center"></i></div>
+                            <span class="font-medium text-gray-200">ローカル実行<br><span class="text-xs text-gray-400 font-normal">クラウド非依存</span></span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <div class="bg-gray-800 p-2 rounded-full text-green-400"><i class="fa-solid fa-check w-4 text-center"></i></div>
+                            <span class="font-medium text-gray-200">プライバシー重視<br><span class="text-xs text-gray-400 font-normal">データは手元に保存</span></span>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- ユースケース -->
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-2"><i class="fa-solid fa-briefcase text-green-500 mr-2"></i>実践的なユースケース（活用例）</h3>
+                
+                <!-- タブメニュー (B案: 横並び) -->
+                <div class="flex overflow-x-auto hide-scrollbar gap-2 mb-6 pb-2 border-b border-gray-100">
+                    <button onclick="switchTab('tab-1')" class="tab-btn bg-blue-600 text-white shadow-md px-5 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-newspaper"></i> パーソナル秘書
+                    </button>
+                    <button onclick="switchTab('tab-2')" class="tab-btn bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 px-5 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-server"></i> サーバー管理
+                    </button>
+                    <button onclick="switchTab('tab-3')" class="tab-btn bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 px-5 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-code"></i> 開発アシスタント
+                    </button>
+                    <button onclick="switchTab('tab-4')" class="tab-btn bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 px-5 py-2.5 rounded-lg text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-pen-nib"></i> SNS運用
+                    </button>
+                </div>
+
+                <!-- タブコンテンツエリア -->
+                <div class="relative min-h-[320px]">
+                    
+                    <!-- タブ1: パーソナル秘書 -->
+                    <div id="tab-1" class="tab-content animate-fade-in grid md:grid-cols-5 gap-6 items-center">
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="inline-block bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-xs mb-2">自動情報収集</div>
+                            <h4 class="text-2xl font-bold text-gray-900">毎朝のニュースを要約して<br>チャットにお届け</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                指定した時間にウェブを巡回し、特定の業界動向や気になるキーワードに関する最新ニュースを収集。<br>長文の記事も要点を3行でまとめ、SlackやLINEなどの使い慣れたアプリに自動で通知してくれます。
+                            </p>
+                        </div>
+                        <div class="md:col-span-3">
+                            <!-- モックアップ: Slack風 UI -->
+                            <div class="bg-gray-50 border border-gray-200 rounded-xl shadow-inner flex flex-col overflow-hidden h-72">
+                                <div class="bg-indigo-900 text-white p-3 font-bold flex items-center gap-2 text-sm">
+                                    <i class="fa-brands fa-slack"></i> #morning-briefing
+                                </div>
+                                <div class="p-4 flex-1 flex flex-col gap-4 overflow-y-auto hide-scrollbar">
+                                    <div class="flex gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-robot text-white"></i></div>
+                                        <div class="space-y-1 w-full">
+                                            <div class="flex items-baseline gap-2">
+                                                <span class="font-bold text-gray-900 text-sm">OpenClaw Agent</span>
+                                                <span class="text-xs text-gray-400">08:00 AM</span>
+                                            </div>
+                                            <div class="bg-white p-3 rounded-r-xl rounded-bl-xl border border-gray-200 shadow-sm">
+                                                <p class="font-bold text-gray-800 text-sm mb-2">おはようございます！今日のAIトレンドです ☕</p>
+                                                <div class="pl-3 border-l-2 border-indigo-400 space-y-2 text-xs text-gray-600">
+                                                    <p><span class="font-bold text-gray-800">1. 新型LLMのベンチマーク公開</span><br>GPT-5クラスのモデルが複数テストされ、推論速度が従来の2倍に向上したとの報告があります。</p>
+                                                    <p><span class="font-bold text-gray-800">2. 自律型エージェントの企業導入が加速</span><br>OpenClawのオープンソース化に伴い、金融機関でのPoC（概念実証）が急増中。</p>
+                                                </div>
+                                                <div class="mt-2 text-xs text-blue-500 hover:underline cursor-pointer">詳細のソースリンクを見る</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- タブ2: サーバー管理 -->
+                    <div id="tab-2" class="tab-content hidden animate-fade-in grid md:grid-cols-5 gap-6 items-center">
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="inline-block bg-purple-100 text-purple-700 font-bold px-3 py-1 rounded-full text-xs mb-2">リモート監視・操作</div>
+                            <h4 class="text-2xl font-bold text-gray-900">自然言語のチャットで<br>サーバーの復旧を指示</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                外出先でサーバーの障害アラートを受け取った際、PCを開く必要はありません。スマホのTelegram等からエージェントに「Nginxのログを確認して」「プロセスを再起動して」と指示するだけで、安全にシェルコマンドを実行・対応してくれます。
+                            </p>
+                        </div>
+                        <div class="md:col-span-3">
+                            <!-- モックアップ: ターミナル・チャット UI -->
+                            <div class="bg-gray-900 border border-gray-800 rounded-xl shadow-2xl flex flex-col overflow-hidden h-72 font-mono">
+                                <div class="bg-black/50 text-gray-400 px-4 py-2 flex items-center justify-between text-xs border-b border-gray-800">
+                                    <div class="flex gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500/80"></span><span class="w-3 h-3 rounded-full bg-yellow-500/80"></span><span class="w-3 h-3 rounded-full bg-green-500/80"></span></div>
+                                    <span>Telegram > OpenClaw_Bot</span>
+                                </div>
+                                <div class="p-4 flex-1 space-y-3 text-sm overflow-y-auto hide-scrollbar">
+                                    <div class="text-right">
+                                        <div class="inline-block bg-blue-600 text-white px-3 py-2 rounded-t-xl rounded-bl-xl shadow-sm text-left">
+                                            Webサーバーの調子が悪いみたい。<br>Nginxのステータス見て。
+                                        </div>
+                                    </div>
+                                    <div class="text-left flex gap-2">
+                                        <div class="mt-1"><i class="fa-solid fa-robot text-green-400"></i></div>
+                                        <div class="space-y-1">
+                                            <div class="text-gray-400 text-[11px] flex items-center gap-1"><i class="fa-solid fa-terminal"></i> 実行中: `systemctl status nginx`</div>
+                                            <div class="inline-block bg-gray-800 text-gray-200 border border-gray-700 px-3 py-2 rounded-t-xl rounded-br-xl shadow-sm text-xs leading-relaxed">
+                                                Nginxのステータスは <span class="text-red-400 font-bold">failed</span> になっています。<br>ポート80が競合しているようです。再起動を試みますか？
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="inline-block bg-blue-600 text-white px-3 py-2 rounded-t-xl rounded-bl-xl shadow-sm">
+                                            原因のプロセスをキルして再起動して！
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- タブ3: 開発アシスタント -->
+                    <div id="tab-3" class="tab-content hidden animate-fade-in grid md:grid-cols-5 gap-6 items-center">
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="inline-block bg-yellow-100 text-yellow-700 font-bold px-3 py-1 rounded-full text-xs mb-2">自律的メンテナンス</div>
+                            <h4 class="text-2xl font-bold text-gray-900">深夜の自律的な<br>コード保守とPR作成</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                あなたが寝ている間も、サーバー上のOpenClawがCronジョブで自動起動。古くなったライブラリのアップデートからテスト実行、発生したエラーの自律的なコード修正まで完結し、朝までにGitHubのPull Requestを作成して通知します。
+                            </p>
+                        </div>
+                        <div class="md:col-span-3">
+                            <!-- モックアップ: GitHub PR & 通知 UI -->
+                            <div class="bg-gray-50 border border-gray-200 rounded-xl shadow-inner flex flex-col overflow-hidden h-72 relative">
+                                <div class="bg-white p-3 border-b border-gray-200 flex items-center gap-2 text-sm">
+                                    <i class="fa-brands fa-github text-lg"></i>
+                                    <span class="font-bold text-gray-800">your-org / web-app</span>
+                                </div>
+                                <div class="p-4 flex-1 overflow-y-auto hide-scrollbar relative">
+                                    <div class="flex items-start gap-3 mb-4">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-sm"><i class="fa-solid fa-robot"></i></div>
+                                        <div>
+                                            <h5 class="font-bold text-gray-900 text-[13px] leading-tight">Bump dependencies & Auto-fix breaking changes</h5>
+                                            <div class="flex items-center gap-2 mt-1.5">
+                                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold border border-green-200"><i class="fa-solid fa-code-merge"></i> Open</span>
+                                                <span class="text-[11px] text-gray-500">OpenClaw Agent wants to merge 3 commits into `main`</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm mb-3 ml-11 relative">
+                                        <!-- 吹き出しのしっぽ -->
+                                        <div class="absolute -left-2 top-3 w-3 h-3 bg-white border-l border-t border-gray-200 transform -rotate-45"></div>
+                                        
+                                        <p class="text-xs text-gray-800 font-semibold mb-2">🤖 Weekly automated maintenance completed.</p>
+                                        <ul class="text-[11px] text-gray-600 space-y-1.5 list-disc list-inside bg-gray-50 p-2 rounded font-mono">
+                                            <li>Updated `react` from 18.2.0 to 19.0.0</li>
+                                            <li><span class="text-red-500 font-bold">Failed:</span> Type error detected after update.</li>
+                                            <li><span class="text-green-500 font-bold">Auto-fixed:</span> Refactored deprecated hooks in 4 files.</li>
+                                            <li><i class="fa-solid fa-check text-green-500"></i> Tests passed automatically.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- 通知ポップアップ (Slack風) -->
+                                <div class="absolute bottom-3 right-3 bg-white border border-gray-200 shadow-xl rounded-lg p-3 w-56 animate-fade-in z-10" style="animation-delay: 0.2s;">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <i class="fa-brands fa-slack text-indigo-700"></i>
+                                        <span class="text-[11px] font-bold text-gray-800"># dev-alerts</span>
+                                        <span class="text-[10px] text-gray-400 ml-auto">04:30 AM</span>
+                                    </div>
+                                    <p class="text-[11px] text-gray-600 leading-tight">
+                                        <span class="font-bold text-gray-800">@here</span> 定期保守タスク完了。依存パッケージの更新と互換性エラーの自動修正を行い、PRを作成しました。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- タブ4: SNS運用 -->
+                    <div id="tab-4" class="tab-content hidden animate-fade-in grid md:grid-cols-5 gap-6 items-center">
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="inline-block bg-pink-100 text-pink-700 font-bold px-3 py-1 rounded-full text-xs mb-2">コンテンツ作成自動化</div>
+                            <h4 class="text-2xl font-bold text-gray-900">複数パターンの投稿を<br>自動生成・下書き</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                プロダクトのリリースノートやブログ記事のURLを渡すだけで、Twitter(X)用、LinkedIn用などの文字数やトーンに合わせた投稿文を自動作成。「絵文字多めで」「真面目なトーンで」といった細かな調整も可能です。
+                            </p>
+                        </div>
+                        <div class="md:col-span-3">
+                            <!-- モックアップ: SNSダッシュボード UI -->
+                            <div class="bg-gray-100 border border-gray-200 rounded-xl shadow-inner flex flex-col overflow-hidden h-72">
+                                <div class="bg-white p-3 border-b border-gray-200 font-bold text-gray-800 flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2"><i class="fa-brands fa-x-twitter"></i> 投稿下書き一覧</div>
+                                    <span class="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full"><i class="fa-solid fa-check"></i> 3件生成完了</span>
+                                </div>
+                                <div class="p-4 space-y-3 overflow-y-auto hide-scrollbar">
+                                    <!-- Post 1 -->
+                                    <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 relative group hover:border-blue-300 transition-colors">
+                                        <span class="absolute top-3 right-3 text-[10px] bg-blue-50 text-blue-500 px-2 py-0.5 rounded border border-blue-100"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Draft</span>
+                                        <div class="flex gap-2 items-center mb-2">
+                                            <div class="w-6 h-6 rounded-full bg-gray-200"></div>
+                                            <div>
+                                                <p class="text-xs font-bold text-gray-900">Your Account <span class="text-gray-400 font-normal">@account_name</span></p>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-800 text-xs leading-relaxed mb-2">
+                                            🔥 OpenClaw v2.0がリリースされました！ローカル実行速度が10倍になり、待望のiOSネイティブサポートも追加されています。<br><br>プライバシーを保ったまま、スマホから最強のエージェントを操作できます。<br>👇 詳細なリリースノートはこちら<br>[link] #OpenSource #AI
+                                        </p>
+                                        <div class="flex gap-4 text-gray-400 text-xs">
+                                            <span class="hover:text-blue-500 cursor-pointer"><i class="fa-regular fa-comment"></i></span>
+                                            <span class="hover:text-green-500 cursor-pointer"><i class="fa-solid fa-retweet"></i></span>
+                                            <span class="hover:text-red-500 cursor-pointer"><i class="fa-regular fa-heart"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- 4. セキュリティリスク -->
+        <section class="bg-white rounded-2xl shadow-lg border border-red-200 overflow-hidden">
+            <!-- Alert Header -->
+            <div class="bg-red-50 border-b border-red-200 p-6 flex flex-col md:flex-row items-center gap-4">
+                <div class="bg-red-100 text-red-600 p-4 rounded-full flex-shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-red-800 mb-1">深刻なセキュリティリスク</h2>
+                    <p class="text-red-700 font-medium text-sm md:text-base">爆発的な普及に伴い、多数の脆弱性が報告されています。社内導入を検討する際は以下の点に厳重な注意が必要です。</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 grid md:grid-cols-2 gap-8">
+                <!-- 発見された脆弱性 -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">主なインシデント・脆弱性</h3>
+                    <div class="space-y-3">
+                        <div class="bg-red-50/50 p-3 rounded border border-red-100 flex items-start gap-3">
+                            <i class="fa-solid fa-bug text-red-500 mt-1"></i>
+                            <div>
+                                <span class="font-bold text-gray-800 block text-sm">ClawJacked脆弱性</span>
+                                <span class="text-xs text-gray-600">WebSocket経由でローカルインスタンスを乗っ取られる危険性</span>
+                            </div>
+                        </div>
+                        <div class="bg-red-50/50 p-3 rounded border border-red-100 flex items-start gap-3">
+                            <i class="fa-solid fa-bolt text-red-500 mt-1"></i>
+                            <div>
+                                <span class="font-bold text-gray-800 block text-sm">ワンクリックRCE (CVE-2026-25253)</span>
+                                <span class="text-xs text-gray-600">悪意あるリンクをクリックするだけでリモートコード実行が可能</span>
+                            </div>
+                        </div>
+                        <div class="bg-red-50/50 p-3 rounded border border-red-100 flex items-start gap-3">
+                            <i class="fa-solid fa-skull-crossbones text-red-500 mt-1"></i>
+                            <div>
+                                <span class="font-bold text-gray-800 block text-sm">悪意あるスキルの流通</span>
+                                <span class="text-xs text-gray-600">ClawHub上で824件以上（全体の約20%）のマルウェア（AMOS等）を発見</span>
+                            </div>
+                        </div>
+                        <div class="bg-red-50/50 p-3 rounded border border-red-100 flex items-start gap-3">
+                            <i class="fa-solid fa-globe text-red-500 mt-1"></i>
+                            <div>
+                                <span class="font-bold text-gray-800 block text-sm">無防備な露出</span>
+                                <span class="text-xs text-gray-600">42,000件以上のインスタンスがインターネットに公開された状態</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 企業の対応 -->
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">大手企業・政府の対応状況</h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <span class="font-bold text-gray-800">Meta</span>
+                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">社内全面禁止</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <span class="font-bold text-gray-800">Naver</span>
+                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200">全面禁止</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <span class="font-bold text-gray-800">Kakao</span>
+                            <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200">業務端末制限</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <span class="font-bold text-gray-800">中国 MIIT</span>
+                            <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold border border-orange-200">監査推奨・インストール警告</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 今後の動向 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-compass text-blue-500"></i> 今後の動向
+            </h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 bg-blue-50 p-5 rounded-xl border border-blue-100">
+                    <div class="text-blue-600 mb-2"><i class="fa-solid fa-building-ngo text-2xl"></i></div>
+                    <h3 class="font-bold text-gray-900 mb-1">独立財団化</h3>
+                    <p class="text-sm text-gray-600">501(c)(3)オープンソース財団への移管が完了。OpenAIが財政スポンサーとして支援。</p>
+                </div>
+                <div class="flex-1 bg-blue-50 p-5 rounded-xl border border-blue-100">
+                    <div class="text-blue-600 mb-2"><i class="fa-solid fa-map-location-dot text-2xl"></i></div>
+                    <h3 class="font-bold text-gray-900 mb-1">ロードマップ</h3>
+                    <p class="text-sm text-gray-600">2026年2月17日に公式ロードマップ「VISION.md」が公開され、今後の方向性が明示。</p>
+                </div>
+                <div class="flex-1 bg-blue-50 p-5 rounded-xl border border-blue-100">
+                    <div class="text-blue-600 mb-2"><i class="fa-solid fa-users-gear text-2xl"></i></div>
+                    <h3 class="font-bold text-gray-900 mb-1">ガバナンス</h3>
+                    <p class="text-sm text-gray-600">今後もMITライセンスを維持し、コミュニティ主導による開発体制を継続する方針。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 参考リンク集 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-link text-gray-400"></i> 参考リンク集
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 公式 -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">公式・動画</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://openclaw.ai" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> 公式サイト</a></li>
+                        <li><a href="https://docs.openclaw.ai/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> 公式ドキュメント</a></li>
+                        <li><a href="https://github.com/openclaw/openclaw" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-brands fa-github text-xs"></i> GitHub</a></li>
+                        <li><a href="https://www.star-history.com/openclaw/openclaw" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-chart-line text-xs"></i> Star History</a></li>
+                        <li><a href="https://lexfridman.com/peter-steinberger/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-brands fa-youtube text-xs"></i> Lex Fridman Podcast</a></li>
+                    </ul>
+                </div>
+
+                <!-- 英語 -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">英語記事</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://en.wikipedia.org/wiki/OpenClaw" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-brands fa-wikipedia-w text-xs"></i> Wikipedia</a></li>
+                        <li><a href="https://www.digitalocean.com/resources/articles/what-is-openclaw" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-file-lines text-xs"></i> DigitalOcean</a></li>
+                        <li><a href="https://www.kdnuggets.com/openclaw-explained-the-free-ai-agent-tool-going-viral-already-in-2026" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-file-lines text-xs"></i> KDnuggets</a></li>
+                        <li><a href="https://thenewstack.io/openclaw-github-stars-security/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-file-lines text-xs"></i> The New Stack</a></li>
+                        <li><a href="https://medium.com/@aftab001x/openclaw-just-beat-reacts-10-year-github-record-in-60-days-now-nobody-knows-what-to-do-with-it-937b8f370507" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-brands fa-medium text-xs"></i> Medium</a></li>
+                    </ul>
+                </div>
+
+                <!-- 日本語 -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">日本語記事</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://www.technologyreview.jp/s/377833/is-a-secure-ai-assistant-possible/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-newspaper text-xs"></i> MIT Tech Review</a></li>
+                        <li><a href="https://gmo-cybersecurity.com/blog/openclaw-security-essay-blog/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-newspaper text-xs"></i> GMOサイバーセキュリティ</a></li>
+                        <li><a href="https://dev.classmethod.jp/articles/openclaw-closed-loop/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-newspaper text-xs"></i> DevelopersIO</a></li>
+                        <li><a href="https://www.trendmicro.com/ja_jp/research/26/b/what-openclaw-reveals-about-agentic-assistants.html" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-newspaper text-xs"></i> トレンドマイクロ (1)</a></li>
+                        <li><a href="https://www.trendmicro.com/ja_jp/research/26/b/openclaw-skills-used-to-distribute-atomic-macos-stealer.html" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-newspaper text-xs"></i> トレンドマイクロ (2)</a></li>
+                        <li><a href="https://www.cio.com/article/4135005/" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-newspaper text-xs"></i> CIO Japan</a></li>
+                    </ul>
+                </div>
+
+                <!-- セキュリティ -->
+                <div>
+                    <h3 class="text-sm font-bold text-red-500 uppercase tracking-wider mb-3">セキュリティ関連</h3>
+                    <ul class="space-y-2 border-l-2 border-red-200 pl-3">
+                        <li><a href="https://thehackernews.com/2026/02/clawjacked-flaw-lets-malicious-sites.html" target="_blank" class="text-sm text-red-600 hover:text-red-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-shield-halved text-xs"></i> ClawJacked脆弱性</a></li>
+                        <li><a href="https://thehackernews.com/2026/02/openclaw-bug-enables-one-click-remote.html" target="_blank" class="text-sm text-red-600 hover:text-red-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-shield-halved text-xs"></i> ワンクリックRCE</a></li>
+                        <li><a href="https://thehackernews.com/2026/02/researchers-find-341-malicious-clawhub.html" target="_blank" class="text-sm text-red-600 hover:text-red-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-shield-halved text-xs"></i> 悪意あるスキル</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            // 全てのコンテンツを非表示にする
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                // アニメーションをリセット
+                content.classList.remove('animate-fade-in');
+            });
+
+            // 選択されたコンテンツを表示する
+            const activeContent = document.getElementById(tabId);
+            activeContent.classList.remove('hidden');
+            // リフローを強制してアニメーションを再トリガー
+            void activeContent.offsetWidth; 
+            activeContent.classList.add('animate-fade-in');
+
+            // 全てのタブを「非アクティブ」スタイルにする
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-50', 'border', 'border-gray-200');
+            });
+
+            // クリックされたタブを「アクティブ」スタイルにする
+            const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+            activeBtn.classList.remove('bg-white', 'text-gray-600', 'hover:bg-gray-50', 'border', 'border-gray-200');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        }
+    </script>
+</body>
+</html>

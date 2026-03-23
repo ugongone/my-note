@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAGアプリ - ユーザーグループ別アクセス制御設計</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+    background: #f9fafb;
+    color: #1f2937;
+    line-height: 1.7;
+  }
+
+  /* ヘッダー */
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header .inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+  }
+  header h1 span { color: #6b7280; font-weight: 400; }
+
+  /* メイン */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* セクション */
+  section { margin-bottom: 48px; }
+  section h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  section h2 .num {
+    display: inline-block;
+    background: #2563eb;
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-size: 14px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* カード */
+  .card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #374151;
+  }
+
+  /* 概念図：グループボックス */
+  .group-box {
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .group-box.blue   { border-color: #3b82f6; background: #eff6ff; }
+  .group-box.green  { border-color: #10b981; background: #ecfdf5; }
+  .group-box.purple { border-color: #8b5cf6; background: #f5f3ff; }
+  .group-box.amber  { border-color: #f59e0b; background: #fffbeb; }
+  .group-box .group-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .group-box.blue .group-title   { color: #1d4ed8; }
+  .group-box.green .group-title  { color: #047857; }
+  .group-box.purple .group-title { color: #6d28d9; }
+  .group-box.amber .group-title  { color: #b45309; }
+  .group-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .group-row .members,
+  .group-row .docs {
+    flex: 1;
+    min-width: 200px;
+  }
+  .group-row .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    margin-bottom: 6px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin: 2px 4px 2px 0;
+    font-weight: 500;
+  }
+  .tag.user { background: #f3f4f6; color: #374151; }
+  .tag.doc  { background: #dbeafe; color: #1e40af; }
+  .tag.doc-green { background: #d1fae5; color: #065f46; }
+  .tag.doc-shared {
+    background: linear-gradient(135deg, #dbeafe 50%, #d1fae5 50%);
+    color: #1e3a5f;
+    border: 1px dashed #9ca3af;
+  }
+  .tag.doc-public { background: #fef3c7; color: #92400e; }
+
+  /* 紐付け図（中央グループ型） */
+  .relation-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 20px 0;
+  }
+  .relation-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .relation-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 0;
+  }
+  .relation-connector .conn-line {
+    width: 2px;
+    height: 16px;
+    background: #d1d5db;
+  }
+  .rel-box {
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 24px;
+    text-align: center;
+    background: #fff;
+    min-width: 140px;
+  }
+  .rel-box.primary { border-color: #3b82f6; background: #eff6ff; }
+  .rel-box .rel-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .rel-box .rel-desc {
+    font-size: 11px;
+    color: #6b7280;
+  }
+  .junction-label {
+    font-size: 11px;
+    color: #6b7280;
+    background: #f3f4f6;
+    border: 1px dashed #d1d5db;
+    border-radius: 6px;
+    padding: 2px 10px;
+  }
+
+  /* 検索フロー */
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flow-step {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    min-width: 130px;
+    flex: 1;
+    max-width: 180px;
+  }
+  .flow-step .step-num {
+    display: inline-block;
+    background: #2563eb;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .flow-step .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+  }
+  .flow-step .step-desc {
+    font-size: 11px;
+    color: #6b7280;
+  }
+  .flow-step.highlight {
+    border-color: #3b82f6;
+    background: #eff6ff;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    color: #9ca3af;
+    font-size: 18px;
+  }
+
+  /* publicフラグ説明 */
+  .logic-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 2;
+  }
+  .logic-box .keyword { color: #2563eb; font-weight: 600; }
+  .logic-box .comment { color: #9ca3af; }
+
+  /* 検索結果テーブル */
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .result-table th {
+    background: #f3f4f6;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  .result-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .result-table tr:last-child td { border-bottom: none; }
+  .hit  { color: #059669; font-weight: 600; }
+  .miss { color: #dc2626; font-weight: 600; }
+  .reason { font-size: 12px; color: #6b7280; }
+
+  /* 補足 */
+  .note {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #92400e;
+    margin-top: 16px;
+  }
+  .note strong { font-weight: 700; }
+
+  /* レスポンシブ */
+  @media (max-width: 640px) {
+    .flow { flex-direction: column; align-items: center; }
+    .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
+    .relation-center { padding: 12px 0; }
+  }
+
+  /* フッター */
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: #9ca3af;
+    border-top: 1px solid #e5e7eb;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <h1>RAGアプリ <span>| ユーザーグループ別アクセス制御設計</span></h1>
+  </div>
+</header>
+
+<main>
+
+  <!-- セクション1: 概念図 -->
+  <section>
+    <h2><span class="num">1</span>基本コンセプト</h2>
+    <p style="margin-bottom:20px; color:#6b7280; font-size:14px;">
+      グループ = ドキュメントの見える範囲を決める箱。ユーザーは複数のグループに所属でき、ドキュメントも複数のグループに公開できる。
+    </p>
+
+    <div class="group-box blue">
+      <div class="group-title">🔵 グループA：営業部</div>
+      <div class="group-row">
+        <div class="members">
+          <div class="label">メンバー</div>
+          <span class="tag user">田中</span>
+          <span class="tag user">佐藤</span>
+          <span class="tag user">鈴木</span>
+        </div>
+        <div class="docs">
+          <div class="label">閲覧可能ドキュメント</div>
+          <span class="tag doc">営業マニュアル</span>
+          <span class="tag doc">価格表</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-box green">
+      <div class="group-title">🟢 グループB：開発部</div>
+      <div class="group-row">
+        <div class="members">
+          <div class="label">メンバー</div>
+          <span class="tag user">山田</span>
+          <span class="tag user">高橋</span>
+          <span class="tag user">佐藤</span>
+        </div>
+        <div class="docs">
+          <div class="label">閲覧可能ドキュメント</div>
+          <span class="tag doc-green">API仕様書</span>
+          <span class="tag doc-green">設計書</span>
+        </div>
+      </div>
+      <div class="note" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46; margin-top:12px;">
+        <strong>佐藤</strong>は営業部と開発部の両方に所属 → 両グループのドキュメントが見える
+      </div>
+    </div>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+      <div class="group-box purple" style="flex:1; min-width:280px;">
+        <div class="group-title">🟣 グループC：経営層</div>
+        <div class="group-row">
+          <div class="members">
+            <div class="label">メンバー</div>
+            <span class="tag user">社長</span>
+            <span class="tag user">取締役</span>
+          </div>
+          <div class="docs">
+            <div class="label">閲覧可能ドキュメント</div>
+            <span class="tag" style="background:#ede9fe; color:#5b21b6;">経営会議議事録</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="group-box amber" style="flex:1; min-width:280px;">
+        <div class="group-title">🟡 全員公開ドキュメント</div>
+        <div class="group-row">
+          <div class="docs">
+            <div class="label">グループに関係なく全員が閲覧可能</div>
+            <span class="tag doc-public">就業規則</span>
+            <span class="tag doc-public">社内FAQ</span>
+            <span class="tag doc-public">お知らせ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 複数グループに公開 -->
+    <div class="card" style="margin-top:16px;">
+      <h3>1つのドキュメントを複数グループに公開する例</h3>
+      <div style="display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; padding:12px 0;">
+        <span class="tag doc">営業部</span>
+        <span style="color:#9ca3af;">←</span>
+        <span class="tag doc-shared" style="font-size:14px; padding:8px 16px;">📄 セキュリティガイドライン</span>
+        <span style="color:#9ca3af;">→</span>
+        <span class="tag doc-green">開発部</span>
+      </div>
+      <p style="text-align:center; font-size:12px; color:#6b7280;">営業部・開発部の両方のメンバーが閲覧できる</p>
+    </div>
+  </section>
+
+  <!-- セクション2: 紐付け構造 -->
+  <section>
+    <h2><span class="num">2</span>データの紐付け構造</h2>
+
+    <div class="card">
+      <h3>3つの多対多関係</h3>
+      <div class="relation-center">
+        <!-- ユーザー -->
+        <div class="rel-box">
+          <div class="rel-title">ユーザー</div>
+          <div class="rel-desc">田中、佐藤、山田...</div>
+        </div>
+        <!-- 接続線 -->
+        <div class="relation-connector">
+          <div class="conn-line"></div>
+          <span class="junction-label">所属（N : N）</span>
+          <div class="conn-line"></div>
+        </div>
+        <!-- グループ（中心） -->
+        <div class="rel-box primary">
+          <div class="rel-title">グループ</div>
+          <div class="rel-desc">営業部、開発部、経営層...</div>
+        </div>
+        <!-- 接続線 -->
+        <div class="relation-connector">
+          <div class="conn-line"></div>
+          <span class="junction-label">公開設定（N : N）</span>
+          <div class="conn-line"></div>
+        </div>
+        <!-- ドキュメント -->
+        <div class="rel-box">
+          <div class="rel-title">ドキュメント</div>
+          <div class="rel-desc">営業マニュアル、API仕様書...</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>関係</th>
+              <th>意味</th>
+              <th>例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ユーザー × グループ</strong></td>
+              <td>誰がどのグループに所属するか</td>
+              <td>佐藤 → 営業部, 開発部</td>
+            </tr>
+            <tr>
+              <td><strong>グループ × ドキュメント</strong></td>
+              <td>どのグループにドキュメントを公開するか</td>
+              <td>営業マニュアル → 営業部</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note" style="margin-top:16px;">
+        <strong>公開フラグ（public）:</strong> ドキュメントに <code>public: true</code> を設定すると、グループ紐付けに関係なく全員に公開される。
+      </div>
+    </div>
+  </section>
+
+  <!-- セクション3: 検索ヒット判定ロジック -->
+  <section>
+    <h2><span class="num">3</span>検索ヒット判定ロジック</h2>
+
+    <div class="card">
+      <h3>ドキュメントが検索にヒットする条件</h3>
+      <div class="logic-box">
+        <span class="comment">// ドキュメントが検索結果に含まれる条件</span><br>
+        <span class="keyword">IF</span> ドキュメント.public == <span class="keyword">true</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ 全員にヒット（グループ不問）</span><br><br>
+        <span class="keyword">OR</span><br><br>
+        <span class="keyword">IF</span> ドキュメントの公開先グループ <span class="keyword">∩</span> ユーザーの所属グループ <span class="keyword">≠ 空</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">→ 1つでも一致するグループがあればヒット</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- セクション4: 検索フロー -->
+  <section>
+    <h2><span class="num">4</span>検索フロー</h2>
+
+    <div class="card" style="padding:24px 16px;">
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div class="step-title">クエリ送信</div>
+          <div class="step-desc">ユーザーが質問を入力</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step highlight">
+          <div class="step-num">2</div>
+          <div class="step-title">認証・認可</div>
+          <div class="step-desc">ユーザーの所属グループを取得</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step highlight">
+          <div class="step-num">3</div>
+          <div class="step-title">フィルタ付き検索</div>
+          <div class="step-desc">group_ids + public でベクトル検索</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div class="step-title">LLMで回答生成</div>
+          <div class="step-desc">該当チャンク + クエリ → 回答</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-num">5</div>
+          <div class="step-title">回答表示</div>
+          <div class="step-desc">ユーザーに回答を返却</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- セクション5: 具体例 -->
+  <section>
+    <h2><span class="num">5</span>具体例：誰に何が見えるか</h2>
+
+    <div class="card">
+      <h3>佐藤さん（営業部 + 開発部 所属）が検索した場合</h3>
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>ドキュメント</th>
+            <th>結果</th>
+            <th>理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>営業マニュアル</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">営業部メンバーだから</td>
+          </tr>
+          <tr>
+            <td>価格表</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">営業部メンバーだから</td>
+          </tr>
+          <tr>
+            <td>API仕様書</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">開発部メンバーだから</td>
+          </tr>
+          <tr>
+            <td>設計書</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">開発部メンバーだから</td>
+          </tr>
+          <tr>
+            <td>就業規則</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">public: true（全員公開）</td>
+          </tr>
+          <tr>
+            <td>経営会議議事録</td>
+            <td><span class="miss">❌ 見えない</span></td>
+            <td class="reason">経営層グループに未所属</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>山田さん（開発部のみ）が同じ検索をした場合</h3>
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>ドキュメント</th>
+            <th>結果</th>
+            <th>理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>営業マニュアル</td>
+            <td><span class="miss">❌ 見えない</span></td>
+            <td class="reason">営業部に未所属</td>
+          </tr>
+          <tr>
+            <td>API仕様書</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">開発部メンバーだから</td>
+          </tr>
+          <tr>
+            <td>設計書</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">開発部メンバーだから</td>
+          </tr>
+          <tr>
+            <td>就業規則</td>
+            <td><span class="hit">✅ ヒット</span></td>
+            <td class="reason">public: true（全員公開）</td>
+          </tr>
+          <tr>
+            <td>経営会議議事録</td>
+            <td><span class="miss">❌ 見えない</span></td>
+            <td class="reason">経営層グループに未所属</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+</main>
+
+<footer>
+  RAGアプリ ユーザーグループ別アクセス制御設計 - 2026/03
+</footer>
+
+</body>
+</html>

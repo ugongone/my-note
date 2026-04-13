@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Glasswing — Claude Mythosが突きつけるサイバーセキュリティの転換点</title>
+  <style>
+    :root {
+      --bg: #f8f8f6; --surface: #ffffff; --border: #e8e6e3;
+      --text: #1a1a1a; --text2: #6b6560;
+      --accent: #2563eb; --accent-bg: #eef4ff;
+      --green: #0d9667; --green-bg: #ecfdf5;
+      --purple: #7c3aed; --purple-bg: #f5f3ff;
+      --red: #dc2626; --red-bg: #fef2f2;
+      --r: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.8; padding: 0 20px;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 0 72px; }
+    .back { font-size: 0.8rem; color: var(--accent); text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+
+    /* Header */
+    .article-header { margin: 24px 0 40px; }
+    .article-header .meta { font-size: 0.8rem; color: var(--text2); margin-bottom: 10px; }
+    .article-header .meta .tag {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 100px; background: var(--red-bg); color: var(--red);
+      margin-left: 8px;
+    }
+    .article-header h1 { font-size: 1.55rem; font-weight: 800; line-height: 1.4; margin-bottom: 14px; }
+    .article-header .lead {
+      font-size: 0.95rem; color: var(--text2); line-height: 1.9;
+      padding-bottom: 28px; border-bottom: 1px solid var(--border);
+    }
+
+    /* Sections */
+    h2 {
+      font-size: 1.15rem; font-weight: 800; margin: 44px 0 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    h2 .icon { font-size: 1.1rem; }
+    h3 { font-size: 0.98rem; font-weight: 700; margin: 28px 0 10px; color: var(--text); }
+    p { font-size: 0.92rem; margin-bottom: 14px; color: var(--text); }
+    p.sub { color: var(--text2); }
+
+    /* Benchmark Table */
+    .bench-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden; margin: 20px 0;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { background: var(--bg); padding: 10px 16px; text-align: left; font-weight: 600; font-size: 0.78rem; color: var(--text2); }
+    td { padding: 10px 16px; border-top: 1px solid var(--border); }
+    th:nth-child(2), th:nth-child(3), td:nth-child(2), td:nth-child(3) { text-align: right; font-variant-numeric: tabular-nums; }
+    .row-hl td { background: var(--accent-bg); font-weight: 700; }
+
+    /* Stat Cards */
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin: 22px 0;
+    }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 18px; text-align: center;
+    }
+    .stat-val { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+    .stat-val.red { color: var(--red); }
+    .stat-val.accent { color: var(--accent); }
+    .stat-val.green { color: var(--green); }
+    .stat-label { font-size: 0.72rem; color: var(--text2); margin-top: 4px; }
+
+    /* Info Box */
+    .info-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 22px 26px; margin: 22px 0;
+    }
+    .info-box h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 12px; }
+    .partner-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 6px;
+    }
+    .partner {
+      font-size: 0.82rem; color: var(--text2); padding: 6px 10px;
+      background: var(--bg); border-radius: 6px; text-align: center;
+    }
+
+    /* Blockquote */
+    blockquote {
+      border-left: 3px solid var(--accent); padding: 14px 20px;
+      margin: 22px 0; background: var(--accent-bg); border-radius: 0 var(--r) var(--r) 0;
+      font-size: 0.88rem; color: var(--text2); font-style: italic;
+    }
+    blockquote cite { display: block; margin-top: 8px; font-size: 0.78rem; font-style: normal; }
+
+    /* Roadmap */
+    .roadmap {
+      margin: 22px 0; padding: 0; list-style: none;
+      border-left: 3px solid var(--accent);
+    }
+    .roadmap li {
+      padding: 12px 0 12px 24px; font-size: 0.9rem; position: relative;
+    }
+    .roadmap li::before {
+      content: ""; position: absolute; left: -8px; top: 18px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--accent); border: 2px solid var(--surface);
+    }
+    .roadmap li strong { color: var(--text); }
+
+    /* Sources */
+    .sources-section { margin-top: 52px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .sources-section h2 { font-size: 0.95rem; margin-top: 0; border: none; }
+    .sources-section ul { list-style: none; }
+    .sources-section li { font-size: 0.82rem; padding: 5px 0; }
+    .sources-section a { color: var(--accent); text-decoration: none; }
+    .sources-section a:hover { text-decoration: underline; }
+    .stag { font-size: 0.62rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+    .stag.official { background: var(--green-bg); color: var(--green); }
+    .stag.media { background: var(--purple-bg); color: var(--purple); }
+
+    footer { margin-top: 48px; text-align: center; }
+    footer a {
+      font-size: 0.82rem; color: var(--accent); text-decoration: none;
+      padding: 8px 24px; border: 1.5px solid var(--accent); border-radius: 100px;
+      transition: all 0.15s;
+    }
+    footer a:hover { background: var(--accent); color: #fff; }
+
+    @media (max-width: 600px) {
+      .article-header h1 { font-size: 1.3rem; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .partner-grid { grid-template-columns: 1fr 1fr; }
+      th, td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="01-メインニュース.html" class="back">← メインニュースに戻る</a>
+
+  <div class="article-header">
+    <div class="meta">2026/04/07 <span class="tag">セキュリティ</span></div>
+    <h1>Project Glasswing — Claude Mythosが突きつけるサイバーセキュリティの転換点</h1>
+    <p class="lead">「危険すぎて一般公開できない」モデルを、限られたパートナーにだけ渡す。この前例のない対応は、AIの能力がサイバーセキュリティの攻防バランスを根本的に変えつつあることを示している。</p>
+  </div>
+
+  <h2><span class="icon">📊</span> Claude Mythosの性能 — Opus 4.6との比較</h2>
+
+  <p class="sub">Mythos PreviewはAnthropicの現行最高モデルOpus 4.6を全領域で大幅に上回る。特にコーディングとサイバーセキュリティでの飛躍が際立つ。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val red">93.9%</div><div class="stat-label">SWE-bench Verified<br>（Opus: 80.8%）</div></div>
+    <div class="stat"><div class="stat-val red">77.8%</div><div class="stat-label">SWE-bench Pro<br>（Opus: 53.4%）</div></div>
+    <div class="stat"><div class="stat-val red">83.1%</div><div class="stat-label">CyberGym 脆弱性再現<br>（Opus: 66.6%）</div></div>
+    <div class="stat"><div class="stat-val red">97.6%</div><div class="stat-label">USAMO 2026 数学<br>（Opus: 42.3%）</div></div>
+  </div>
+
+  <div class="bench-wrap">
+    <table>
+      <thead><tr><th>ベンチマーク</th><th>Mythos</th><th>Opus 4.6</th></tr></thead>
+      <tbody>
+        <tr class="row-hl"><td>SWE-bench Verified</td><td>93.9%</td><td>80.8%</td></tr>
+        <tr><td>SWE-bench Pro</td><td>77.8%</td><td>53.4%</td></tr>
+        <tr><td>Terminal-Bench 2.0</td><td>82.0%</td><td>65.4%</td></tr>
+        <tr><td>SWE-bench Multimodal</td><td>59.0%</td><td>27.1%</td></tr>
+        <tr><td>SWE-bench Multilingual</td><td>87.3%</td><td>77.8%</td></tr>
+        <tr class="row-hl"><td>CyberGym（脆弱性再現）</td><td>83.1%</td><td>66.6%</td></tr>
+        <tr><td>USAMO 2026（数学）</td><td>97.6%</td><td>42.3%</td></tr>
+        <tr><td>GraphWalks（長文脈）</td><td>80.0%</td><td>38.7%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="sub">リーク文書では約10兆パラメータのMoEアーキテクチャ（コードネーム「Capybara」）と報じられているが、Anthropicは公式にパラメータ数を確認していない。USAMO 2026で55.3ポイント差は単なる改善ではなく、世代的な飛躍と言える。</p>
+
+  <h2><span class="icon">⚠️</span> なぜ「危険」なのか</h2>
+
+  <p>コーディング能力とサイバーセキュリティ能力は表裏一体。脆弱性を理解し修正できるモデルは、同時にそれを発見し悪用するポテンシャルも持つ。</p>
+
+  <blockquote>
+    「AIモデルは、ソフトウェアの脆弱性を発見・悪用する能力において、最も熟練した人間を除くすべての人間を上回るレベルに到達した」
+    <cite>— Anthropic, Project Glasswing公式ページ</cite>
+  </blockquote>
+
+  <p class="sub">実際にMythos Previewは数週間のテスト期間で<strong>すべての主要OSとWebブラウザ</strong>において数千件のゼロデイ脆弱性を発見済み。これらは既にメンテナに報告されパッチ済み。</p>
+
+  <h2><span class="icon">🤝</span> パートナーシップの構造</h2>
+
+  <div class="info-box">
+    <h4>ローンチパートナー 12組織</h4>
+    <div class="partner-grid">
+      <div class="partner">AWS</div>
+      <div class="partner">Anthropic</div>
+      <div class="partner">Apple</div>
+      <div class="partner">Broadcom</div>
+      <div class="partner">Cisco</div>
+      <div class="partner">CrowdStrike</div>
+      <div class="partner">Google</div>
+      <div class="partner">JPMorganChase</div>
+      <div class="partner">Linux Foundation</div>
+      <div class="partner">Microsoft</div>
+      <div class="partner">NVIDIA</div>
+      <div class="partner">Palo Alto Networks</div>
+    </div>
+  </div>
+
+  <p class="sub">Google・Microsoft・NVIDIAといった直接の競合も参加。サイバーセキュリティの脅威が競合関係を超える深刻さであることを物語っている。パートナーを含め約40組織がMythos Previewにアクセスし、自社システムとオープンソースコードの脆弱性を防御的にスキャンする。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val accent">$1億</div><div class="stat-label">利用クレジット提供</div></div>
+    <div class="stat"><div class="stat-val accent">$400万</div><div class="stat-label">OSS団体への寄付</div></div>
+    <div class="stat"><div class="stat-val accent">$25/$125</div><div class="stat-label">入力/出力 per 1M tokens</div></div>
+  </div>
+
+  <h2><span class="icon">🗓️</span> 一般公開の見通し</h2>
+
+  <p>Anthropicは「Mythos Previewを一般公開する予定はない」と明言。ただし最終目標はMythosクラスのモデルを安全にスケール展開することだとしている。</p>
+
+  <blockquote>
+    「今後リリースするClaude Opusモデルに新しいセーフガードを搭載し、Mythos Previewほどのリスクを伴わないモデルで改善・洗練を進める予定だ」
+    <cite>— Anthropic, Project Glasswing公式ページ</cite>
+  </blockquote>
+
+  <h3>ロードマップ</h3>
+  <ol class="roadmap">
+    <li><strong>現在:</strong> Project Glasswingで防御的にMythosを展開し、脆弱性を事前修正</li>
+    <li><strong>90日以内:</strong> 初期調査結果を公表（発見された脆弱性と緩和策）</li>
+    <li><strong>次期Opus:</strong> 新しいセーフガードを搭載してMythosクラス以外のモデルで試行</li>
+    <li><strong>将来:</strong> 安全性が確認されたらMythosクラスのモデルを広く展開</li>
+  </ol>
+
+  <p class="sub">具体的な時期は未定だが、少なくとも数ヶ月〜半年以上のセーフガード開発期間が必要になると考えられる。</p>
+
+  <h2><span class="icon">🔮</span> 攻防バランスの転換</h2>
+
+  <p>これまでサイバーセキュリティは「攻撃側が有利」な構造にあった。防御側は全脆弱性を塞ぐ必要があるが、攻撃側は1つ見つければよい。Mythosクラスのモデルはこの非対称性を<strong>両方向に</strong>加速させる。</p>
+
+  <p class="sub">Project Glasswingは「防御側に先手を打たせる」ための時間稼ぎ。類似能力のモデルが他社から登場するのは時間の問題であり、その前に重要インフラの脆弱性をできるだけ修正しておく戦略だ。Anthropicが米政府高官に「今年中に大規模サイバー攻撃の可能性を大幅に高める」と非公式に警告したとAxiosが報じている。</p>
+
+  <section class="sources-section">
+    <h2>情報ソース</h2>
+    <ul>
+      <li><a href="https://www.anthropic.com/glasswing">Project Glasswing: Securing critical software for the AI era — Anthropic</a> <span class="stag official">公式</span></li>
+      <li><a href="https://www.anthropic.com/project/glasswing">Project Glasswing — Anthropic</a> <span class="stag official">公式</span></li>
+      <li><a href="https://techcrunch.com/2026/04/07/anthropic-mythos-ai-model-preview-security/">Anthropic debuts preview of powerful new AI model Mythos — TechCrunch</a> <span class="stag media">メディア</span></li>
+      <li><a href="https://fortune.com/2026/04/07/anthropic-claude-mythos-model-project-glasswing-cybersecurity/">Anthropic is giving some firms access to Claude Mythos — Fortune</a> <span class="stag media">メディア</span></li>
+      <li><a href="https://daveshap.substack.com/p/project-glasswing-anthropic-has-crossed">Project Glasswing - Anthropic has crossed a line — David Shapiro</a> <span class="stag media">メディア</span></li>
+    </ul>
+  </section>
+
+  <footer><a href="01-メインニュース.html">← メインニュースに戻る</a></footer>
+</div>
+</body>
+</html>

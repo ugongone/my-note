@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLM-5.1 — オープンソースがクローズドモデルを超えた日</title>
+  <style>
+    :root {
+      --bg: #f8f8f6; --surface: #ffffff; --border: #e8e6e3;
+      --text: #1a1a1a; --text2: #6b6560;
+      --accent: #2563eb; --accent-bg: #eef4ff;
+      --green: #0d9667; --green-bg: #ecfdf5;
+      --purple: #7c3aed; --purple-bg: #f5f3ff;
+      --orange: #d97706; --orange-bg: #fffbeb;
+      --r: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.8; padding: 0 20px;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 0 72px; }
+    .back { font-size: 0.8rem; color: var(--accent); text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+
+    /* Header */
+    .article-header { margin: 24px 0 40px; }
+    .article-header .meta { font-size: 0.8rem; color: var(--text2); margin-bottom: 10px; }
+    .article-header .meta .tag {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 100px; background: var(--green-bg); color: var(--green);
+      margin-left: 8px;
+    }
+    .article-header h1 { font-size: 1.55rem; font-weight: 800; line-height: 1.4; margin-bottom: 14px; }
+    .article-header .lead {
+      font-size: 0.95rem; color: var(--text2); line-height: 1.9;
+      padding-bottom: 28px; border-bottom: 1px solid var(--border);
+    }
+
+    h2 { font-size: 1.15rem; font-weight: 800; margin: 44px 0 18px; display: flex; align-items: center; gap: 8px; }
+    h2 .icon { font-size: 1.1rem; }
+    h3 { font-size: 0.98rem; font-weight: 700; margin: 28px 0 10px; }
+    p { font-size: 0.92rem; margin-bottom: 14px; }
+    p.sub { color: var(--text2); }
+
+    /* Spec Card */
+    .spec-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 22px 26px; margin: 22px 0;
+    }
+    .spec-card h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 14px; }
+    .spec-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .spec-item {
+      font-size: 0.84rem; padding: 8px 12px;
+      background: var(--bg); border-radius: 8px;
+    }
+    .spec-item .label { font-weight: 700; color: var(--text); display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text2); margin-bottom: 2px; }
+    .spec-item .value { font-weight: 600; color: var(--text); }
+
+    /* Stats */
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin: 22px 0;
+    }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 18px; text-align: center;
+    }
+    .stat-val { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+    .stat-val.green { color: var(--green); }
+    .stat-val.accent { color: var(--accent); }
+    .stat-val.orange { color: var(--orange); }
+    .stat-label { font-size: 0.72rem; color: var(--text2); margin-top: 4px; }
+
+    /* Bench Table */
+    .bench-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden; margin: 20px 0;
+    }
+    .bench-wrap .bench-title {
+      font-size: 0.82rem; font-weight: 700; padding: 12px 16px;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { background: var(--bg); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 0.78rem; color: var(--text2); }
+    td { padding: 10px 14px; border-top: 1px solid var(--border); }
+    th:nth-child(n+2), td:nth-child(n+2) { text-align: right; font-variant-numeric: tabular-nums; }
+    .row-hl td { background: var(--green-bg); font-weight: 700; }
+
+    /* Blockquote */
+    blockquote {
+      border-left: 3px solid var(--green); padding: 14px 20px;
+      margin: 22px 0; background: var(--green-bg); border-radius: 0 var(--r) var(--r) 0;
+      font-size: 0.88rem; color: var(--text2); font-style: italic;
+    }
+    blockquote cite { display: block; margin-top: 8px; font-size: 0.78rem; font-style: normal; }
+
+    /* Reason cards */
+    .reasons {
+      display: grid; grid-template-columns: 1fr; gap: 14px; margin: 22px 0;
+    }
+    .reason {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px 24px;
+      border-left: 4px solid var(--accent);
+    }
+    .reason.obstacle { border-left-color: var(--orange); }
+    .reason.breakthrough { border-left-color: var(--green); }
+    .reason h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; }
+    .reason p { font-size: 0.86rem; color: var(--text2); margin-bottom: 0; }
+
+    /* Tool list */
+    .tool-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px; margin: 16px 0;
+    }
+    .tool-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 0.85rem; font-weight: 600; text-align: center;
+    }
+    .tool-chip.primary { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+    /* Sources */
+    .sources-section { margin-top: 52px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .sources-section h2 { font-size: 0.95rem; margin-top: 0; }
+    .sources-section ul { list-style: none; }
+    .sources-section li { font-size: 0.82rem; padding: 5px 0; }
+    .sources-section a { color: var(--accent); text-decoration: none; }
+    .sources-section a:hover { text-decoration: underline; }
+    .stag { font-size: 0.62rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+    .stag.official { background: var(--green-bg); color: var(--green); }
+    .stag.media { background: var(--purple-bg); color: var(--purple); }
+
+    footer { margin-top: 48px; text-align: center; }
+    footer a {
+      font-size: 0.82rem; color: var(--accent); text-decoration: none;
+      padding: 8px 24px; border: 1.5px solid var(--accent); border-radius: 100px;
+      transition: all 0.15s;
+    }
+    footer a:hover { background: var(--accent); color: #fff; }
+
+    @media (max-width: 600px) {
+      .article-header h1 { font-size: 1.3rem; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .spec-grid { grid-template-columns: 1fr; }
+      .tool-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="01-メインニュース.html" class="back">← メインニュースに戻る</a>
+
+  <div class="article-header">
+    <div class="meta">2026/04/07 <span class="tag">オープンソース</span></div>
+    <h1>GLM-5.1 — オープンソースがクローズドモデルを超えた日</h1>
+    <p class="lead">SWE-Bench Proでオープンソース初のトップスコア。NVIDIA GPUなしで訓練。MITライセンスで商用利用自由。「オープンソースはクローズドに勝てない」という通念を覆したモデルの全貌。</p>
+  </div>
+
+  <!-- Spec Sheet -->
+  <div class="spec-card">
+    <h4>スペックシート</h4>
+    <div class="spec-grid">
+      <div class="spec-item"><span class="label">開発元</span><span class="value">Z.ai（旧Zhipu AI）</span></div>
+      <div class="spec-item"><span class="label">アーキテクチャ</span><span class="value">MoE 754B（アクティブ40B）</span></div>
+      <div class="spec-item"><span class="label">ライセンス</span><span class="value">MIT（商用利用OK）</span></div>
+      <div class="spec-item"><span class="label">コンテキスト</span><span class="value">200,000トークン</span></div>
+      <div class="spec-item"><span class="label">訓練データ</span><span class="value">28.5Tトークン</span></div>
+      <div class="spec-item"><span class="label">訓練HW</span><span class="value">Huawei Ascend 910B</span></div>
+      <div class="spec-item"><span class="label">公開先</span><span class="value">Hugging Face (zai-org/GLM-5)</span></div>
+      <div class="spec-item"><span class="label">API料金</span><span class="value">$1.00 / $4.00 per 1M tok</span></div>
+    </div>
+  </div>
+
+  <h2><span class="icon">📊</span> 最先端モデルとの性能比較</h2>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val green">58.4%</div><div class="stat-label">SWE-Bench Pro<br>オープンソース1位</div></div>
+    <div class="stat"><div class="stat-val green">8時間</div><div class="stat-label">連続自律作業<br>OSS初</div></div>
+    <div class="stat"><div class="stat-val green">754B</div><div class="stat-label">パラメータ<br>（アクティブ40B）</div></div>
+  </div>
+
+  <div class="bench-wrap">
+    <div class="bench-title">コーディング・ソフトウェアエンジニアリング</div>
+    <table>
+      <thead><tr><th>ベンチマーク</th><th>GLM-5.1</th><th>GPT-5.4</th><th>Opus 4.6</th><th>Gemini 3.1</th></tr></thead>
+      <tbody>
+        <tr class="row-hl"><td>SWE-Bench Pro</td><td>58.4%</td><td>57.7%</td><td>57.3%</td><td>54.2%</td></tr>
+        <tr><td>Terminal-Bench 2.0</td><td>72.9%</td><td>—</td><td>66.7%</td><td>—</td></tr>
+        <tr><td>NL2Repo</td><td>45.7%</td><td>—</td><td>38.2%</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="bench-wrap">
+    <div class="bench-title">汎用能力（推論・数学・マルチモーダル）</div>
+    <table>
+      <thead><tr><th>ベンチマーク</th><th>GLM-5.1</th><th>GPT-5.4</th><th>Opus 4.6</th></tr></thead>
+      <tbody>
+        <tr><td>GPQA Diamond</td><td>82%</td><td>89%</td><td>85%</td></tr>
+        <tr><td>AIME 2025</td><td>88%</td><td>96%</td><td>92%</td></tr>
+        <tr><td>MMMU-Pro</td><td>73%</td><td>78%</td><td>75%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="sub">コーディングではトップ、汎用推論・数学ではクローズドモデルが依然優位。ただし差は大幅に縮小しており、GLM-5.1は「特化型」ではなく汎用性を維持しつつコーディングで突破したモデルと言える。</p>
+
+  <h2><span class="icon">🔓</span> なぜオープンソースがクローズドを超えにくいのか</h2>
+
+  <div class="reasons">
+    <div class="reason obstacle">
+      <h4>1. 計算資源の非対称性</h4>
+      <p>OpenAIやAnthropicは数百億ドル規模でGPUクラスタを構築。オープンソース開発者は通常この規模にアクセスできない。</p>
+    </div>
+    <div class="reason obstacle">
+      <h4>2. データの質と量</h4>
+      <p>独自のデータパイプラインとRLHFへの膨大な投資。訓練データの質は最終性能に直結する。</p>
+    </div>
+    <div class="reason obstacle">
+      <h4>3. ポストトレーニングの深さ</h4>
+      <p>事前学習後のファインチューニング・安全性調整・推論最適化に多大な工数。ここでクローズドが差をつけやすい。</p>
+    </div>
+  </div>
+
+  <h2><span class="icon">🚀</span> GLM-5.1が突破できた4つの要因</h2>
+
+  <div class="reasons">
+    <div class="reason breakthrough">
+      <h4>1. 「長時間自律作業」という新しい最適化軸</h4>
+      <p>従来モデルが分単位のインタラクション向けなのに対し、GLM-5.1は数千回のツールコールに渡ってゴール整合性を維持。METR評価で8時間連続作業可能なOSSモデルは初。</p>
+    </div>
+    <div class="reason breakthrough">
+      <h4>2. MoEアーキテクチャの効率性</h4>
+      <p>754B中アクティブ40B。巨大モデルの知識量を持ちつつ推論コストを抑制。1台のH100で推論可能な規模でデプロイのハードルを大幅に低下。</p>
+    </div>
+    <div class="reason breakthrough">
+      <h4>3. プラトー回避の最適化技術</h4>
+      <p>訓練中の性能頭打ち（プラトー効果）を早期に検出し局所最適解から脱出。同じ計算資源からより多くの性能を引き出す。</p>
+    </div>
+    <div class="reason breakthrough">
+      <h4>4. 非NVIDIAハードウェアでの訓練</h4>
+      <p>Huawei Ascend 910B + MindSporeで全訓練を完了。NVIDIAに依存しないことで地政学リスクを回避し、Huaweiチップのフロンティア対応能力を実証。</p>
+    </div>
+  </div>
+
+  <blockquote>
+    「エージェントは去年末には約20ステップこなせた。GLM-5.1は現在1,700ステップ実行できる。自律的な作業時間は、スケーリング則の次に最も重要な曲線かもしれない」
+    <cite>— Z.ai リーダー Lou（X投稿）</cite>
+  </blockquote>
+
+  <h2><span class="icon">🛠️</span> 対応AIコーディングツール</h2>
+
+  <p class="sub">幅広いツールとの互換性を公式サポート。Claude Codeでは settings.json でモデル名を "GLM-5.1" に変更するだけで利用可能。</p>
+
+  <div class="tool-grid">
+    <div class="tool-chip primary">Claude Code</div>
+    <div class="tool-chip primary">OpenClaw</div>
+    <div class="tool-chip">OpenCode</div>
+    <div class="tool-chip">Kilo Code</div>
+    <div class="tool-chip">Roo Code</div>
+    <div class="tool-chip">Cline</div>
+    <div class="tool-chip">Droid</div>
+  </div>
+
+  <p class="sub">ローカルデプロイは vLLM / SGLang / KTransformers をサポート。Hugging Faceからウェイトをダウンロードしてセルフホスト可能。API利用は入力$1.00/出力$4.00（1Mトークン）、ピーク時（14:00-18:00 北京時間）は3倍消費だが4月末までオフピーク1倍のプロモーション中。</p>
+
+  <h2><span class="icon">💡</span> 意味するもの</h2>
+
+  <p>SWE-Bench Proでの0.7ポイント差は統計的議論の余地はある。汎用推論でもクローズドが優位。しかし<strong>「OSSはクローズドに追いつけない」という心理的な壁は確実に崩れた</strong>。</p>
+
+  <p class="sub">Z.aiは2026年1月に香港証取に上場、時価総額約528億ドル。フラッグシップをMITで公開しつつGLM-5 Turboをプロプライエタリで提供する「ハイブリッド戦略」で、オープンソースAIがビジネスとして成立することを証明している。</p>
+
+  <section class="sources-section">
+    <h2>情報ソース</h2>
+    <ul>
+      <li><a href="https://z.ai/blog/glm-5.1">GLM-5.1: Towards Long-Horizon Tasks — Z.ai</a> <span class="stag official">公式</span></li>
+      <li><a href="https://venturebeat.com/technology/ai-joins-the-8-hour-work-day-as-glm-ships-5-1-open-source-llm-beating-opus-4">AI joins the 8-hour work day — VentureBeat</a> <span class="stag media">メディア</span></li>
+      <li><a href="https://pandaily.com/zhipu-unveils-glm-5-1-its-most-advanced-open-source-model-with-8-hour-autonomous-task-capability">Zhipu Unveils GLM-5.1 — Pandaily</a> <span class="stag media">メディア</span></li>
+      <li><a href="https://help.apiyi.com/en/glm-5-1-open-source-api-launched-on-apiyi-en.html">GLM-5.1 API — APIYI</a> <span class="stag media">メディア</span></li>
+    </ul>
+  </section>
+
+  <footer><a href="01-メインニュース.html">← メインニュースに戻る</a></footer>
+</div>
+</body>
+</html>

@@ -255,16 +255,21 @@
 
   <h2><span class="icon">🛠️</span> 対応AIコーディングツール</h2>
 
-  <p class="sub">幅広いツールとの互換性を公式サポート。Claude Codeでは settings.json でモデル名を "GLM-5.1" に変更するだけで利用可能。</p>
+  <p class="sub">Z.aiは幅広いコーディングツールとの互換性を主張している。ただし、ツールごとに対応状況の正確さには差がある点に注意。</p>
 
   <div class="tool-grid">
-    <div class="tool-chip primary">Claude Code</div>
+    <div class="tool-chip">Claude Code *</div>
     <div class="tool-chip primary">OpenClaw</div>
     <div class="tool-chip">OpenCode</div>
     <div class="tool-chip">Kilo Code</div>
     <div class="tool-chip">Roo Code</div>
     <div class="tool-chip">Cline</div>
     <div class="tool-chip">Droid</div>
+  </div>
+
+  <div class="reason obstacle" style="margin-top: 16px;">
+    <h4>* Claude Codeでの利用について — 要注意</h4>
+    <p>Z.aiの公式ドキュメントにはClaude Codeのセットアップ手順が掲載されている（環境変数でエンドポイントとモデル名を差し替える方式）。しかし<strong>Anthropicが公式にサポートしているプロバイダーはAnthropic API / Bedrock / Vertex AI / Foundryの4つのみ</strong>。Claude Code側がGLM-5.1を認識しているわけではなく、Z.aiがAnthropic Messages API互換のエンドポイントを構築して接続を実現している。Anthropicの方針変更により将来使えなくなるリスクがあり、ツール呼び出しの完全な互換性も保証されていない。</p>
   </div>
 
   <p class="sub">ローカルデプロイは vLLM / SGLang / KTransformers をサポート。Hugging Faceからウェイトをダウンロードしてセルフホスト可能。API利用は入力$1.00/出力$4.00（1Mトークン）、ピーク時（14:00-18:00 北京時間）は3倍消費だが4月末までオフピーク1倍のプロモーション中。</p>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深掘り: Nano Banana 2 GA | 生成AIニュース週報</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+<header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="image" class="w-6 h-6 text-blue-500"></i>
+            <span class="text-lg font-bold tracking-tight">Nano Banana 2 GA <span class="text-gray-400 font-normal">| 深掘り記事</span></span>
+        </div>
+        <a href="01-メインニュース.html" class="text-sm font-medium text-gray-400 hover:text-blue-600 transition flex items-center">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週報トップ
+        </a>
+    </div>
+</header>
+
+<section class="py-8 text-center border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-medium mb-4">
+            <i data-lucide="sparkles" class="w-3 h-3 mr-2"></i>
+            2026/05/29 ・ Google / DeepMind
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            <span class="gradient-text">Nano Banana 2 / Pro が一般提供（GA）</span>
+        </h1>
+        <p class="text-gray-500 text-sm md:text-base">Gemini 3.1 Flash Image がエンタープライズGAへ。動画→画像生成という新たな入口。</p>
+    </div>
+</section>
+
+<!-- 1 何が発表されたか -->
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="megaphone" class="w-6 h-6 mr-3 text-blue-500"></i>1. 何が発表されたか</h2>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                Google は2026年5月29日、画像生成モデル <span class="font-semibold text-gray-800">Nano Banana 2（Gemini 3.1 Flash Image）</span> と <span class="font-semibold text-gray-800">Nano Banana Pro（Gemini 3 Pro Image）</span> を Gemini Enterprise Agent Platform 経由で一般提供（GA）開始した。両モデルはエンタープライズ級のインフラとセキュリティ、SLA に対応し、アプリやワークフローに高品質な画像生成・編集を直接組み込めるようになった。開発者は Gemini API 経由でも利用できる（こちらは SLA 対象外）。
+            </p>
+            <div class="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
+                <div class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium">原 Nano Banana（2025）</div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-gray-400"></i>
+                <div class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium">Nano Banana 2 Preview（2/26）</div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-gray-400"></i>
+                <div class="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium">GA（5/29）</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 mt-6">
+                <span class="font-bold text-gray-700">補足:</span> Nano Banana 2 そのものは2026年2月26日に Preview として公開済み。今週のニュースは「エンタープライズ向けの一般提供（GA）化」であり、新規モデル登場ではない点に注意。
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2 前モデルから何が変わったか -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="trending-up" class="w-6 h-6 mr-3 text-blue-500"></i>2. 前モデルから何が変わったか</h2>
+        <p class="text-sm text-gray-600 mb-4">
+            原 Nano Banana は2025年に登場し、数十億枚の画像生成に使われた人気モデルだった。Nano Banana 2 はそれを土台に、上位の Nano Banana Pro が持っていた高度な機能を <span class="font-semibold text-gray-800">Flash の速度で</span>実現する位置づけになっている。公式が挙げる主な進化点は以下のとおり。
+        </p>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="text-left px-6 py-4 font-bold text-gray-600">観点</th>
+                        <th class="text-left px-6 py-4 font-bold text-gray-500">原 Nano Banana（2025）</th>
+                        <th class="text-left px-6 py-4 font-bold text-blue-600">Nano Banana 2 / Pro（現在）</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr><td class="px-6 py-3 text-gray-600 font-medium">対応入力</td><td class="px-6 py-3 text-gray-500">テキスト・画像</td><td class="px-6 py-3 text-blue-600">テキスト・画像・<span class="font-semibold">動画（Preview）</span></td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600 font-medium">解像度</td><td class="px-6 py-3 text-gray-500">標準解像度</td><td class="px-6 py-3 text-blue-600">1K / 2K / 4K（高解像度出力）</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600 font-medium">テキスト描画</td><td class="px-6 py-3 text-gray-500">限定的</td><td class="px-6 py-3 text-blue-600">長文も読みやすく、誤りが減少</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600 font-medium">被写体の一貫性</td><td class="px-6 py-3 text-gray-500">編集で崩れやすい</td><td class="px-6 py-3 text-blue-600">複数生成・編集をまたいで維持</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600 font-medium">世界知識</td><td class="px-6 py-3 text-gray-500">標準</td><td class="px-6 py-3 text-blue-600">高度化（文脈に即した正確な画像）</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600 font-medium">来歴証明</td><td class="px-6 py-3 text-gray-500">SynthID</td><td class="px-6 py-3 text-blue-600">SynthID + C2PA Content Credentials</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
+            <span class="font-bold text-gray-700">補足:</span> Pro 版（Gemini 3 Pro Image）はより要求の高いプロ／プロダクション用途向けで、世界知識とテキスト描画がさらに優れるとされる。2 版（Flash）は高ボリューム用途に最適化された速度重視のラインという棲み分け。
+        </div>
+    </div>
+</section>
+
+<!-- 3 動画→画像 -->
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="film" class="w-6 h-6 mr-3 text-blue-500"></i>3. 新機能：動画→画像生成（Preview）</h2>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                今回のGAで明示された目玉が「動画を入力として画像を生成する」機能（Preview）だ。動画からキーフレームを抽出したり、サムネイルを作ったり、動画の内容に基づいた静止画を生成したりできる。従来の「テキスト→画像」「画像→画像」に加え、<span class="font-semibold text-gray-800">動画を起点にする経路</span>が加わったことで、映像ワークフローとの接続点が生まれた。
+            </p>
+            <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+                <span class="font-bold text-gray-700">引用:</span> 「Nano Banana 2 now supports video files as an input prompt. (...) the model now utilizes deep video understanding to analyze the visual context, specific subjects, and actions within video footage to generate context-aware images, including thumbnails, rich infographics, and more.」（Google Cloud Blog）
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 Omniとの関係 -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="boxes" class="w-6 h-6 mr-3 text-blue-500"></i>4. Gemini Omni との関係とマルチモーダル統合</h2>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                Google は I/O 2026（5/19）で、あらゆる入力からあらゆるものを生成する動画生成モデル「Gemini Omni」を発表している。今回の Nano Banana 2/Pro が「動画を入力として静止画を出す」方向であるのに対し、Omni は「テキスト・画像・音声・動画から動画を生成・編集する」方向で、両者はマルチモーダルを別の角度から押し進める関係にある。画像生成が単独メディアのツールから、Gemini 系の汎用マルチモーダル基盤の一部へ統合されていく流れがはっきりしてきた。
+            </p>
+            <div class="flex items-start text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                <span>Nano Banana 2 / Pro は入力にテキスト・画像・動画（Preview）を取り、出力はテキストと画像。Search グラウンディングや C2PA 来歴証明など、Gemini 基盤の機能を共有する。</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5 実務 -->
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="briefcase" class="w-6 h-6 mr-3 text-blue-500"></i>5. 実務ワークフローへの影響</h2>
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="clapperboard" class="w-5 h-5"></i></div>
+                <h3 class="font-bold text-gray-800 mb-1">映像・編集現場</h3>
+                <p class="text-xs text-gray-500">動画からキーフレーム抽出・サムネイル生成を自動化</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="megaphone" class="w-5 h-5"></i></div>
+                <h3 class="font-bold text-gray-800 mb-1">広告・マーケ</h3>
+                <p class="text-xs text-gray-500">被写体一貫性を保ったキャンペーン素材を大量展開</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center hover:shadow-md transition">
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="shopping-bag" class="w-5 h-5"></i></div>
+                <h3 class="font-bold text-gray-800 mb-1">EC・リテール</h3>
+                <p class="text-xs text-gray-500">アプリ組み込みでインタラクティブな商品画像生成</p>
+            </div>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 mt-6">
+            <span class="font-bold text-gray-700">補足:</span> エンタープライズSLA対応のGAになったことで、PoC段階から本番組み込みへ移しやすくなった。4K出力やテキスト描画の改善は、そのまま制作の外注削減・内製化に効いてくる。
+        </div>
+    </div>
+</section>
+
+<!-- 6 まとめ -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="flag" class="w-6 h-6 mr-3 text-blue-500"></i>6. まとめ：画像生成主戦場の移動</h2>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <p class="text-sm text-gray-600 leading-relaxed">
+                Nano Banana 2 / Pro の GA は、単なる新モデル投入ではなく「Preview で人気を得たモデルを、エンタープライズが本番で使える形に固める」フェーズの動きだ。原 Nano Banana から見れば、解像度・テキスト描画・被写体一貫性・世界知識が底上げされ、さらに動画入力という新たな経路が加わった。画像生成の主戦場は、テキスト→画像の単機能ツールから、動画も含めた入出力マルチモーダルを束ねる汎用基盤（Gemini / Omni）へと移りつつある。OpenAI の画像・動画戦略との対抗構図の中で、Google は「速度の Flash」「品質の Pro」を両輪に据えてエンタープライズ領域を押さえにいった、と読める。
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="link" class="w-5 h-5 mr-3 text-blue-500"></i>情報ソース</h2>
+        <ul class="space-y-2 text-sm">
+            <li><a href="https://cloud.google.com/blog/products/ai-machine-learning/nano-banana-2-and-nano-banana-pro-are-generally-available" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Nano Banana 2 and Nano Banana Pro are generally available — Google Cloud Blog</a> <span class="text-gray-400">[公式]</span></li>
+            <li><a href="https://blog.google/innovation-and-ai/technology/ai/nano-banana-2" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Nano Banana 2: Combining Pro capabilities with lightning-fast speed — Google Blog</a> <span class="text-gray-400">[公式]</span></li>
+        </ul>
+    </div>
+</section>
+
+<footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+    <a href="01-メインニュース.html" class="inline-flex items-center text-blue-600 hover:underline font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週報トップに戻る</a>
+    <p class="mt-3">生成AIニュース週報 - 2026年5月25日〜5月31日</p>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

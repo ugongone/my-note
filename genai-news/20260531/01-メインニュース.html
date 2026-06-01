@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生成AIニュース週報 | 2026/05/25〜05/31</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+<header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="newspaper" class="w-6 h-6 text-blue-500"></i>
+            <span class="text-lg font-bold tracking-tight">生成AIニュース週報 <span class="text-gray-400 font-normal">| 2026/05/25〜05/31</span></span>
+        </div>
+        <nav class="hidden md:flex space-x-6 text-sm font-medium text-gray-400">
+            <a href="#news" class="hover:text-blue-600 transition">今週の注目ニュース</a>
+            <a href="#summary" class="hover:text-blue-600 transition">まとめ</a>
+        </nav>
+    </div>
+</header>
+
+<section class="py-8 text-center border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-medium mb-4">
+            <i data-lucide="sparkles" class="w-3 h-3 mr-2"></i>
+            Weekly Generative AI Digest
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            <span class="gradient-text">今週の生成AIニュース</span>
+        </h1>
+        <p class="text-gray-500 text-sm md:text-base">対象期間: 2026年5月25日（月）〜 5月31日（日）／ 全6件 + 深掘り記事3本</p>
+    </div>
+</section>
+
+<section id="news" class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="flame" class="w-6 h-6 mr-3 text-blue-500"></i>今週の注目ニュース</h2>
+
+        <!-- 1 Opus 4.8 -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-blue-50 border-b border-blue-100 flex justify-between items-center">
+                <h3 class="font-bold text-blue-700 flex items-center">
+                    <i data-lucide="cpu" class="w-5 h-5 mr-2"></i>
+                    ① Anthropic、Claude Opus 4.8 を一般提供
+                </h3>
+                <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">新モデル</span>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-400 mb-3"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>2026/05/28</p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    Anthropic が最新フラッグシップ「Claude Opus 4.8」を一般提供開始。価格は Opus 4.7 から据え置き（入力 $5／出力 $25 per Mtok）のまま、エージェント的コーディング・computer use・推論を強化。SWE-bench Verified は 88.6%、Terminal-Bench 2.1 は 63.9%→74.6% と大幅に伸びた。新機能 Dynamic Workflows で数百のサブエージェントを並列実行でき、「誠実さ（honesty）」を Opus 4.7 比で約4倍改善したと強調している。
+                </p>
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 mb-4">
+                    <span class="font-bold text-gray-700">引用:</span> 「On our internal agentic-coding honesty evaluations, Opus 4.8 is roughly four times less likely than Opus 4.7 to engage in this kind of undesirable behavior.」
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="02-ClaudeOpus48リリース.html" class="inline-flex items-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                        <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>深掘り記事を読む
+                    </a>
+                    <a href="https://www.anthropic.com/news/claude-opus-4-8" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:underline">Introducing Claude Opus 4.8 <span class="text-gray-400">[公式]</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2 GPT-Rosalind -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center">
+                    <i data-lucide="dna" class="w-5 h-5 mr-2 text-blue-500"></i>
+                    ② OpenAI、生命科学特化「GPT-Rosalind」を発表
+                </h3>
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-medium">安全保障</span>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-400 mb-3"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>2026/05/29</p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    OpenAI が生命科学・バイオディフェンスに特化した推論モデル「GPT-Rosalind」を発表（Rosalind Biodefense プログラム）。感染症対策や生物テロ防御を念頭に置いた専門モデルで、商用展開はなく、審査済みの開発者と米政府・同盟国機関に限定提供される。同じ推論能力が生物兵器設計に悪用されうるデュアルユースリスクも論点として明示された。
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="https://openai.com/index/strengthening-societal-resilience-with-rosalind-biodefense" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:underline">Strengthening societal resilience with Rosalind Biodefense <span class="text-gray-400">[公式]</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 GPT-5.5-Cyber Japan -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-blue-50 border-b border-blue-100 flex justify-between items-center">
+                <h3 class="font-bold text-blue-700 flex items-center">
+                    <i data-lucide="shield-check" class="w-5 h-5 mr-2"></i>
+                    ③ OpenAI、GPT-5.5-Cyber を日本の金融機関・重要インフラに提供へ
+                </h3>
+                <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">日本 / 安全保障</span>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-400 mb-3"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>2026/05/29</p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    来日した OpenAI の Jason Kwon 最高戦略責任者が、サイバー防御特化モデル「GPT-5.5-Cyber」を日本の一部企業・金融機関に提供する方針を表明。片山さつき財務相は、一部金融機関がすでに同モデルへのアクセスを得たと会見で明らかにした（三菱UFJ・三井住友・みずほの3メガバンクが対象とされる）。Anthropic の Claude Mythos に対抗する形で、金融・電力など15の重要インフラ分野を対象とした日米サイバー協力の枠組みに組み込まれている。
+                </p>
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 mb-4">
+                    <span class="font-bold text-gray-700">引用:</span> 「We're trying to broaden access to Japan and other allies.」（Jason Kwon 氏／朝日新聞インタビュー）
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="03-GPT55Cyber日本提供.html" class="inline-flex items-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                        <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>深掘り記事を読む
+                    </a>
+                    <a href="https://www.asahi.com/ajw/articles/16584417" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:underline">OpenAI to provide latest cybersecurity AI model to Japanese firms <span class="text-gray-400">[メディア報道]</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 NEC日立富士通 -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center">
+                    <i data-lucide="handshake" class="w-5 h-5 mr-2 text-blue-500"></i>
+                    ④ NEC・日立・富士通がそろってAnthropicと戦略提携
+                </h3>
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-medium">日本 / 企業動向</span>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-400 mb-3"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>2026/05/28 前後</p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    日本の大手SI3社（NEC・日立・富士通）が相次いでAnthropicとの協業を表明。富士通は「Anthropicの最新AIモデルへの早期アクセス」を含む戦略的提携を発表し、セキュリティ分野などを強化する。Mythos級モデルを含む最先端Claudeの活用が焦点で、日本の伝統的IT産業が米フロンティアラボと足並みをそろえる節目となった。
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="https://www.itmedia.co.jp/aiplus/articles/2605/29/news000.html" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:underline">NEC・日立・富士通が"Anthropic協業"でそろい踏み <span class="text-gray-400">[メディア報道]</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 教皇 -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-amber-50 border-b border-amber-100 flex justify-between items-center">
+                <h3 class="font-bold text-amber-700 flex items-center">
+                    <i data-lucide="scale" class="w-5 h-5 mr-2"></i>
+                    ⑤ 教皇レオ14世、AI倫理に関する文書「Magnifica Humanitas」を公表
+                </h3>
+                <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded font-medium">倫理 / 規制</span>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-400 mb-3"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>2026/05/25</p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    ローマ教皇レオ14世が、就任後初の重要文書として回勅「Magnifica Humanitas」を公表。「技術は中立ではない」との立場から、AIの軍事利用やグローバルな成果配分の不公平に懸念を示した。同日、Anthropic共同創業者のChris Olahが回勅に応えるコメントを発表し、業界の自己内省を促した。
+                </p>
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 mb-4">
+                    <span class="font-bold text-gray-700">引用:</span> 「They are grown, on a structure roughly modeled after the brain, on an enormous inheritance of human thought and speech.」（Chris Olah 氏）
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="https://www.anthropic.com/news" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:underline">Anthropic co-founder Chris Olah's remarks on Pope Leo XIV's encyclical <span class="text-gray-400">[公式]</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6 Nano Banana 2 GA -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-blue-50 border-b border-blue-100 flex justify-between items-center">
+                <h3 class="font-bold text-blue-700 flex items-center">
+                    <i data-lucide="image" class="w-5 h-5 mr-2"></i>
+                    ⑥ Google、Nano Banana 2 / Pro を一般提供（GA）開始
+                </h3>
+                <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded font-medium">画像生成</span>
+            </div>
+            <div class="p-6">
+                <p class="text-xs text-gray-400 mb-3"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>2026/05/29</p>
+                <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                    Google が画像生成モデル Nano Banana 2（Gemini 3.1 Flash Image）と Nano Banana Pro（Gemini 3 Pro Image）の一般提供（GA）を Gemini Enterprise Agent Platform 経由で開始。2月のPreview公開を経てエンタープライズSLA対応となり、新たに「動画を入力として画像を生成する」機能（Preview）や 4K 出力、テキスト描画精度の向上などが利用可能になった。
+                </p>
+                <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 mb-4">
+                    <span class="font-bold text-gray-700">引用:</span> 「Image generation from video input (Preview): You can now provide a video as input and generate images from it.」
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="04-GeminiNanoBanana2.html" class="inline-flex items-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                        <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>深掘り記事を読む
+                    </a>
+                    <a href="https://cloud.google.com/blog/products/ai-machine-learning/nano-banana-2-and-nano-banana-pro-are-generally-available" target="_blank" rel="noopener" class="text-sm text-blue-600 hover:underline">Nano Banana 2 and Nano Banana Pro are generally available <span class="text-gray-400">[公式]</span></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section id="summary" class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-6 flex items-center"><i data-lucide="list-checks" class="w-6 h-6 mr-3 text-blue-500"></i>今週のまとめ</h2>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <p class="text-sm text-gray-600 leading-relaxed">
+                今週はフロンティアモデルの「実務化」と、AIの「安全保障インフラ化」が同時に進んだ一週間だった。Anthropic は Opus 4.8 で誠実さとエージェント性能を両立させ、Google は画像生成モデルをエンタープライズGAへ押し上げた一方、OpenAI のサイバー特化モデルが日本のメガバンクに渡るなど、生成AIが国家間の安全保障協力の対象として扱われ始めている。教皇庁による倫理文書や、日本のSI大手のAnthropic協業も加わり、技術・産業・倫理・地政学が交差する局面が鮮明になった。
+            </p>
+        </div>
+    </div>
+</section>
+
+<footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+    <p>生成AIニュース週報 - 2026年5月25日〜5月31日</p>
+    <p class="mt-1 text-xs text-gray-300">一次情報・公式発表ベースで構成。各ニュースの詳細は深掘り記事を参照。</p>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

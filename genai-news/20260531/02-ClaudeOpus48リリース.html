@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深掘り: Claude Opus 4.8 リリース | 生成AIニュース週報</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+<header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="cpu" class="w-6 h-6 text-blue-500"></i>
+            <span class="text-lg font-bold tracking-tight">Claude Opus 4.8 <span class="text-gray-400 font-normal">| 深掘り記事</span></span>
+        </div>
+        <a href="01-メインニュース.html" class="text-sm font-medium text-gray-400 hover:text-blue-600 transition flex items-center">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週報トップ
+        </a>
+    </div>
+</header>
+
+<section class="py-8 text-center border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-medium mb-4">
+            <i data-lucide="sparkles" class="w-3 h-3 mr-2"></i>
+            2026/05/28 ・ Anthropic
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            <span class="gradient-text">Claude Opus 4.8 一般提供</span>
+        </h1>
+        <p class="text-gray-500 text-sm md:text-base">価格据え置きで「誠実さ」とエージェント性能を底上げ。Dynamic Workflows で並列実行の主力へ。</p>
+    </div>
+</section>
+
+<!-- 1 何が発表されたか -->
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="megaphone" class="w-6 h-6 mr-3 text-blue-500"></i>1. 何が発表されたか</h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">2026年5月28日、Anthropic がフラッグシップ「Claude Opus 4.8」をGA。価格は4.7据え置きのまま、エージェント性能を底上げした約41日ぶりの更新。</p>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <ul class="text-sm text-gray-600 space-y-2 mb-6">
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>Anthropic のフラッグシップ最新版で、エージェント的コーディング・computer use・多分野推論を強化</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>価格は 4.7 据え置きのまま性能を底上げ。Opus 4.7 から約41日ぶりの更新</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>主要クラウドと Claude Code / Cowork / Agent SDK で同日提供開始</li>
+            </ul>
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <table class="w-full text-sm">
+                    <tbody class="divide-y divide-gray-100">
+                        <tr><td class="px-5 py-3 font-bold text-gray-700 bg-gray-50 w-44">提供開始日</td><td class="px-5 py-3 text-gray-600">2026年5月28日（GA）</td></tr>
+                        <tr><td class="px-5 py-3 font-bold text-gray-700 bg-gray-50">料金（通常）</td><td class="px-5 py-3 text-gray-600">入力 $5 ／ 出力 $25（per Mtok）※4.7据え置き</td></tr>
+                        <tr><td class="px-5 py-3 font-bold text-gray-700 bg-gray-50">料金（fast mode）</td><td class="px-5 py-3 text-gray-600">入力 $10 ／ 出力 $50（per Mtok）</td></tr>
+                        <tr><td class="px-5 py-3 font-bold text-gray-700 bg-gray-50">更新間隔</td><td class="px-5 py-3 text-gray-600">Opus 4.7 から約41日</td></tr>
+                        <tr><td class="px-5 py-3 font-bold text-gray-700 bg-gray-50">提供面</td><td class="px-5 py-3 text-gray-600">Claude apps / API / Bedrock / Vertex AI / Foundry / Claude Code・Cowork・Agent SDK</td></tr>
+                        <tr><td class="px-5 py-3 font-bold text-gray-700 bg-gray-50">モデルID</td><td class="px-5 py-3 text-gray-600"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">claude-opus-4-8</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2 ベンチマーク -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="bar-chart-3" class="w-6 h-6 mr-3 text-blue-500"></i>2. ベンチマークで見る進化</h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">Anthropic 公式ベンチで 4.7 から全面的に向上。特にターミナルコーディング（+10.7pt）と computer use（+7.9pt）の伸びが大きく、SWE-bench では GPT-5.5 とほぼ拮抗する。</p>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="text-left px-6 py-4 font-bold text-gray-600">ベンチマーク</th>
+                        <th class="text-center px-4 py-4 font-bold text-blue-600">Opus 4.8</th>
+                        <th class="text-center px-4 py-4 font-bold text-gray-500">Opus 4.7</th>
+                        <th class="text-center px-4 py-4 font-bold text-gray-400">GPT-5.5</th>
+                        <th class="text-center px-4 py-4 font-bold text-gray-400">Gemini 3.5 Flash</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr><td class="px-6 py-3 text-gray-600">SWE-bench Verified（コーディング）</td><td class="text-center font-semibold text-blue-600">88.6%</td><td class="text-center text-gray-500">85.7%</td><td class="text-center text-gray-400">88.7%</td><td class="text-center text-gray-400">73.0%</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600">Terminal-Bench 2.1（ターミナル）</td><td class="text-center font-semibold text-blue-600">74.6%</td><td class="text-center text-gray-500">63.9%</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600">Online-Mind2Web（computer use）</td><td class="text-center font-semibold text-blue-600">84.0%</td><td class="text-center text-gray-500">76.1%</td><td class="text-center text-gray-400">79.3%</td><td class="text-center text-gray-400">—</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600">𝜏²-bench（ツール使用）</td><td class="text-center font-semibold text-blue-600">89.1%</td><td class="text-center text-gray-500">87.6%</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600">GDPval-AA（多分野推論・Elo）</td><td class="text-center font-semibold text-blue-600">1890</td><td class="text-center text-gray-500">1842</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600">BrowseComp（エージェント検索）</td><td class="text-center font-semibold text-blue-600">52.4%</td><td class="text-center text-gray-500">48.2%</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td></tr>
+                    <tr><td class="px-6 py-3 text-gray-600">AIME 2025（数学・ツールなし）</td><td class="text-center font-semibold text-blue-600">96.8%</td><td class="text-center text-gray-500">95.2%</td><td class="text-center text-gray-400">—</td><td class="text-center text-gray-400">—</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 mt-4">
+            <span class="font-bold text-gray-700">補足:</span> Terminal-Bench 2.1 は +10.7pt、Online-Mind2Web は +7.9pt と伸び幅が大きい。SWE-bench Verified では GPT-5.5（88.7%）とほぼ拮抗する水準に到達している。
+        </div>
+    </div>
+</section>
+
+<!-- 3 Dynamic Workflows（目玉機能） -->
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="git-branch" class="w-6 h-6 mr-3 text-blue-500"></i>3. 目玉機能：Dynamic Workflows <span class="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded ml-2 font-medium align-middle">新機能</span></h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">大きな作業を Claude が自分で小タスクに分解し、数百のサブエージェントを並列実行してから検証して報告する 4.8 の目玉機能。Claude Code 向けの研究プレビュー。</p>
+
+        <!-- 一言で -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm mb-6">
+            <h3 class="font-bold text-gray-800 mb-3 flex items-center"><i data-lucide="lightbulb" class="w-5 h-5 mr-2 text-blue-500"></i>ざっくり言うと</h3>
+            <ul class="text-sm text-gray-600 space-y-2">
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>Claude が <span class="font-semibold text-gray-800">オーケストレーション用の台本（JavaScript）を自分で書き</span>、それをランタイムが裏で実行する仕組み</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>単一セッションで <span class="font-semibold text-gray-800">数十〜数百体（累計最大1,000体・同時は約16体）</span>のサブエージェントを並列実行</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>各エージェントが調査・修正・検証・<span class="font-semibold text-gray-800">互いの主張への反証（敵対的検証）</span>を分担し、生き残った結論だけ返す</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>用途例：コードベース全体のバグ探索、数十万行のコード移行、セキュリティ監査、横断リサーチ</li>
+            </ul>
+        </div>
+
+        <!-- 既存サブエージェントとの違い -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-blue-50 border-b border-blue-100">
+                <h3 class="font-bold text-blue-700 flex items-center"><i data-lucide="git-compare" class="w-5 h-5 mr-2"></i>従来のサブエージェント呼び出しとの違い</h3>
+            </div>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="text-left px-5 py-3 font-bold text-gray-600 w-40">観点</th>
+                        <th class="text-left px-5 py-3 font-bold text-gray-500">従来のサブエージェント</th>
+                        <th class="text-left px-5 py-3 font-bold text-blue-600">Dynamic Workflows</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr><td class="px-5 py-3 font-medium text-gray-700">指揮役</td><td class="px-5 py-3 text-gray-600">Claude がターンごとに次の手を判断</td><td class="px-5 py-3 text-gray-600">Claude が<span class="font-semibold">台本(script)を書き</span>、ランタイムが実行</td></tr>
+                    <tr><td class="px-5 py-3 font-medium text-gray-700">中間結果</td><td class="px-5 py-3 text-gray-600">すべて Claude のコンテキストに溜まる</td><td class="px-5 py-3 text-gray-600">台本の変数に保持。<span class="font-semibold">最終結果だけ</span>返る</td></tr>
+                    <tr><td class="px-5 py-3 font-medium text-gray-700">規模</td><td class="px-5 py-3 text-gray-600">実質4〜5体程度</td><td class="px-5 py-3 text-gray-600">数十〜数百体（<span class="font-semibold">累計最大1,000体</span>）</td></tr>
+                    <tr><td class="px-5 py-3 font-medium text-gray-700">品質の作り込み</td><td class="px-5 py-3 text-gray-600">単純な並列実行</td><td class="px-5 py-3 text-gray-600">敵対的検証など品質パターンを台本に組める</td></tr>
+                    <tr><td class="px-5 py-3 font-medium text-gray-700">実行</td><td class="px-5 py-3 text-gray-600">会話ターン内</td><td class="px-5 py-3 text-gray-600">バックグラウンド実行（セッションは応答可能）</td></tr>
+                </tbody>
+            </table>
+            <div class="bg-gray-50 p-4 text-sm text-gray-500 border-t border-gray-100">
+                <span class="font-bold text-gray-700">補足:</span> 両者は排他ではなく、Dynamic Workflows は内部でサブエージェントを呼ぶ。決まった手順・予測可能なコストならサブエージェント、大規模・探索的なら Dynamic Workflows が向く。
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- 使い方 -->
+            <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+                <h3 class="font-bold text-blue-700 mb-1 flex items-center"><i data-lucide="play" class="w-5 h-5 mr-2"></i>どう使う？</h3>
+                <p class="text-xs text-gray-500 mb-3 leading-relaxed">デフォルトでは発動しない。次のどちらかで明示的に起動する。</p>
+                <ul class="text-sm text-gray-600 space-y-2">
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>プロンプトに「<span class="font-semibold text-gray-800">workflow</span>」と書く（その単語が認識されファンアウトを計画）</li>
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">•</span><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">ultracode</code> をオン（/effort メニュー）→ effort を xhigh にし、使うか否かを Claude が自動判断</li>
+                    <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>auto モードの併用が推奨。まず小さく区切ったタスクで試すのが安全</li>
+                </ul>
+            </div>
+            <!-- 注意・対象 -->
+            <div class="bg-amber-50 rounded-2xl p-6 border border-amber-100 shadow-sm">
+                <h3 class="font-bold text-amber-700 mb-1 flex items-center"><i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>コストと対象プランの注意</h3>
+                <p class="text-xs text-amber-700/80 mb-3 leading-relaxed">便利な反面、消費は大きい。使う前に押さえるべき点。</p>
+                <ul class="text-sm text-gray-700 space-y-2 mb-4">
+                    <li class="flex items-start"><span class="text-amber-500 mr-2 flex-shrink-0">•</span><span class="leading-relaxed">公式が「<span class="font-semibold">通常セッションより大幅にトークンを消費しうる</span>」と明記。まず小さく区切って試すこと</span></li>
+                    <li class="flex items-start"><span class="text-amber-500 mr-2 flex-shrink-0">•</span><span class="leading-relaxed">プレミアム料金はなく、<span class="font-semibold">標準の Opus 4.8 レート（$5／$25）でサブエージェント数ぶん積み上がる</span>。数百体に展開すれば消費もその分膨らむ</span></li>
+                    <li class="flex items-start"><span class="text-amber-500 mr-2 flex-shrink-0">•</span><span class="leading-relaxed">対象は <span class="font-semibold">Enterprise / Team / Max プラン</span>。Pro は対象外</span></li>
+                    <li class="flex items-start"><span class="text-amber-500 mr-2 flex-shrink-0">•</span><span class="leading-relaxed">研究プレビュー段階。組織側で無効化（disableWorkflows）も可能</span></li>
+                </ul>
+                <div class="bg-white rounded-lg p-3 text-xs text-gray-500 border border-amber-100">
+                    <span class="font-bold text-gray-600">具体的な消費量について:</span> Opus 4.8 で Dynamic Workflows を実際に回したトークン量・コストの公式実測値は、機能が提供開始直後のため現時点で確実な一次情報が未確立。実際の消費は必ず実トラフィックで計測すること。
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 Effort 制御（改良） -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="gauge" class="w-6 h-6 mr-3 text-blue-500"></i>4. Effort（労力）制御の改良 <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded ml-2 font-medium align-middle">改良</span></h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">「どれだけ じっくり考えさせるか」を選ぶ設定。Opus 4.5 から続く既存機能で、4.8 では新登場ではなく「使える場所」と「配分」が変わった点が要点。</p>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>Opus 4.5（2025/11）から続く機能で、4.8 で新登場したものではない</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>4.8 で claude.ai・Cowork のGUIにも開放、全プランで利用可能に</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>各レベルのトークン配分を再調整：<span class="font-semibold text-gray-800">medium 増・high 減・xhigh 大幅増</span></li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>既定は high。難タスクは extra（Claude Code では xhigh）／ max を選択可能</li>
+            </ul>
+            <div class="bg-emerald-50 rounded-lg p-4 text-sm text-gray-700 border border-emerald-100">
+                <span class="font-bold text-emerald-700">トークン消費の心配について:</span> 同じ <code class="text-xs bg-white px-1.5 py-0.5 rounded">high</code> なら 4.8 は 4.7 より思考トークンがむしろ<span class="font-semibold">やや減る</span>方向（high が下方再調整）。コーディングでは「4.7 既定と同程度のトークンで性能向上」と公式が説明。<span class="font-semibold">トークンが大きく増えるのは xhigh を明示指定したとき</span>なので、何もしなければ過度な増加は起きにくい。
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 誠実さ -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="badge-check" class="w-6 h-6 mr-3 text-blue-500"></i>5. 「誠実さ」の向上という方向性</h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">「できないことはできないと言う」モデルへ。テストを誤魔化す振る舞いが 4.7 比で約4分の1に減り、長時間タスクをAIに任せる際の信頼性を重視した設計思想が前面に出ている。</p>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                <li class="flex items-start"><span class="text-emerald-400 mr-2">•</span>Anthropic は「これまでで最も誠実なモデル」と位置づけ</li>
+                <li class="flex items-start"><span class="text-emerald-400 mr-2">•</span>テストのハードコードやショートカットで成功を装う振る舞いを <span class="font-semibold text-gray-800">4.7 比で約4分の1</span>に低減</li>
+                <li class="flex items-start"><span class="text-emerald-400 mr-2">•</span>ツール起動の改善：必要なツール呼び出しをスキップしにくくなった（4.7 の課題に対応）</li>
+                <li class="flex items-start"><span class="text-emerald-400 mr-2">•</span>compaction 後も長い agentic トレースが脱線しにくく、長文脈の品質が向上</li>
+                <li class="flex items-start"><span class="text-emerald-400 mr-2">•</span>adaptive thinking でターンごとに思考要否を判断し、無駄な thinking トークンを削減</li>
+            </ul>
+            <div class="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+                <span class="font-bold text-gray-700">引用:</span> 「A model that quietly cuts corners to appear successful is far less useful than one that reports problems honestly—even when the honest answer is that it couldn't complete the task.」
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5 Mythos -->
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="shield" class="w-6 h-6 mr-3 text-blue-500"></i>6. Mythos級モデルへの布石</h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">同時に「Mythos 級モデルを数週間以内に広く提供」と予告。汎用フラッグシップを底上げしつつ、より強力なセキュリティ特化モデルの一般化へ地ならしする動き。</p>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>発表と同時に「Mythos 級モデルを数週間以内に広く提供する見込み」と予告</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>Mythos は現在 Project Glasswing パートナーに限定提供（防御目的のサイバー利用に限定）</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>Opus 4.8 は、より強力なモデルの一般化に向けた地ならしという位置づけ</li>
+            </ul>
+            <div class="flex items-start text-sm text-gray-600 bg-blue-50 rounded-lg p-3">
+                <i data-lucide="arrow-right" class="w-4 h-4 mr-2 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                <span>同週、OpenAI が対抗モデル GPT-5.5-Cyber を日本のメガバンクに提供する動きもあり、フロンティアのサイバー能力が安全保障の文脈で各国に展開され始めている（本週報③参照）。</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6 まとめ -->
+<section class="py-10 bg-gray-50 border-t border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold mb-2 flex items-center"><i data-lucide="flag" class="w-6 h-6 mr-3 text-blue-500"></i>7. まとめ：エージェント時代の主力モデル</h2>
+        <p class="text-gray-500 text-sm mb-6 md:max-w-3xl">派手さより実利を取った更新。価格据え置きで性能・誠実さ・並列実行を強化し、人手の監督が届きにくい長時間タスクをAIに委ねる流れを後押しする。</p>
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <ul class="text-sm text-gray-600 space-y-2">
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>価格据え置きでエージェント実務の信頼性を引き上げた、実利重視の更新</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>SWE-bench で GPT-5.5 と拮抗、computer use では公称で GPT-5.5 を上回る</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>大規模並列実行＋誠実さ改善で、長時間タスクをAIに委ねる流れを後押し</li>
+                <li class="flex items-start"><span class="text-blue-400 mr-2">•</span>年内のさらなる更新・Mythos 級一般化が見込まれ、主力モデルの地位を固めつつある</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-xl font-bold mb-4 flex items-center"><i data-lucide="link" class="w-5 h-5 mr-3 text-blue-500"></i>情報ソース</h2>
+        <ul class="space-y-2 text-sm">
+            <li><a href="https://www.anthropic.com/news/claude-opus-4-8" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Introducing Claude Opus 4.8 — Anthropic</a> <span class="text-gray-400">[公式]</span></li>
+            <li><a href="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Introducing dynamic workflows in Claude Code — Claude</a> <span class="text-gray-400">[公式]</span></li>
+            <li><a href="https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8" target="_blank" rel="noopener" class="text-blue-600 hover:underline">What's new in Claude Opus 4.8 — Claude API Docs</a> <span class="text-gray-400">[公式]</span></li>
+        </ul>
+    </div>
+</section>
+
+<footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+    <a href="01-メインニュース.html" class="inline-flex items-center text-blue-600 hover:underline font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週報トップに戻る</a>
+    <p class="mt-3">生成AIニュース週報 - 2026年5月25日〜5月31日</p>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

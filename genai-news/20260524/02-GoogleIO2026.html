@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google I/O 2026 深掘り — Gemini 3.5 Flash・Spark・Omni</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quote-block {
+            border-left: 3px solid #3b82f6;
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+<header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="presentation" class="w-6 h-6 text-blue-500"></i>
+            <span class="text-lg font-bold tracking-tight">Google I/O 2026 <span class="text-gray-400 font-normal">| 深掘り</span></span>
+        </div>
+        <a href="01-メインニュース.html" class="text-sm font-medium text-gray-500 hover:text-blue-600 transition flex items-center">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週間サマリーへ戻る
+        </a>
+    </div>
+</header>
+
+<section class="py-8 text-center border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-medium mb-4">
+            <i data-lucide="calendar" class="w-3 h-3 mr-2"></i>
+            2026/05/19 — Mountain View, CA
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            <span class="gradient-text">Google I/O 2026 — エージェント時代の Gemini</span>
+        </h1>
+        <p class="text-gray-500 text-sm md:text-base">Gemini 3.5 Flash, Spark, Omni — そして「Pro はどこにいる？」</p>
+    </div>
+</section>
+
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="target" class="w-6 h-6 mr-3 text-blue-500"></i>イベントの全体像
+        </h2>
+
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
+            <p class="text-sm md:text-base text-gray-700 leading-relaxed">
+                Google は2026年5月19日（米太平洋時間）、年次デベロッパーイベント <strong>Google I/O 2026</strong> を開催した。Sundar Pichai CEO は基調講演で「我々はいま、AI サイクルのなかで、人々が日々使う製品にこそ価値を見たいと感じる段階に入った」と述べ、研究成果よりも<strong class="text-blue-600">プロダクト統合</strong>に軸足を移すことを明確にした。発表の中心は「Gemini 3.5 Flash」「Gemini Spark」「Gemini Omni」の3つで、いずれも <strong>Antigravity</strong> ハーネスとの統合により、エージェント実行を前提とした構成になっている。
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-10">
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center">
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-gray-800 mb-1">Gemini 3.5 Flash</h3>
+                <p class="text-xs text-gray-500">即日 GA。Antigravity / Gemini API / AI Studio で利用可能</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center">
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="bot" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-gray-800 mb-1">Gemini Spark</h3>
+                <p class="text-xs text-gray-500">24/7 動作する個人エージェント。AI Ultra 加入者向け Beta</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center">
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="film" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-bold text-gray-800 mb-1">Gemini Omni</h3>
+                <p class="text-xs text-gray-500">「あらゆる入力から動画を生成」する新モデル</p>
+            </div>
+        </div>
+
+        <!-- Pro 系の状況 -->
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="help-circle" class="w-6 h-6 mr-3 text-blue-500"></i>「Pro 系の発表はまだなのか？」
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-amber-50 border-b border-amber-100">
+                <h3 class="font-bold text-amber-700 flex items-center">
+                    <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>結論：Gemini 3.5 Pro は I/O では発表されず、「来月公開」とだけ予告された
+                </h3>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                    Pichai は基調講演のなかで、Pro 系について<strong>明示的に「来月（next month）」</strong>とだけ述べ、I/O では Flash のみを GA、Pro はティーザーに留めた。これは Pre-I/O のリーク報道（Alex Heath / Sources 5/14付）で示唆されていた「3.5 は GPT-5.5 クラスで、Anthropic Mythos には届かない」という事前評価と整合しており、Google は <strong>無理に Pro を I/O 当日に出さず、Flash で「速度・コスト」軸を先行させる</strong>戦略を採ったと読み取れる。
+                </p>
+
+                <div class="quote-block rounded p-3 text-sm text-gray-700 italic mb-4">
+                    「Gemini 3.5 Flash is available for everyone today across our products and APIs. We're also excited for Gemini 3.5 Pro. We are using it internally, it's showing great improvements, and it will be coming next month.」
+                    <span class="block mt-1 text-xs text-gray-500 not-italic">— Sundar Pichai / "I/O 2026: Welcome to the agentic Gemini era"</span>
+                </div>
+
+                <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                    公式アナウンスメント集「100 things we announced at I/O 2026」でも、3.5 Pro 専用の発表項目は存在せず、トップ項目の <code class="bg-gray-100 px-1 rounded text-xs">#6</code> として「<strong>We're also hard at work on Gemini 3.5 Pro. It's already being used internally and we look forward to rolling it out next month.</strong>」と記載されるのみ。<strong>"Coming next month"</strong>＝ <strong>2026年6月中</strong>のリリースが現時点の公開情報。
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                        <h4 class="font-bold text-emerald-700 mb-2 flex items-center">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>判明している情報
+                        </h4>
+                        <ul class="text-xs text-gray-700 space-y-1">
+                            <li>・ 3.5 Pro は Google 社内で既に使用中</li>
+                            <li>・ Pichai が "great improvements" と発言</li>
+                            <li>・ 「next month（＝6月）」中にロールアウト予定</li>
+                        </ul>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                        <h4 class="font-bold text-amber-700 mb-2 flex items-center">
+                            <i data-lucide="help-circle" class="w-4 h-4 mr-2"></i>未公表の情報
+                        </h4>
+                        <ul class="text-xs text-gray-700 space-y-1">
+                            <li>・ 具体的な公開日</li>
+                            <li>・ ベンチマークスコア</li>
+                            <li>・ 価格 / コンテキスト長</li>
+                            <li>・ Mythos / Opus 4.7 との比較</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-xs text-gray-500 mb-10">
+            <strong>補足:</strong> 既存の Gemini 3 Pro / 3.1 Pro は引き続き利用可能で、3.5 Flash は「Gemini 3.1 Pro より一部ベンチマーク（Terminal-Bench 2.1 で76.2%、MCP Atlas で83.6%）で優位」と公式が主張している。つまり <strong>Flash がいったん「旧 Pro 級」の位置に上がり、本物の 3.5 Pro はその上に来る</strong>ロードマップ。
+        </p>
+
+        <!-- Gemini Spark の使い方 -->
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="play-circle" class="w-6 h-6 mr-3 text-blue-500"></i>Gemini Spark はどうやったら使えるのか
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+            <div class="p-4 bg-blue-50 border-b border-blue-100">
+                <h3 class="font-bold text-blue-700 flex items-center">
+                    <i data-lucide="key" class="w-5 h-5 mr-2"></i>提供条件・ロードマップ
+                </h3>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                    Spark は<strong>段階的ロールアウト</strong>で提供される。安全性を優先するため、まずトラステッドテスター、その次に <strong>米国の Google AI Ultra 加入者</strong>へ Beta 公開される構造になっている。
+                </p>
+
+                <div class="overflow-hidden border border-gray-200 rounded-xl mb-4">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-200">
+                                <th class="text-left px-4 py-3 font-bold text-gray-600">タイミング</th>
+                                <th class="text-left px-4 py-3 font-bold text-gray-600">対象</th>
+                                <th class="text-left px-4 py-3 font-bold text-gray-600">提供形態</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="px-4 py-3 text-gray-700">5/19 週内</td>
+                                <td class="px-4 py-3 text-gray-500">Trusted Testers</td>
+                                <td class="px-4 py-3 text-gray-500">招待制</td>
+                            </tr>
+                            <tr class="bg-blue-50/30">
+                                <td class="px-4 py-3 text-gray-700 font-medium">翌週（5/26 週〜）</td>
+                                <td class="px-4 py-3 text-gray-700 font-medium">US の Google AI Ultra 加入者</td>
+                                <td class="px-4 py-3 text-gray-700 font-medium">Beta（Gemini app 経由）</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-gray-700">今夏 (Summer 2026)</td>
+                                <td class="px-4 py-3 text-gray-500">Workspace / Gemini Enterprise 顧客</td>
+                                <td class="px-4 py-3 text-gray-500">プレビュー</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-gray-700">今夏〜後半</td>
+                                <td class="px-4 py-3 text-gray-500">Chrome 内エージェント / Mac アプリ</td>
+                                <td class="px-4 py-3 text-gray-500">順次展開</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-gray-700">2026 後半</td>
+                                <td class="px-4 py-3 text-gray-500">Android の "Halo" UI で進捗表示</td>
+                                <td class="px-4 py-3 text-gray-500">統合</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-700">
+                    <strong class="flex items-center mb-2"><i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i>日本ユーザーが踏むべきステップ</strong>
+                    <ol class="text-xs text-gray-700 space-y-1 list-decimal pl-5">
+                        <li>現状、Spark は <strong>米国 Google AI Ultra</strong> 加入者の Beta に限定。日本リージョンでは即時利用不可。</li>
+                        <li>新設の <strong>$100/月の Ultra プラン</strong> も提示（既存 $250 → $200/月に値下げ）。</li>
+                        <li>米国アカウント＋米国向け課金プロファイルが揃えば Beta 対象になる可能性はあるが、Google が明示的に「US」と限定している点に注意。</li>
+                        <li>Workspace / Enterprise 経由ルートは「今夏プレビュー」のため、業務利用は <strong>2026年7月以降</strong>を待つのが現実的。</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="cog" class="w-6 h-6 mr-3 text-blue-500"></i>Spark の動作モデル
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                    <i data-lucide="server" class="w-5 h-5 mr-2 text-blue-500"></i>アーキテクチャ
+                </h3>
+                <ul class="text-sm text-gray-700 space-y-2">
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>基盤モデル: <strong>Gemini 3.5</strong></li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>ハーネス: <strong>Google Antigravity</strong></li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>実行環境: Google Cloud 上の<strong>専用 VM</strong></li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>動作: 24/7。端末を閉じても継続</li>
+                </ul>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                    <i data-lucide="link" class="w-5 h-5 mr-2 text-blue-500"></i>連携先
+                </h3>
+                <ul class="text-sm text-gray-700 space-y-2">
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>Workspace（Gmail, Docs, Slides, Drive）</li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>サードパーティ: 今夏以降 <strong>MCP</strong> 経由</li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>操作面: Gemini app / メール / チャット</li>
+                    <li class="flex items-start"><span class="text-blue-500 mr-2">-</span>セーフガード: 重要操作前にユーザー確認</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quote-block rounded p-4 text-sm text-gray-700 italic mb-10">
+            「It runs on dedicated virtual machines on Google Cloud. And it's 24/7 so you don't need to keep your laptop open. … Spark will integrate seamlessly with tools, starting with our own, and in the coming weeks with third-party tools through MCP.」
+            <span class="block mt-1 text-xs text-gray-500 not-italic">— Google Blog "I/O 2026: Welcome to the agentic Gemini era"</span>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="bookmark" class="w-6 h-6 mr-3 text-blue-500"></i>情報ソース
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-10">
+            <ul class="text-sm text-gray-700 space-y-2">
+                <li>・<a href="https://blog.google/innovation-and-ai/sundar-pichai-io-2026" class="text-blue-600 hover:underline">I/O 2026: Welcome to the agentic Gemini era - Google Blog</a> <span class="text-emerald-600 text-xs">[公式]</span></li>
+                <li>・<a href="https://blog.google/innovation-and-ai/technology/ai/google-io-2026-all-our-announcements" class="text-blue-600 hover:underline">100 things we announced at I/O 2026 - Google Blog</a> <span class="text-emerald-600 text-xs">[公式]</span></li>
+            </ul>
+        </div>
+
+        <a href="01-メインニュース.html" class="inline-flex items-center text-sm font-medium text-blue-600 hover:underline">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週間サマリーへ戻る
+        </a>
+    </div>
+</section>
+
+<footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+    <p>生成AI週間ニュース - 2026年5月18日〜5月24日</p>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

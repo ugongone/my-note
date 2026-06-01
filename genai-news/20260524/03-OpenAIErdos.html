@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI、80年来のエルデシュ「単位距離予想」を AI が反証 — 深掘り</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quote-block {
+            border-left: 3px solid #3b82f6;
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+<header class="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <i data-lucide="sigma" class="w-6 h-6 text-blue-500"></i>
+            <span class="text-lg font-bold tracking-tight">エルデシュ予想の反証 <span class="text-gray-400 font-normal">| 深掘り</span></span>
+        </div>
+        <a href="01-メインニュース.html" class="text-sm font-medium text-gray-500 hover:text-blue-600 transition flex items-center">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週間サマリーへ戻る
+        </a>
+    </div>
+</header>
+
+<section class="py-8 text-center border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-medium mb-4">
+            <i data-lucide="calendar" class="w-3 h-3 mr-2"></i>
+            2026/05/20 公表 — OpenAI
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            <span class="gradient-text">AI が80年来の幾何学未解決問題を反証</span>
+        </h1>
+        <p class="text-gray-500 text-sm md:text-base">汎用推論モデルによる「自律的な数学的発見」の初の明確な事例</p>
+    </div>
+</section>
+
+<section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="target" class="w-6 h-6 mr-3 text-blue-500"></i>何が起きたか
+        </h2>
+
+        <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-10">
+            <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-4">
+                2026年5月20日、OpenAI は<strong>「内部の汎用推論モデル」</strong>が、組合せ幾何学の最も有名な未解決問題の一つである<strong class="text-blue-600">「Erdős の平面単位距離問題（planar unit distance problem）」</strong>の通説を反証したと発表した。
+            </p>
+            <p class="text-sm md:text-base text-gray-700 leading-relaxed mb-4">
+                この問題は、Paul Erdős が1946年に American Mathematical Monthly に発表した論文で問うたもの。「平面上に n 個の点を置いたとき、距離がちょうど 1 となる点ペアの最大数はいくつか？」というシンプルな問いで、Erdős 本人は答えがおおむね <span class="font-mono">n^(1+o(1))</span>（n に対してほぼ線形）に収まると予想していた。80年間、誰もこの予想を完全に証明も反証もできなかった。
+            </p>
+            <p class="text-sm md:text-base text-gray-700 leading-relaxed">
+                OpenAI モデルは、<strong>正方格子よりも多くの単位距離ペアを与える無限族</strong>を、代数的整数論を用いた構成によって発見。結果として「単位距離数は <span class="font-mono">n^(1+δ)</span>（δ は普遍定数）を超えうる」ことが示され、Erdős の予想は反証された。証明は外部数学者グループ（Alon, Bloom, Gowers, Litt, Sawin, Shankar, Tsimerman, Wang, Matchett Wood）が検証し、<a href="https://arxiv.org/html/2605.20695v1" class="text-blue-600 hover:underline">arXiv:2605.20695</a> に解説論文が公開された。
+            </p>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="award" class="w-6 h-6 mr-3 text-blue-500"></i>なぜ重要か — 4つの観点
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-blue-50 border-b border-blue-100">
+                    <h3 class="font-bold text-blue-700 flex items-center">
+                        <i data-lucide="brain" class="w-5 h-5 mr-2"></i>1. 汎用モデル、ではなく特化モデルではない
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        AlphaProof のような<strong>数学特化システムではなく、汎用の reasoning モデル</strong>がこれを解いた。これは reasoning スケーリングが領域横断で汎化しつつあることの強い証拠で、Sébastien Bubeck（OpenAI 数学リード）は「<em>The model did not invent something fundamentally new that nobody saw coming. It just executed like an amazing mathematician.</em>」とコメントしている。
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-blue-50 border-b border-blue-100">
+                    <h3 class="font-bold text-blue-700 flex items-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 mr-2"></i>2. 著名な未解決問題、初の AI 単独解決
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        単位距離問題は、Brass-Moser-Pach の "Research Problems in Discrete Geometry" で「<em>possibly the best known (and simplest to explain) problem in combinatorial geometry</em>」とされる定番問題。Erdős 自身が懸賞金まで掛けていた。「マイナーな Erdős 問題」ではない、という点に重みがある。
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-blue-50 border-b border-blue-100">
+                    <h3 class="font-bold text-blue-700 flex items-center">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>3. 外部数学者による検証
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        証明は Mark Sellke と Mehtaab Sawhney（OpenAI）が確認したのち、Tim Gowers（フィールズ賞）を含む9名の外部数学者が再検証し、解説論文を arXiv に投稿。前回 2025 年の Erdős 関連の「成果」では、既存文献を学習データから再生しただけだったと批判されていた経緯がある（Thomas Bloom らによる指摘）。<strong>今回は同じ Bloom も検証側にまわっている</strong>のが大きな違い。
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-blue-50 border-b border-blue-100">
+                    <h3 class="font-bold text-blue-700 flex items-center">
+                        <i data-lucide="zap" class="w-5 h-5 mr-2"></i>4. コスト効率の衝撃
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        Latent Space の報道によれば、この結果は「<strong>32時間未満、1,000ドル未満</strong>」の計算で得られたと噂されている。125ページに及ぶ出力のうち「page 39 moment」と呼ばれる箇所が、構成の核心とされている。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="info" class="w-6 h-6 mr-3 text-blue-500"></i>留意点
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-10">
+            <div class="p-4 bg-amber-50 border-b border-amber-100">
+                <h3 class="font-bold text-amber-700 flex items-center">
+                    <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>「完全解決」ではないという事実
+                </h3>
+            </div>
+            <div class="p-6">
+                <ul class="text-sm text-gray-700 space-y-2 mb-4">
+                    <li class="flex items-start"><span class="text-amber-500 mr-2">-</span>反証は出たが、<strong>単位距離数の正しい増加レートは未だ未知</strong>。</li>
+                    <li class="flex items-start"><span class="text-amber-500 mr-2">-</span>専門家は「Erdős が正しかった証明の方が、新しい洞察を生み数学的に豊かだった」とも指摘（Scientific American）。</li>
+                    <li class="flex items-start"><span class="text-amber-500 mr-2">-</span>使われた数学的ツール（代数的整数論）自体は新規ではなく、<strong>新規なのは「この領域への適用」</strong>。</li>
+                </ul>
+                <p class="text-xs text-gray-500">
+                    つまり「AI が数学を発明した」ではなく「AI が、人間には手数が多すぎて実行できなかった既知の戦略を、最後まで実行しきった」というのが正確な解釈。
+                </p>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="quote" class="w-6 h-6 mr-3 text-blue-500"></i>関係者コメント
+        </h2>
+
+        <div class="space-y-4 mb-10">
+            <div class="quote-block rounded p-4 text-sm text-gray-700 italic">
+                「It feels like magic. It's kind of an amazing experience to have a machine give back something which really resembles how I work.」
+                <span class="block mt-1 text-xs text-gray-500 not-italic">— Mehtaab Sawhney（OpenAI 数学者 / Scientific American）</span>
+            </div>
+            <div class="quote-block rounded p-4 text-sm text-gray-700 italic">
+                「Humans were not able to execute this approach — it was just too delicate. There were too many decisions to make along the way of a proof, and the AI has been able to explore all of these possibilities much more comprehensively.」
+                <span class="block mt-1 text-xs text-gray-500 not-italic">— OpenAI 発表動画コメンタリー</span>
+            </div>
+            <div class="quote-block rounded p-4 text-sm text-gray-700 italic">
+                「The proof was achieved by Lijie Chen using an internal OpenAI model and Mark Sellke and Mehtaab Sawhney verifying correctness.」
+                <span class="block mt-1 text-xs text-gray-500 not-italic">— Gil Kalai（Hebrew University 数学者 / 個人ブログ）</span>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i data-lucide="bookmark" class="w-6 h-6 mr-3 text-blue-500"></i>情報ソース
+        </h2>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-10">
+            <ul class="text-sm text-gray-700 space-y-2">
+                <li>・<a href="https://openai.com/index/model-disproves-discrete-geometry-conjecture" class="text-blue-600 hover:underline">An OpenAI model has disproved a central conjecture in discrete geometry - OpenAI</a> <span class="text-emerald-600 text-xs">[公式]</span></li>
+                <li>・<a href="https://arxiv.org/html/2605.20695v1" class="text-blue-600 hover:underline">Remarks on the disproof of the unit distance conjecture - arXiv</a> <span class="text-blue-600 text-xs">[論文]</span></li>
+                <li>・<a href="https://www.scientificamerican.com/article/ai-just-solved-an-80-year-old-erdos-problem-and-mathematicians-are-amazed" class="text-blue-600 hover:underline">OpenAI announces AI's biggest math breakthrough yet - Scientific American</a> <span class="text-amber-600 text-xs">[メディア報道]</span></li>
+                <li>・<a href="https://www.theguardian.com/technology/2026/may/21/openai-paul-erdos-maths-problem-breakthrough" class="text-blue-600 hover:underline">OpenAI makes breakthrough on 80-year-old maths problem - The Guardian</a> <span class="text-amber-600 text-xs">[メディア報道]</span></li>
+                <li>・<a href="https://gilkalai.wordpress.com/2026/05/21/amazing-erdos-unit-distance-problem-was-disproved-it-was-achieved-by-ai" class="text-blue-600 hover:underline">Amazing: Erdős' Unit Distance Problem was Disproved! - Gil Kalai blog</a> <span class="text-amber-600 text-xs">[専門家ブログ]</span></li>
+            </ul>
+        </div>
+
+        <a href="01-メインニュース.html" class="inline-flex items-center text-sm font-medium text-blue-600 hover:underline">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>週間サマリーへ戻る
+        </a>
+    </div>
+</section>
+
+<footer class="py-10 bg-white border-t border-gray-200 text-center text-gray-400 text-sm">
+    <p>生成AI週間ニュース - 2026年5月18日〜5月24日</p>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

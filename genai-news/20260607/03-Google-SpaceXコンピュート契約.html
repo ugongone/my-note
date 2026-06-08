@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google、SpaceXに月$920Mでコンピュート契約 ― 自社TPUを持つ巨人が“GPUを借りる”理由</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface-2: #f1efea;
+    --border: #e3e0d8;
+    --text: #20242b;
+    --text-dim: #6b7280;
+    --accent: #c2592f;
+    --accent-soft: rgba(194, 89, 47, 0.10);
+    --link: #b04e28;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 24px 96px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+    margin-bottom: 32px; transition: color .2s;
+  }
+  .back:hover { color: var(--accent); }
+  .eyebrow {
+    display: inline-block; font-size: 0.78rem; letter-spacing: 0.08em;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 5px 12px; border-radius: 999px; margin-bottom: 18px; font-weight: 600;
+  }
+  h1 {
+    font-size: 2.05rem; line-height: 1.35; margin: 0 0 16px; font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .meta { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 40px; }
+  .lead {
+    font-size: 1.08rem; color: var(--text); background: var(--surface);
+    border-left: 3px solid var(--accent); border-radius: 8px;
+    padding: 20px 24px; margin: 0 0 48px;
+  }
+  section { margin-bottom: 48px; }
+  h2 {
+    font-size: 1.35rem; margin: 0 0 18px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border); font-weight: 700;
+  }
+  h2 .num {
+    color: var(--accent); font-size: 0.95rem; margin-right: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+  p { margin: 0 0 16px; }
+  .callout {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin: 22px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .callout .label {
+    font-size: 0.78rem; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.05em; margin-bottom: 8px;
+  }
+  blockquote {
+    margin: 22px 0; padding: 14px 20px; background: var(--surface);
+    border-left: 3px solid var(--text-dim); border-radius: 6px;
+    color: var(--text-dim); font-style: normal;
+  }
+  blockquote cite { display: block; margin-top: 8px; font-size: 0.82rem; color: var(--text-dim); font-style: normal; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 22px 0; }
+  .fact { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+  .fact .k { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 6px; }
+  .fact .v { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .fact .v small { font-size: 0.85rem; font-weight: 500; color: var(--text-dim); }
+  .note { font-size: 0.88rem; color: var(--text-dim); }
+  .compare { width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 0.95rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .compare th, .compare td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  .compare th { background: var(--surface-2); font-weight: 700; font-size: 0.85rem; color: var(--text-dim); }
+  .compare tr:last-child td { border-bottom: none; }
+  .compare td:first-child { font-weight: 600; }
+  .sources { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .sources h2 { font-size: 1.05rem; border: none; padding: 0; margin-bottom: 14px; }
+  .sources ul { list-style: none; padding: 0; margin: 0; }
+  .sources li { margin-bottom: 10px; font-size: 0.92rem; }
+  .sources a { color: var(--link); text-decoration: none; }
+  .sources a:hover { text-decoration: underline; }
+  .tag {
+    display: inline-block; font-size: 0.72rem; color: var(--text-dim);
+    border: 1px solid var(--border); border-radius: 4px; padding: 1px 7px; margin-left: 8px;
+  }
+  strong { color: #111418; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="01-メインニュース.html">← 今週のメインニュースへ戻る</a>
+
+  <span class="eyebrow">DEEP DIVE / インフラ</span>
+  <h1>Google、SpaceXに月$920Mでコンピュート契約<br>― 自社TPUを持つ巨人が“GPUを借りる”理由</h1>
+  <div class="meta">2026/06/05 ・ メディア報道ベース</div>
+
+  <p class="lead">
+    Googleが、ロケット企業SpaceXから<strong>AI計算用のコンピュータ（GPU）を大量に借りる</strong>契約を結んだと報じられた。
+    支払いは<strong>月$920M（約920億ドル相当の規模、2026年10月〜2029年6月）</strong>。
+    自社で高性能チップ（TPU）を作っているGoogleが、なぜわざわざ他社から借りるのか――そこにAI競争の今が表れている。
+  </p>
+
+  <section>
+    <h2><span class="num">01</span>契約の概要 ― 何を、いくらで、いつまで</h2>
+    <p>
+      まず、ざっくり言うと――Googleは<strong>AIを動かすための計算資源（GPUなど）を、SpaceXから大量にレンタルする</strong>契約を結んだ。AIの開発・運用には膨大な計算が必要で、その“計算力”をまとめて借りる、ということだ。
+    </p>
+    <p class="note" style="margin-bottom:20px;">
+      厳密には ―― 報道によれば、Googleは<strong>2026年10月から2029年6月まで（32か月間）、月額$920M</strong>をSpaceXに支払い、<strong>約11万基のNVIDIA製GPU</strong>に加えCPU・メモリ等のコンピュート資源にアクセスする。総額は約$10.1B（約101億ドル）にのぼる。
+    </p>
+    <div class="facts">
+      <div class="fact"><div class="k">月額</div><div class="v">$920M</div></div>
+      <div class="fact"><div class="k">契約期間</div><div class="v">32か月 <small>(26/10〜29/06)</small></div></div>
+      <div class="fact"><div class="k">総額（概算）</div><div class="v">約$10.1B</div></div>
+      <div class="fact"><div class="k">GPU規模</div><div class="v">約11万基 <small>(NVIDIA製)</small></div></div>
+    </div>
+    <p>
+      契約には柔軟な解約条項も付く。<strong>2026年12月31日以降は、双方とも90日前の通知で解約可能</strong>。さらに、SpaceXが2026年9月30日までに約束したGPUを用意できなければ、Googleは即時解約するか、容量を減らして料金を調整して受け入れることもできる。これは「とりあえず急場をしのぐための、機動的な契約」であることを示している。
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>なぜ自社TPUを持つGoogleが“借りる”のか</h2>
+    <p>
+      ここが最大の謎だ。Googleは<strong>TPU（Tensor Processing Unit）</strong>という自社開発のAI専用チップを持ち、他社にも貸し出すほどの“チップを作る側”。その巨人が、なぜライバルの陣営からGPUを借りるのか。
+    </p>
+    <div class="callout">
+      <div class="label">そもそもTPUとGPUって？</div>
+      <p style="margin:0;">
+        どちらもAIの計算を高速に行うためのチップ。<strong>GPU</strong>はNVIDIAが市場を握る汎用的な定番品で、AI業界で奪い合いになっている。<strong>TPU</strong>はGoogleが自社向けに設計した専用チップ。つまりGoogleは「自前のチップ」を持っているのに、今回は「定番のGPU」を外から調達した、という構図だ。
+      </p>
+    </div>
+    <p>
+      Google自身が挙げた理由は、<strong>エージェントプラットフォーム「Gemini Enterprise」への需要が、予想を超えて急増した</strong>こと。自社の設備増設が追いつかず、足りない分を急いで“ブリッジ（橋渡し）容量”として借りる、という説明だ。
+    </p>
+    <blockquote>
+      「This is a short-term, timely agreement to ensure we have bridge capacity to meet surging customer demand for our agent platform, Gemini Enterprise, which has been even higher than we expected.（これは、エージェントプラットフォームGemini Enterpriseへの予想を超える需要急増に応えるため、つなぎの容量を確保する短期的かつタイムリーな契約だ）」
+      <cite>― Google（報道より）</cite>
+    </blockquote>
+    <p>
+      要するに――<strong>自前の計算資源を増やすには時間がかかる。待つより借りた方が速い（そして場合によっては安い）</strong>。世界的にGPUが不足し、ほしくてもすぐ手に入らない今、「カネを払ってでも今すぐ計算力を確保する」ことが競争の鍵になっている。Googleほどの会社でさえそう判断した、という点にこの契約の重みがある。
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>そもそも、なぜSpaceXが“計算力”を貸せるのか</h2>
+    <p>
+      ここで素朴な疑問が湧く。<strong>ロケットの会社が、なぜAI用の計算資源を大量に持っているのか</strong>。答えは「2026年2月の合併」と、イーロン・マスク氏の“計算力に全張りする”戦略にある。
+    </p>
+    <div class="callout">
+      <div class="label">出発点 ―― SpaceXとxAIの合併（2026年2月）</div>
+      <p style="margin:0;">
+        マスク氏は2026年2月、自身のロケット企業<strong>SpaceX</strong>と、AI企業<strong>xAI</strong>（チャットボット「Grok」を開発）を合併させた。これにより、xAIが築いた巨大なAI計算インフラが<strong>SpaceXの傘下</strong>に入った。つまりSpaceXは自前でGPUを作ったのではなく、<strong>合併でAI企業のインフラを丸ごと取り込んだ</strong>のだ。
+      </p>
+    </div>
+    <p>
+      ではなぜ、そのxAIが桁外れの計算資源を持っていたのか。AIには<strong>「計算力とデータが多いほど、確実に賢いモデルになる」という経験則（スケーリング則）</strong>がある。マスク氏はこれに賭け、Grokを訓練するため世界最大級のスーパーコンピュータ「<strong>Colossus（コロッサス）</strong>」を異常な速さで建造してきた。
+    </p>
+    <div class="facts">
+      <div class="fact"><div class="k">Colossus 1（初代）</div><div class="v">20万基 <small>/ 122日で構築→倍増</small></div></div>
+      <div class="fact"><div class="k">Colossus 2（現行）</div><div class="v">55万基超 <small>/ 約2GW</small></div></div>
+      <div class="fact"><div class="k">マスク氏の最終目標</div><div class="v">100万基 <small>GPU</small></div></div>
+    </div>
+
+    <h3 style="font-size:1.05rem; margin:26px 0 10px;">「余っている」のか？ ―― 実は“訓練に使えなかった”資産</h3>
+    <p>
+      では、各社に貸し出されている計算力は<strong>単に余ったもの</strong>なのか。答えは「半分イエス、半分ノー」。正確には、<strong>初代のColossus 1が「AIの訓練用としては欠陥があった」ために、貸し出しに回された</strong>のだ。
+    </p>
+    <div class="callout">
+      <div class="label">なぜ訓練に使えなかったのか（“足の遅い人待ち”問題）</div>
+      <p style="margin:0;">
+        Colossus 1は<strong>新旧さまざまな世代のGPUが混在</strong>していた（H100が約15万、H200が約5万、GB200が約2万）。AIの訓練は、全GPUが歩調を合わせて<strong>同時に1ステップずつ進める</strong>必要がある。すると速い新型GPUが先に終わっても、<strong>遅い旧型を待ち続ける</strong>ことになる。この“足の遅い人待ち”のせいで、報道によれば<strong>GPUの稼働率はわずか11%</strong>＝計算力の約9割がムダになっていたという。
+      </p>
+    </div>
+    <p>
+      そこでxAIは、新型で揃えた効率的な「<strong>Colossus 2</strong>」に訓練の主力を移し、<strong>訓練には不向きと分かったColossus 1を“収益化できる資産”として外部に貸し出す</strong>ことにした。ポイントは、<strong>推論（＝完成したAIを動かす用途）はGPUの厳密な同期を必要としない</strong>こと。だから訓練で持て余したColossus 1でも、推論用途なら問題なく使える。Anthropicの用途にちょうど合致した、というわけだ。
+    </p>
+    <p class="note">
+      ※ まとめると――「①合併でAI企業xAIの巨大インフラをSpaceXが取り込んだ」＋「②xAIが訓練に不向きな初代スパコンを貸し出しに回した」。この2つが、ロケット企業SpaceXが“計算力の貸し手”になれた理由だ。
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>Anthropic×SpaceX契約との対比でみる構図</h2>
+    <p>
+      実はSpaceXは、同じ時期に<strong>Anthropicとも巨大なコンピュート契約</strong>を結んでいる。2社を並べると、SpaceX側が“計算力の貸し手”として台頭してきた構図が見えてくる。
+    </p>
+    <table class="compare">
+      <thead>
+        <tr><th>借り手</th><th>月額</th><th>規模・期間</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Anthropic</td><td>$1.25B</td><td>Colossus 1 の全コンピュートを〜2029年まで</td></tr>
+        <tr><td>Google</td><td>$920M</td><td>約11万基のGPU、26/10〜29/06</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Anthropicの方が月額で大きく、確保するリソースも多い。Googleの契約はその<strong>およそ半分の規模</strong>にあたる。ロケット企業であるSpaceXが、AIの“計算インフラの供給者”として、フロンティアAI各社から多額の支払いを受ける立場になっている――これは数年前には想像しにくかった構図だ。
+    </p>
+    <p class="note">
+      ※ セクション03で見たとおり、SpaceXが貸し出せる計算力の出どころはxAI由来のインフラだ。<strong>競合し合うAI各社が、インフラの層では同じSpaceX（xAI系）の設備を共有する</strong>という、ねじれた構図が生まれている点も興味深い。
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>業界へのインパクトと、押さえておくべき注意点</h2>
+    <p>
+      この契約は、AI競争が<strong>「より賢いモデルを作る競争」から「計算力と電力をどれだけ確保できるかの競争」へ</strong>移っていることの縮図だ。チップと電力を大規模に押さえた者が、モデル開発でもサービス提供でも優位に立つ。だからこそ、自社チップを持つGoogleすら巨額を払って外部調達に動いた。
+    </p>
+    <p>
+      世界的なGPU不足は少なくとも2026年、一部予測では2027年まで続くとされる。<strong>「ほしいときに、ほしいだけ計算力が手に入らない」</strong>状況が、こうした青天井の調達合戦を生んでいる。
+    </p>
+    <div class="callout" style="border-left:3px solid var(--accent);">
+      <div class="label">この記事を読むうえでの注意</div>
+      <p style="margin:0;">
+        本記事の契約条件（金額・期間・GPU数・解約条項など）は、<strong>主にメディア報道に基づくもの</strong>であり、<strong>GoogleやSpaceXの公式な一次発表は本稿時点で確認できていない</strong>。数字は今後の公式発表や追加報道で更新される可能性がある点に留意してほしい。
+      </p>
+    </div>
+  </section>
+
+  <div class="sources">
+    <h2>情報ソース</h2>
+    <ul>
+      <li><a href="https://techcrunch.com/2026/06/05/google-will-pay-spacex-920m-per-month-for-compute/">Google will pay SpaceX $920M per month for compute（TechCrunch）</a><span class="tag">メディア報道</span></li>
+      <li><a href="https://www.techtimes.com/articles/317914/20260606/google-will-pay-spacex-920-million-month-nvidia-gpu-capacity-xai-data-centers.htm">Google Will Pay SpaceX $920 Million A Month For Nvidia GPU Capacity At xAI Data Centers（Tech Times）</a><span class="tag">メディア報道</span></li>
+      <li><a href="https://www.datacenterfrontier.com/machine-learning/article/55336429/googles-tpu-roadmap-challenging-nvidias-dominance-in-ai-infrastructure">Google's TPU Roadmap: Challenging Nvidia's Dominance in AI Infrastructure（Data Center Frontier）</a><span class="tag">解説</span></li>
+    </ul>
+  </div>
+
+  <a class="back" href="01-メインニュース.html" style="margin-top:40px;">← 今週のメインニュースへ戻る</a>
+</div>
+<script src="../../_assets/news-editor/news-editor.js" defer></script>
+</body>
+</html>

@@ -1,644 +1,540 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Notes</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M2 6h4%27/%3E%3Cpath d=%27M2 10h4%27/%3E%3Cpath d=%27M2 14h4%27/%3E%3Cpath d=%27M2 18h4%27/%3E%3Crect width=%2716%27 height=%2720%27 x=%274%27 y=%272%27 rx=%272%27/%3E%3Cpath d=%27M12 2v20%27/%3E%3Cpath d=%27M17 7.5h-1%27/%3E%3Cpath d=%27M17 12h-1%27/%3E%3Cpath d=%27M17 16.5h-1%27/%3E%3C/svg%3E">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        // Tailwind ダークモードをクラスベースに設定
-        tailwind.config = { darkMode: 'class' };
-    </script>
-    <script>
-        // チラつき防止：HTMLパース直後に <html> へ dark クラスを付与
-        (function () {
-            try {
-                const stored = localStorage.getItem('theme');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const isDark = stored ? stored === 'dark' : prefersDark;
-                if (isDark) document.documentElement.classList.add('dark');
-            } catch (e) { /* ignore */ }
-        })();
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Notes</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M2 6h4%27/%3E%3Cpath d=%27M2 10h4%27/%3E%3Cpath d=%27M2 14h4%27/%3E%3Cpath d=%27M2 18h4%27/%3E%3Crect width=%2716%27 height=%2720%27 x=%274%27 y=%272%27 rx=%272%27/%3E%3Cpath d=%27M12 2v20%27/%3E%3C/svg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { darkMode: 'class' };</script>
+<script>
+  (function () {
+    try {
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored ? stored === 'dark' : prefersDark) document.documentElement.classList.add('dark');
+    } catch (e) {}
+  })();
+</script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+  body { background:#f8fafc; color:#1e293b; }
+  .dark body { background:#0f172a; color:#e2e8f0; }
 
-        body {
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
+  .truncate-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 
-        /* ダークモード：bodyベース色 */
-        .dark body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-        }
+  /* scrollbars */
+  .custom-scrollbar::-webkit-scrollbar { width:6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background:transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background:#c4b5fd; border-radius:3px; }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb { background:#6d28d9; }
+  .custom-scrollbar.news::-webkit-scrollbar-thumb { background:#93c5fd; }
+  .dark .custom-scrollbar.news::-webkit-scrollbar-thumb { background:#1d4ed8; }
 
-        /* Gradient text utility */
-        .gradient-text {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+  /* sidebar tree */
+  .folder-children { max-height:0; overflow:hidden; transition:max-height .3s ease-out; }
+  .folder-children.open { max-height:3000px; }
+  .folder-icon { transition:transform .2s ease; }
+  .folder-icon.open { transform:rotate(90deg); }
+  .row { cursor:pointer; user-select:none; transition:background .12s; }
+  .tab span { white-space:nowrap; }
 
-        /* Sidebar styles */
-        .sidebar {
-            transition: width 0.2s ease, min-width 0.2s ease;
-            min-width: 200px;
-            max-width: 480px;
-        }
+  /* fade */
+  .fade { animation:fade .4s ease-out; }
+  @keyframes fade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
 
-        .sidebar.collapsed {
-            width: 0 !important;
-            min-width: 0;
-            overflow: hidden;
-            border-right: none;
-        }
+  /* home split hover */
+  .split-half { transition:flex-grow .45s cubic-bezier(.2,.7,.3,1), filter .3s; }
+  .home-split:hover .split-half { filter:brightness(.92); }
+  .home-split .split-half:hover { filter:brightness(1.04); }
 
-        /* Folder tree styles */
-        .folder-item {
-            cursor: pointer;
-            user-select: none;
-        }
+  #contentFrame { border:none; width:100%; height:100%; background:#fff; }
+  .dark #contentFrame { background:#0f172a; }
 
-        .folder-item:hover {
-            background-color: rgba(99, 102, 241, 0.08);
-        }
-
-        .dark .folder-item:hover {
-            background-color: rgba(139, 92, 246, 0.18);
-        }
-
-        .folder-children {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .folder-children.open {
-            max-height: 2000px;
-        }
-
-        .folder-icon {
-            transition: transform 0.2s ease;
-        }
-
-        .folder-icon.open {
-            transform: rotate(90deg);
-        }
-
-        .file-item {
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .file-item:hover {
-            background-color: rgba(99, 102, 241, 0.08);
-        }
-
-        .dark .file-item:hover {
-            background-color: rgba(139, 92, 246, 0.18);
-        }
-
-        .file-item.active {
-            background-color: rgba(99, 102, 241, 0.12);
-            border-right: 3px solid #6366f1;
-        }
-
-        .dark .file-item.active {
-            background-color: rgba(139, 92, 246, 0.22);
-            border-right-color: #8b5cf6;
-        }
-
-        /* Content iframe */
-        #contentFrame {
-            border: none;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Mobile sidebar overlay */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 40;
-        }
-
-        .sidebar-overlay.show {
-            display: block;
-        }
-
-        /* Scrollbar styling */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #c4b5fd;
-            border-radius: 3px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #8b5cf6;
-        }
-
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #6d28d9;
-        }
-
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #8b5cf6;
-        }
-
-        /* Welcome screen */
-        .welcome-card {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                z-index: 50;
-                height: 100vh !important;
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            #sidebarOpenBtn {
-                display: none !important;
-            }
-        }
-    </style>
+  @media (max-width:768px){
+    .home-split { flex-direction:column; }
+    .desk-only { display:none !important; }
+  }
+</style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-violet-500 selection:text-white">
+<body class="h-screen overflow-hidden antialiased selection:bg-violet-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="border-b border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="flex items-center px-4 h-12 gap-3">
-            <!-- Mobile menu button -->
-            <button id="menuBtn" class="md:hidden p-2 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-lg transition-colors flex-shrink-0">
-                <i data-lucide="menu" class="w-5 h-5 text-gray-600 dark:text-gray-300"></i>
-            </button>
-            <!-- Logo -->
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <i data-lucide="notebook-pen" class="w-5 h-5 text-violet-500"></i>
-                <h1 class="text-sm font-semibold text-gray-800 dark:text-gray-100">My Notes</h1>
-            </div>
-            <!-- Breadcrumb -->
-            <div id="breadcrumb" class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 overflow-hidden flex-1 min-w-0 justify-end">
-                <!-- Populated by JS -->
-            </div>
-            <!-- Dark mode toggle -->
-            <button id="darkModeToggle" data-testid="dark-mode-toggle"
-                class="p-2 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded-lg transition-colors flex-shrink-0"
-                title="ダークモード切替" aria-label="ダークモード切替">
-                <i data-lucide="moon" class="w-5 h-5 text-gray-600 dark:hidden"></i>
-                <i data-lucide="sun" class="w-5 h-5 text-yellow-300 hidden dark:inline"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Floating Sidebar Reopen Button (appears when sidebar is collapsed) -->
-    <button id="sidebarOpenBtn" class="hidden fixed left-3 bottom-3 z-30 w-8 h-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:shadow-md transition-all items-center justify-center" title="サイドバーを開く">
-        <i data-lucide="panel-left-open" class="w-4 h-4 text-gray-400 dark:text-gray-300"></i>
-    </button>
-
-    <div class="flex flex-1 overflow-hidden">
-        <!-- Mobile overlay -->
-        <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 flex flex-col h-[calc(100vh-48px)]" style="width: 288px;">
-            <!-- Search -->
-            <div class="p-3 border-b border-gray-100 dark:border-slate-700">
-                <div class="relative">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchInput" placeholder="ノートを検索..."
-                        class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-slate-800 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400 transition-all">
-                </div>
-            </div>
-
-            <!-- Folder Tree -->
-            <nav id="folderTree" class="flex-1 overflow-y-auto custom-scrollbar p-2">
-                <!-- Populated by JS -->
-                <div class="flex items-center justify-center py-8 text-gray-400">
-                    <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-gray-400"></i>
-                </div>
-            </nav>
-
-            <!-- Footer -->
-            <div class="p-3 border-t border-gray-100 dark:border-slate-700 text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span id="noteCount">-</span>
-                        <span class="text-gray-300 dark:text-gray-600">·</span>
-                        <span id="lastUpdated">-</span>
-                    </div>
-                    <button id="sidebarCollapseBtn" class="p-1 hover:bg-violet-50 dark:hover:bg-violet-900/30 rounded transition-colors flex-shrink-0" title="サイドバーを閉じる">
-                        <i data-lucide="panel-left-close" class="w-4 h-4 text-gray-400 dark:text-gray-300"></i>
-                    </button>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Resize Handle -->
-        <div id="resizeHandle" class="hidden md:block w-1 cursor-col-resize bg-transparent hover:bg-violet-300 active:bg-violet-400 transition-colors flex-shrink-0"></div>
-
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
-            <!-- Welcome Screen (shown when no note selected) -->
-            <div id="welcomeScreen" class="flex-1 flex items-center justify-center p-8">
-                <div class="welcome-card text-center max-w-lg">
-                    <div class="inline-flex items-center px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 border border-violet-200 dark:border-violet-700/50 text-violet-600 dark:text-violet-300 text-xs font-medium mb-6">
-                        <i data-lucide="sparkles" class="w-3 h-3 mr-2"></i>
-                        Learning Notes
-                    </div>
-                    <h2 class="text-4xl font-bold tracking-tight mb-4">
-                        <span class="gradient-text">ようこそ</span>
-                    </h2>
-                    <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed mb-8">
-                        左のサイドバーからノートを選択してください。<br>
-                        フォルダをクリックして展開できます。
-                    </p>
-                </div>
-            </div>
-
-            <!-- Content Frame (hidden initially) -->
-            <iframe id="contentFrame" class="hidden flex-1"></iframe>
-        </main>
+<!-- ============ HOME（案C1：スプリット・ランチャー） ============ -->
+<div id="home" class="home-split fixed inset-0 z-30 flex">
+  <!-- 知識 -->
+  <div id="homeKnowledge" class="split-half flex-1 relative overflow-hidden text-white p-8 md:p-10 flex flex-col cursor-pointer"
+       style="background:linear-gradient(150deg,#7c3aed,#6366f1 60%,#4f46e5)">
+    <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-auto"><i data-lucide="book-open" class="w-6 h-6"></i></div>
+    <div>
+      <div class="text-[11px] font-semibold tracking-[0.2em] opacity-80 mb-1">KNOWLEDGE</div>
+      <h2 class="text-3xl md:text-[34px] font-bold leading-tight mb-2">知識ノート</h2>
+      <p class="text-sm opacity-90 mb-4 max-w-xs" id="kSub">テーマ別に体系立てた学習メモ。</p>
+      <div class="flex flex-wrap gap-1.5 mb-5 max-w-sm" id="kChips"></div>
+      <span class="inline-flex items-center gap-2 bg-white text-violet-700 font-semibold text-[13px] px-4 py-2 rounded-full">開く<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
     </div>
+  </div>
+  <!-- ニュース -->
+  <div id="homeNews" class="split-half flex-1 relative overflow-hidden text-white p-8 md:p-10 flex flex-col items-end text-right cursor-pointer"
+       style="background:linear-gradient(210deg,#2563eb,#3b82f6 60%,#1d4ed8)">
+    <div class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-auto"><i data-lucide="newspaper" class="w-6 h-6"></i></div>
+    <div class="flex flex-col items-end">
+      <div class="text-[11px] font-semibold tracking-[0.2em] opacity-80 mb-1">WEEKLY NEWS</div>
+      <h2 class="text-3xl md:text-[34px] font-bold leading-tight mb-2">週刊ニュース</h2>
+      <p class="text-sm opacity-90 mb-4 max-w-xs" id="nSub">毎週の生成AIニュースまとめ。</p>
+      <div class="flex flex-wrap gap-1.5 justify-end mb-5 max-w-sm" id="nChips"></div>
+      <span class="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold text-[13px] px-4 py-2 rounded-full">開く<i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+    </div>
+  </div>
+  <!-- 中央：ロゴ + 横断検索 -->
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-5 w-[88%] max-w-[360px] z-10">
+    <div class="flex flex-col items-center gap-2">
+      <div class="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center"><i data-lucide="notebook-pen" class="w-7 h-7 text-violet-500"></i></div>
+      <div class="text-[15px] font-bold text-white drop-shadow whitespace-nowrap">My Notes</div>
+    </div>
+    <button id="homeSearchBtn" class="w-full bg-white rounded-full shadow-xl px-4 py-2.5 flex items-center gap-2 text-left hover:shadow-2xl transition-shadow">
+      <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+      <span class="text-[13px] text-gray-400 flex-1">すべてを横断検索…</span>
+      <span class="text-[10px] text-gray-400 border border-gray-200 rounded px-1.5 py-0.5 desk-only">⌘K</span>
+    </button>
+  </div>
+</div>
 
-    <script>
-        // State
-        let notesData = null;
-        let currentNotePath = null;
-        let allFiles = [];
+<!-- ============ APP（案A2 / A3：ヘッダータブ + サイドバー + 本文） ============ -->
+<div id="app" class="hidden h-screen flex flex-col">
+  <!-- Header -->
+  <header class="h-12 flex items-center gap-2 sm:gap-3 px-3 sm:px-4 border-b border-gray-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur flex-shrink-0 z-40">
+    <button id="menuBtn" class="md:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800"><i data-lucide="menu" class="w-5 h-5 text-gray-500"></i></button>
+    <button id="logoBtn" class="flex items-center gap-2 flex-shrink-0" title="ホームへ">
+      <i data-lucide="notebook-pen" class="w-5 h-5 text-violet-500"></i>
+      <span class="text-[13px] font-bold text-gray-800 dark:text-gray-100 hidden sm:inline whitespace-nowrap">My Notes</span>
+    </button>
+    <!-- Tabs -->
+    <div class="flex items-center gap-1 ml-1 sm:ml-3 p-0.5 rounded-full bg-gray-100/80 dark:bg-slate-800">
+      <button data-tab="knowledge" class="tab flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold text-gray-500 dark:text-gray-400"><i data-lucide="book-open" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">知識ノート</span></button>
+      <button data-tab="news" class="tab flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold text-gray-500 dark:text-gray-400"><i data-lucide="newspaper" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">週刊ニュース</span></button>
+    </div>
+    <!-- Breadcrumb -->
+    <div id="breadcrumb" class="hidden lg:flex items-center gap-2 text-[12.5px] text-gray-400 overflow-hidden flex-1 min-w-0"></div>
+    <div class="ml-auto flex items-center gap-1.5">
+      <button id="globalSearchBtn" class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-400 hover:border-violet-300 transition-colors">
+        <i data-lucide="search" class="w-3.5 h-3.5"></i><span class="text-[12px] hidden md:inline whitespace-nowrap">横断検索</span><span class="text-[10px] border border-gray-200 dark:border-slate-600 rounded px-1 desk-only">⌘K</span>
+      </button>
+      <button id="darkModeToggle" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800" title="ダークモード切替">
+        <i data-lucide="moon" class="w-4.5 h-4.5 text-gray-500 dark:hidden"></i>
+        <i data-lucide="sun" class="w-4.5 h-4.5 text-yellow-300 hidden dark:inline"></i>
+      </button>
+    </div>
+  </header>
 
-        // DOM Elements
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const menuBtn = document.getElementById('menuBtn');
-        const folderTree = document.getElementById('folderTree');
-        const searchInput = document.getElementById('searchInput');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const contentFrame = document.getElementById('contentFrame');
-        const breadcrumb = document.getElementById('breadcrumb');
-        const noteCount = document.getElementById('noteCount');
-        const lastUpdated = document.getElementById('lastUpdated');
-        const sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn');
-        const sidebarOpenBtn = document.getElementById('sidebarOpenBtn');
-        const resizeHandle = document.getElementById('resizeHandle');
-        const darkModeToggle = document.getElementById('darkModeToggle');
+  <div class="flex flex-1 overflow-hidden relative">
+    <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/50 z-30 md:hidden"></div>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="absolute md:relative z-40 md:z-auto h-full -translate-x-full md:translate-x-0 transition-transform bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 flex flex-col flex-shrink-0" style="width:280px">
+      <div class="p-3 pb-2">
+        <div class="relative">
+          <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input id="sideSearch" type="text" placeholder="この中を検索…" class="w-full pl-8 pr-3 py-2 bg-gray-50 dark:bg-slate-800 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-slate-700 rounded-lg text-[12.5px] focus:outline-none focus:ring-1 focus:ring-violet-400 focus:border-violet-400">
+        </div>
+      </div>
+      <div class="px-3.5 pb-1.5 flex items-center gap-2">
+        <span id="sideTitle" class="text-[11px] font-bold uppercase tracking-wide">SECTION</span>
+        <span id="sideCount" class="text-[10px] text-gray-400"></span>
+      </div>
+      <nav id="tree" class="flex-1 overflow-y-auto custom-scrollbar px-2 pb-3"></nav>
+      <div class="p-3 border-t border-gray-100 dark:border-slate-700 text-[11px] text-gray-400 flex items-center justify-between flex-shrink-0">
+        <span id="footMeta">—</span>
+        <button id="collapseBtn" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-slate-800 desk-only" title="サイドバーを閉じる"><i data-lucide="panel-left-close" class="w-4 h-4"></i></button>
+      </div>
+    </aside>
+    <div id="resizeHandle" class="hidden md:block w-1 cursor-col-resize hover:bg-violet-300 active:bg-violet-400 transition-colors flex-shrink-0"></div>
+    <button id="reopenBtn" class="hidden fixed left-3 bottom-3 z-30 w-8 h-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm hover:bg-violet-50 items-center justify-center" title="サイドバーを開く"><i data-lucide="panel-left-open" class="w-4 h-4 text-gray-400"></i></button>
 
-        // ダークモードトグル
-        darkModeToggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        });
+    <!-- Main -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
+      <div id="emptyState" class="hidden flex-1 items-center justify-center p-8 text-center">
+        <div class="fade max-w-sm">
+          <div id="emptyIcon" class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"></div>
+          <p class="text-gray-500 dark:text-gray-400 text-sm">左の一覧から選択してください。</p>
+        </div>
+      </div>
+      <iframe id="contentFrame" class="hidden flex-1"></iframe>
+    </main>
+  </div>
+</div>
 
+<!-- ============ 横断検索オーバーレイ ============ -->
+<div id="searchModal" class="hidden fixed inset-0 z-[60] flex items-start justify-center pt-[12vh] px-4 bg-black/40 backdrop-blur-sm">
+  <div class="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden fade" onclick="event.stopPropagation()">
+    <div class="flex items-center gap-3 px-4 border-b border-gray-100 dark:border-slate-700">
+      <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+      <input id="modalSearch" type="text" placeholder="記事・ノートを横断検索…" class="flex-1 py-3.5 bg-transparent text-[15px] focus:outline-none dark:text-gray-100">
+      <kbd class="text-[10px] text-gray-400 border border-gray-200 dark:border-slate-600 rounded px-1.5 py-0.5">Esc</kbd>
+    </div>
+    <div id="modalResults" class="max-h-[52vh] overflow-y-auto custom-scrollbar p-2"></div>
+  </div>
+</div>
 
-        // Initialize
-        async function init() {
-            try {
-                // キャッシュを無効化（古い構造が残るとサイドバーに反映されないため）
-                const response = await fetch(`notes-structure.json?_=${Date.now()}`, { cache: 'no-store' });
-                notesData = await response.json();
+<script>
+/* ---------- State ---------- */
+let data = null, knowledge = [], newsWeeks = [], allFiles = [];
+let view = 'home', currentPath = null, collapsed = false;
 
-                // Flatten files for search
-                allFiles = flattenFiles(notesData.notes);
+const $ = (id) => document.getElementById(id);
+const enc = encodeURIComponent;
 
-                // Render tree
-                renderFolderTree(notesData.notes);
+/* ---------- helpers ---------- */
+function countFiles(node){
+  if(node.type === 'file') return 1;
+  return (node.children||[]).reduce((s,c)=>s+countFiles(c),0);
+}
+function flatten(items, path=[]){
+  let out=[];
+  for(const it of items){
+    if(it.type==='file') out.push({...it, breadcrumb:[...path, it.name]});
+    else if(it.children) out=out.concat(flatten(it.children,[...path,it.name]));
+  }
+  return out;
+}
+function parseDate(name){
+  const m=String(name).match(/(\d{4})(\d{2})(\d{2})/);
+  if(!m) return null;
+  return { y:+m[1], mo:+m[2], d:+m[3], key:+(m[1]+m[2]+m[3]) };
+}
+function weekRange(dt){
+  const end=new Date(dt.y, dt.mo-1, dt.d);
+  const start=new Date(end); start.setDate(end.getDate()-6);
+  const f=(x)=>String(x.getMonth()+1).padStart(2,'0')+'/'+String(x.getDate()).padStart(2,'0');
+  return f(start)+'〜'+f(end);
+}
 
-                // Update footer
-                noteCount.textContent = `${allFiles.length} ノート`;
-                const date = new Date(notesData.generated);
-                lastUpdated.textContent = `更新: ${date.toLocaleDateString('ja-JP')}`;
+/* ---------- init ---------- */
+async function init(){
+  const res = await fetch(`notes-structure.json?_=${Date.now()}`,{cache:'no-store'});
+  data = await res.json();
 
-                // Check URL hash for direct link
-                if (window.location.hash) {
-                    const path = decodeURIComponent(window.location.hash.slice(1));
-                    loadNote(path);
-                }
-            } catch (error) {
-                console.error('Failed to load notes structure:', error);
-                folderTree.innerHTML = `
-                    <div class="text-center py-8 text-red-500">
-                        <i data-lucide="alert-circle" class="w-8 h-8 mb-2 mx-auto"></i>
-                        <p class="text-sm">データの読み込みに失敗しました</p>
-                    </div>
-                `;
-                lucide.createIcons();
-            }
-        }
+  const newsFolder = data.notes.find(n => n.name === 'genai-news');
+  knowledge = data.notes.filter(n => n.name !== 'genai-news');
 
-        function flattenFiles(items, parentPath = []) {
-            let files = [];
-            for (const item of items) {
-                if (item.type === 'file') {
-                    files.push({
-                        ...item,
-                        breadcrumb: [...parentPath, item.name]
-                    });
-                } else if (item.children) {
-                    files = files.concat(flattenFiles(item.children, [...parentPath, item.name]));
-                }
-            }
-            return files;
-        }
+  // news weeks (folders=週グループ / file=単発号), newest first
+  newsWeeks = (newsFolder ? newsFolder.children.slice() : []).map(node=>{
+    const dt = parseDate(node.name);
+    if(node.type==='folder'){
+      const main = (node.children||[]).find(c=>/01[-_]|メイン/.test(c.name)) || (node.children||[])[0];
+      return { dt, kind:'folder', name:node.name, mainPath:main?main.path:null, articles:node.children||[] };
+    }
+    return { dt, kind:'file', name:node.name, mainPath:node.path, articles:[] };
+  }).sort((a,b)=> (b.dt?.key||0) - (a.dt?.key||0));
 
-        function renderFolderTree(items, level = 0) {
-            const container = document.createElement('div');
+  allFiles = flatten(data.notes);
 
-            for (const item of items) {
-                if (item.type === 'folder') {
-                    const folder = createFolderElement(item, level);
-                    container.appendChild(folder);
-                } else {
-                    const file = createFileElement(item, level);
-                    container.appendChild(file);
-                }
-            }
+  buildHome();
+  $('footMeta').textContent = `${allFiles.length} ノート · 更新 ${new Date(data.generated).toLocaleDateString('ja-JP')}`;
 
-            if (level === 0) {
-                folderTree.innerHTML = '';
-                folderTree.appendChild(container);
-                lucide.createIcons();
-            }
+  // routing
+  applyHash();
+  window.addEventListener('hashchange', applyHash);
+  paint();
+}
 
-            return container;
-        }
+/* ---------- HOME (C1) ---------- */
+function buildHome(){
+  const kCount = knowledge.reduce((s,f)=>s+countFiles(f),0);
+  $('kSub').textContent = `テーマ別に体系立てた学習メモ。${kCount}ノート・${knowledge.length}カテゴリ。`;
+  $('kChips').innerHTML = knowledge.slice(0,5).map(f=>chip(f.name,'violet')).join('') + (knowledge.length>5?chip('+'+(knowledge.length-5),'violet'):'');
 
-        function createFolderElement(item, level) {
-            const wrapper = document.createElement('div');
+  const latest = newsWeeks[0];
+  const latestLabel = latest?.dt ? `${latest.dt.y}/${String(latest.dt.mo).padStart(2,'0')}/${String(latest.dt.d).padStart(2,'0')}` : '—';
+  $('nSub').textContent = `毎週の生成AIニュースまとめ。最新 ${latestLabel}・${newsWeeks.length}週分。`;
+  $('nChips').innerHTML = ['最新号','深掘りあり','週報'].map(t=>chip(t,'blue')).join('');
 
-            // Folder header
-            const header = document.createElement('div');
-            header.className = 'folder-item flex items-center gap-2 px-2 py-2 rounded-lg';
-            header.style.paddingLeft = `${level * 16 + 8}px`;
+  lucide.createIcons();
+}
+function chip(t,c){
+  return `<span class="text-[10.5px] px-2 py-0.5 rounded-full bg-white/15">${t}</span>`;
+}
 
-            header.innerHTML = `
-                <i data-lucide="chevron-right" class="folder-icon w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0"></i>
-                <i data-lucide="folder" class="w-4 h-4 text-violet-500 flex-shrink-0"></i>
-                <span class="text-xs font-medium text-gray-700 dark:text-gray-200 truncate">${item.name}</span>
-                <span class="text-xs text-gray-400 dark:text-gray-500 ml-auto">${item.children?.length || 0}</span>
-            `;
+/* ---------- routing / view ---------- */
+function applyHash(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  if(!h || h==='home'){ view='home'; currentPath=null; paint(); return; }
+  if(h==='knowledge' || h==='news'){ enterSection(h); return; }
+  loadNote(h, false);
+}
+function sectionOf(path){ return path && path.startsWith('genai-news/') ? 'news' : 'knowledge'; }
 
-            // Children container
-            const children = document.createElement('div');
-            children.className = 'folder-children';
+function paint(){
+  // toggle home vs app
+  if(view==='home'){
+    $('home').classList.remove('hidden');
+    $('app').classList.add('hidden');
+    location.hash = 'home';
+  } else {
+    $('home').classList.add('hidden');
+    $('app').classList.remove('hidden');
+  }
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>{
+    const on = t.dataset.tab===view;
+    const isNews = t.dataset.tab==='news';
+    t.classList.toggle('bg-white', on && !isNews);
+    t.classList.toggle('dark:bg-slate-700', on);
+    t.classList.toggle('shadow-sm', on);
+    t.style.color = on ? (isNews? '#2563eb' : t.dataset.tab==='knowledge' ? '#7c3aed' : '#334155') : '';
+    if(on && isNews) t.classList.add('bg-blue-100'); else t.classList.remove('bg-blue-100');
+    if(on && t.dataset.tab==='knowledge') t.classList.add('bg-violet-100'); else t.classList.remove('bg-violet-100');
+  });
+  lucide.createIcons();
+}
 
-            if (item.children) {
-                const childContent = renderFolderTree(item.children, level + 1);
-                children.appendChild(childContent);
-            }
+function enterSection(sec, autoload=true){
+  view = sec;
+  paint();
+  renderSidebar(sec);
+  if(autoload){
+    // 直近/先頭を自動選択
+    if(sec==='news' && newsWeeks[0]?.mainPath) loadNote(newsWeeks[0].mainPath, false);
+    else {
+      const first = flatten(knowledge)[0];
+      if(first) loadNote(first.path, false);
+    }
+  }
+}
 
-            // Toggle folder
-            header.addEventListener('click', () => {
-                const icon = header.querySelector('.folder-icon');
-                icon.classList.toggle('open');
-                children.classList.toggle('open');
-            });
+/* ---------- sidebar ---------- */
+function renderSidebar(sec){
+  const news = sec==='news';
+  $('sideTitle').textContent = news ? '週刊ニュース' : '知識ノート';
+  $('sideTitle').style.color = news ? '#2563eb' : '#7c3aed';
+  $('tree').className = 'flex-1 overflow-y-auto custom-scrollbar px-2 pb-3' + (news?' news':'');
+  $('sideSearch').value=''; 
+  if(news){
+    $('sideCount').textContent = `${newsWeeks.length}週`;
+    renderNews();
+  } else {
+    $('sideCount').textContent = `${knowledge.reduce((s,f)=>s+countFiles(f),0)}件`;
+    renderKnowledge();
+  }
+}
 
-            // Auto-expand first level
-            if (level === 0) {
-                setTimeout(() => {
-                    header.querySelector('.folder-icon').classList.add('open');
-                    children.classList.add('open');
-                }, 100);
-            }
+function renderKnowledge(){
+  const tree = $('tree'); tree.innerHTML='';
+  tree.appendChild(buildTree(knowledge, 0));
+  lucide.createIcons();
+  setActive(currentPath);
+  // 先頭フォルダを展開
+  const firstFolder = tree.querySelector('[data-folder]');
+  if(firstFolder) toggleFolder(firstFolder, true);
+}
+function buildTree(items, level){
+  const frag = document.createElement('div');
+  for(const it of items){
+    if(it.type==='folder'){
+      const wrap=document.createElement('div'); wrap.dataset.folder='';
+      const head=document.createElement('div');
+      head.className='row folder-head flex items-center gap-2 px-2.5 py-[7px] rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/20';
+      head.style.paddingLeft=(level*14+8)+'px';
+      head.innerHTML=`<i data-lucide="chevron-right" class="folder-icon w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+        <i data-lucide="folder" class="w-4 h-4 text-violet-500 flex-shrink-0"></i>
+        <span class="text-[12.5px] font-medium text-gray-700 dark:text-gray-200 truncate">${it.name}</span>
+        <span class="ml-auto text-[10.5px] text-gray-400">${countFiles(it)}</span>`;
+      const kids=document.createElement('div'); kids.className='folder-children';
+      kids.appendChild(buildTree(it.children||[], level+1));
+      head.addEventListener('click', ()=>toggleFolder(wrap));
+      wrap.appendChild(head); wrap.appendChild(kids); frag.appendChild(wrap);
+    } else {
+      const f=document.createElement('div');
+      f.className='row file-item flex items-center gap-2 px-2.5 py-[6px] rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/20';
+      f.style.paddingLeft=(level*14+8+22)+'px';
+      f.dataset.path=it.path;
+      f.innerHTML=`<i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+        <span class="text-[12.5px] text-gray-600 dark:text-gray-300 truncate" title="${it.name}">${it.name}</span>`;
+      f.addEventListener('click', ()=>{ loadNote(it.path); closeMobile(); });
+      frag.appendChild(f);
+    }
+  }
+  return frag;
+}
+function toggleFolder(wrap, forceOpen){
+  const icon=wrap.querySelector('.folder-icon');
+  const kids=wrap.querySelector('.folder-children');
+  const open = forceOpen!==undefined ? forceOpen : !kids.classList.contains('open');
+  icon.classList.toggle('open', open);
+  kids.classList.toggle('open', open);
+}
 
-            wrapper.appendChild(header);
-            wrapper.appendChild(children);
+function renderNews(){
+  const tree=$('tree'); tree.innerHTML='';
+  newsWeeks.forEach((w,i)=>{
+    const dt=w.dt;
+    const dd = dt? String(dt.d).padStart(2,'0'):'--';
+    const mm = dt? String(dt.mo).padStart(2,'0'):'--';
+    const range = dt? weekRange(dt) : w.name;
+    const wrap=document.createElement('div'); wrap.dataset.folder='';
+    const head=document.createElement('div');
+    head.className='row flex items-start gap-2.5 px-2 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20';
+    head.dataset.path=w.mainPath||'';
+    head.innerHTML=`
+      <div class="mt-0.5 flex flex-col items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 ${i===0?'bg-blue-500 text-white':'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300'}">
+        <span class="text-[12px] font-bold leading-none">${dd}</span><span class="text-[8px] leading-none mt-0.5 opacity-80">${mm}月</span>
+      </div>
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[12.5px] font-semibold text-gray-700 dark:text-gray-200">${range}</span>
+          ${i===0?'<span class="text-[9px] font-bold px-1.5 py-px rounded-full bg-blue-500 text-white">最新</span>':''}
+        </div>
+        <span class="text-[10.5px] text-gray-400">${w.kind==='folder'? w.articles.length+'本':'1本'}</span>
+      </div>
+      ${w.kind==='folder' && w.articles.length>1?'<i data-lucide="chevron-right" class="folder-icon w-3.5 h-3.5 text-gray-300 mt-2.5 flex-shrink-0"></i>':''}`;
+    wrap.appendChild(head);
 
-            return wrapper;
-        }
+    // 記事サブリスト
+    if(w.kind==='folder' && w.articles.length>1){
+      const kids=document.createElement('div'); kids.className='folder-children';
+      w.articles.forEach(a=>{
+        const f=document.createElement('div');
+        f.className='row file-item flex items-center gap-2 pl-12 pr-2 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20';
+        f.dataset.path=a.path;
+        f.innerHTML=`<i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+          <span class="text-[11.5px] text-gray-600 dark:text-gray-300 truncate" title="${a.name}">${a.name.replace(/^\d+[-_]/,'')}</span>`;
+        f.addEventListener('click',(e)=>{ e.stopPropagation(); loadNote(a.path); closeMobile(); });
+        kids.appendChild(f);
+      });
+      wrap.appendChild(kids);
+      head.addEventListener('click',()=>{ if(w.mainPath){ loadNote(w.mainPath); closeMobile(); } toggleFolder(wrap,true); });
+    } else {
+      head.addEventListener('click',()=>{ if(w.mainPath){ loadNote(w.mainPath); closeMobile(); } });
+    }
+    tree.appendChild(wrap);
+  });
+  lucide.createIcons();
+  setActive(currentPath);
+}
 
-        function createFileElement(item, level) {
-            const file = document.createElement('div');
-            file.className = 'file-item flex items-center gap-2 px-2 py-2 rounded-lg';
-            file.style.paddingLeft = `${level * 16 + 8 + 24}px`;
-            file.dataset.path = item.path;
+function setActive(path){
+  document.querySelectorAll('#tree .file-item, #tree .row[data-path]').forEach(el=>{
+    const on = el.dataset.path && el.dataset.path===path;
+    el.classList.toggle('bg-violet-100/70', on && view==='knowledge');
+    el.classList.toggle('bg-blue-100/70', on && view==='news');
+    el.style.borderRight = on ? `3px solid ${view==='news'?'#3b82f6':'#8b5cf6'}` : '';
+    if(on) el.scrollIntoView?.({block:'nearest'});
+  });
+}
 
-            file.innerHTML = `
-                <i data-lucide="file-text" class="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0"></i>
-                <span class="text-xs text-gray-600 dark:text-gray-300 truncate" title="${item.name}">${item.name}</span>
-            `;
+/* ---------- load note ---------- */
+function loadNote(path, push=true){
+  const sec = sectionOf(path);
+  if(view!==sec){ view=sec; paint(); renderSidebar(sec); }
+  currentPath = path;
+  $('emptyState').classList.add('hidden'); $('emptyState').classList.remove('flex');
+  const frame=$('contentFrame'); frame.classList.remove('hidden');
+  if(frame.getAttribute('src')!==path) frame.src = path;
+  setActive(path);
+  const info = allFiles.find(f=>f.path===path);
+  if(info) updateBreadcrumb(info.breadcrumb);
+  if(push) location.hash = enc(path);
+}
+function updateBreadcrumb(items){
+  $('breadcrumb').innerHTML = items.map((it,i)=>{
+    const last=i===items.length-1;
+    return `<span class="${last?'text-gray-800 dark:text-gray-100 font-medium truncate max-w-[260px]':'text-gray-400'}">${it}</span>${last?'':'<i data-lucide="chevron-right" class="w-3 h-3 text-gray-300"></i>'}`;
+  }).join('');
+  lucide.createIcons();
+}
 
-            file.addEventListener('click', () => {
-                loadNote(item.path);
-                // Close sidebar on mobile
-                if (window.innerWidth < 768) {
-                    toggleSidebar();
-                }
-            });
+/* ---------- nav actions ---------- */
+function goHome(){ view='home'; currentPath=null; location.hash='home'; paint(); }
+function closeMobile(){ if(innerWidth<768){ $('sidebar').classList.add('-translate-x-full'); $('sidebarOverlay').classList.add('hidden'); } }
 
-            return file;
-        }
+$('homeKnowledge').addEventListener('click', ()=>{ location.hash='knowledge'; });
+$('homeNews').addEventListener('click', ()=>{ location.hash='news'; });
+$('logoBtn').addEventListener('click', goHome);
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
+  const tab=t.dataset.tab;
+  if(tab==='home') goHome();
+  else enterSection(tab, currentPath ? sectionOf(currentPath)!==tab : true);
+}));
 
-        function loadNote(path) {
-            // Update active state
-            document.querySelectorAll('.file-item').forEach(el => {
-                el.classList.remove('active');
-                if (el.dataset.path === path) {
-                    el.classList.add('active');
-                }
-            });
+/* ---------- dark mode ---------- */
+$('darkModeToggle').addEventListener('click', ()=>{
+  const dark=document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', dark?'dark':'light');
+});
 
-            // Find the file info
-            const fileInfo = allFiles.find(f => f.path === path);
+/* ---------- mobile sidebar ---------- */
+$('menuBtn').addEventListener('click', ()=>{ $('sidebar').classList.toggle('-translate-x-full'); $('sidebarOverlay').classList.toggle('hidden'); });
+$('sidebarOverlay').addEventListener('click', closeMobile);
 
-            // Update breadcrumb
-            if (fileInfo) {
-                updateBreadcrumb(fileInfo.breadcrumb);
-            }
+/* ---------- collapse + resize (desktop) ---------- */
+$('collapseBtn').addEventListener('click', ()=>{ collapsed=true; $('sidebar').style.width='0'; $('sidebar').style.minWidth='0'; $('sidebar').style.overflow='hidden'; $('resizeHandle').style.display='none'; $('reopenBtn').classList.remove('hidden'); $('reopenBtn').classList.add('flex'); });
+$('reopenBtn').addEventListener('click', ()=>{ collapsed=false; $('sidebar').style.width='280px'; $('sidebar').style.minWidth=''; $('sidebar').style.overflow=''; $('resizeHandle').style.display=''; $('reopenBtn').classList.add('hidden'); $('reopenBtn').classList.remove('flex'); });
+let resizing=false;
+$('resizeHandle').addEventListener('mousedown', ()=>{ resizing=true; document.body.style.cursor='col-resize'; $('contentFrame').style.pointerEvents='none'; });
+document.addEventListener('mousemove', e=>{ if(resizing) $('sidebar').style.width=Math.min(460,Math.max(210,e.clientX))+'px'; });
+document.addEventListener('mouseup', ()=>{ if(resizing){ resizing=false; document.body.style.cursor=''; $('contentFrame').style.pointerEvents=''; } });
 
-            // Show iframe, hide welcome
-            welcomeScreen.classList.add('hidden');
-            contentFrame.classList.remove('hidden');
+/* ---------- 横断検索 ---------- */
+function openSearch(){ $('searchModal').classList.remove('hidden'); $('modalSearch').value=''; renderSearch(''); setTimeout(()=>$('modalSearch').focus(),30); }
+function closeSearch(){ $('searchModal').classList.add('hidden'); }
+$('homeSearchBtn').addEventListener('click', openSearch);
+$('globalSearchBtn').addEventListener('click', openSearch);
+$('searchModal').addEventListener('click', closeSearch);
+$('modalSearch').addEventListener('input', e=>renderSearch(e.target.value));
+document.addEventListener('keydown', e=>{
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openSearch(); }
+  if(e.key==='Escape') closeSearch();
+});
+function renderSearch(q){
+  q=q.toLowerCase().trim();
+  const box=$('modalResults');
+  let list = allFiles;
+  if(q) list = allFiles.filter(f=> f.name.toLowerCase().includes(q) || f.path.toLowerCase().includes(q));
+  list = list.slice(0,40);
+  if(!list.length){ box.innerHTML=`<div class="text-center py-10 text-gray-400 text-sm">一致するノートがありません</div>`; return; }
+  box.innerHTML = list.map(f=>{
+    const news = f.path.startsWith('genai-news/');
+    const cat = news?'ニュース':f.breadcrumb[0];
+    const color = news?'text-blue-600 bg-blue-50 dark:bg-blue-900/30':'text-violet-600 bg-violet-50 dark:bg-violet-900/30';
+    return `<button class="result w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 text-left" data-path="${f.path.replace(/"/g,'&quot;')}">
+      <i data-lucide="${news?'newspaper':'file-text'}" class="w-4 h-4 ${news?'text-blue-500':'text-violet-500'} flex-shrink-0"></i>
+      <div class="min-w-0 flex-1">
+        <div class="text-[13px] text-gray-800 dark:text-gray-100 truncate">${hl(f.name,q)}</div>
+        <div class="text-[11px] text-gray-400 truncate">${f.breadcrumb.slice(0,-1).join(' / ')}</div>
+      </div>
+      <span class="text-[10px] font-medium px-1.5 py-0.5 rounded ${color} flex-shrink-0">${cat}</span>
+    </button>`;
+  }).join('');
+  box.querySelectorAll('.result').forEach(b=>b.addEventListener('click',()=>{ closeSearch(); loadNote(b.dataset.path); }));
+  lucide.createIcons();
+}
+function hl(t,q){ if(!q) return t; try{ return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark class="bg-yellow-200 dark:bg-yellow-500/40 rounded px-0.5">$1</mark>'); }catch(e){ return t; } }
 
-            // Load content
-            contentFrame.src = path;
-            currentNotePath = path;
+/* ---------- section sidebar filter ---------- */
+$('sideSearch').addEventListener('input', e=>{
+  const q=e.target.value.toLowerCase().trim();
+  const pool = view==='news' ? allFiles.filter(f=>f.path.startsWith('genai-news/')) : flatten(knowledge);
+  if(!q){ renderSidebar(view); $('sideSearch').focus(); return; }
+  const hits = pool.filter(f=>f.name.toLowerCase().includes(q));
+  const tree=$('tree'); tree.innerHTML='';
+  if(!hits.length){ tree.innerHTML=`<div class="text-center py-8 text-gray-400 text-[12.5px]">一致なし</div>`; return; }
+  hits.slice(0,60).forEach(f=>{
+    const el=document.createElement('div');
+    el.className='row file-item flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800';
+    el.dataset.path=f.path;
+    el.innerHTML=`<i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+      <div class="min-w-0"><div class="text-[12.5px] text-gray-700 dark:text-gray-200 truncate">${hl(f.name,q)}</div>
+      <div class="text-[10.5px] text-gray-400 truncate">${f.breadcrumb.slice(0,-1).join(' / ')}</div></div>`;
+    el.addEventListener('click',()=>{ loadNote(f.path); closeMobile(); });
+    tree.appendChild(el);
+  });
+  lucide.createIcons();
+});
 
-            // Update URL hash
-            window.location.hash = encodeURIComponent(path);
-        }
-
-        function updateBreadcrumb(items) {
-            breadcrumb.innerHTML = items.map((item, i) => {
-                const isLast = i === items.length - 1;
-                return `
-                    <span class="${isLast ? 'text-gray-800 dark:text-gray-100 font-medium truncate max-w-[200px]' : 'text-gray-400 dark:text-gray-500'}">${item}</span>
-                    ${!isLast ? '<i data-lucide="chevron-right" class="w-3 h-3 text-gray-300 dark:text-gray-600"></i>' : ''}
-                `;
-            }).join('');
-            lucide.createIcons();
-        }
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('open');
-            sidebarOverlay.classList.toggle('show');
-        }
-
-        // Search functionality
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-
-            if (!query) {
-                // Reset view
-                renderFolderTree(notesData.notes);
-                return;
-            }
-
-            // Filter files
-            const filtered = allFiles.filter(file =>
-                file.name.toLowerCase().includes(query) ||
-                file.path.toLowerCase().includes(query)
-            );
-
-            // Show filtered results
-            folderTree.innerHTML = '';
-
-            if (filtered.length === 0) {
-                folderTree.innerHTML = `
-                    <div class="text-center py-8 text-gray-400 dark:text-gray-500">
-                        <i data-lucide="search" class="w-6 h-6 mb-2 mx-auto"></i>
-                        <p class="text-sm">「${query}」に一致するノートがありません</p>
-                    </div>
-                `;
-                lucide.createIcons();
-                return;
-            }
-
-            const list = document.createElement('div');
-            list.className = 'space-y-1';
-
-            filtered.forEach(file => {
-                const item = document.createElement('div');
-                item.className = 'file-item flex items-center gap-2 px-3 py-2 rounded-lg';
-                item.dataset.path = file.path;
-
-                item.innerHTML = `
-                    <i data-lucide="file-text" class="w-4 h-4 text-gray-400 dark:text-gray-500 flex-shrink-0"></i>
-                    <div class="min-w-0">
-                        <div class="text-sm text-gray-700 dark:text-gray-200 truncate">${highlightMatch(file.name, query)}</div>
-                        <div class="text-xs text-gray-400 dark:text-gray-500 truncate">${file.breadcrumb.slice(0, -1).join(' / ')}</div>
-                    </div>
-                `;
-
-                item.addEventListener('click', () => {
-                    loadNote(file.path);
-                    if (window.innerWidth < 768) {
-                        toggleSidebar();
-                    }
-                });
-
-                list.appendChild(item);
-            });
-
-            folderTree.appendChild(list);
-            lucide.createIcons();
-        });
-
-        function highlightMatch(text, query) {
-            const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-            return text.replace(regex, '<mark class="bg-violet-200 text-violet-800 rounded px-0.5">$1</mark>');
-        }
-
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-
-        // Event listeners
-        menuBtn.addEventListener('click', toggleSidebar);
-
-        // Sidebar collapse/expand (desktop)
-        let sidebarCollapsed = false;
-
-        function collapseSidebar() {
-            sidebarCollapsed = true;
-            sidebar.classList.add('collapsed');
-            if (resizeHandle) resizeHandle.style.display = 'none';
-            sidebarOpenBtn.classList.remove('hidden');
-            sidebarOpenBtn.classList.add('flex');
-        }
-
-        function expandSidebar() {
-            sidebarCollapsed = false;
-            sidebar.classList.remove('collapsed');
-            if (resizeHandle) resizeHandle.style.display = '';
-            sidebarOpenBtn.classList.add('hidden');
-            sidebarOpenBtn.classList.remove('flex');
-        }
-
-        sidebarCollapseBtn.addEventListener('click', () => {
-            sidebarCollapsed ? expandSidebar() : collapseSidebar();
-        });
-        sidebarOpenBtn.addEventListener('click', expandSidebar);
-
-        // Sidebar resize
-        let isResizing = false;
-        if (resizeHandle) {
-            resizeHandle.addEventListener('mousedown', (e) => {
-                isResizing = true;
-                document.body.style.cursor = 'col-resize';
-                document.body.style.userSelect = 'none';
-                contentFrame.style.pointerEvents = 'none';
-            });
-        }
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isResizing) return;
-            const newWidth = Math.min(480, Math.max(200, e.clientX));
-            sidebar.style.width = newWidth + 'px';
-        });
-
-        document.addEventListener('mouseup', () => {
-            if (!isResizing) return;
-            isResizing = false;
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-            contentFrame.style.pointerEvents = '';
-        });
-
-        // Handle hash change
-        window.addEventListener('hashchange', () => {
-            if (window.location.hash) {
-                const path = decodeURIComponent(window.location.hash.slice(1));
-                loadNote(path);
-            }
-        });
-
-        // Initialize Lucide icons for static HTML, then load notes
-        lucide.createIcons();
-        init().then(() => lucide.createIcons());
-    </script>
+lucide.createIcons();
+init();
+</script>
 </body>
 </html>

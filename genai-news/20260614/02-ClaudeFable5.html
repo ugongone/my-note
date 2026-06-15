@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="editorial">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>公開72時間で消えた最強モデル — Claude Fable 5 / Mythos 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700;900&family=Shippori+Mincho:wght@500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   Claude Fable 5 — News Visualization
+   トークンシステム + 切替可能な3つのテーマ方向
+   ============================================================ */
+:root{
+  --maxw: 1120px;
+  --readw: 760px;
+  --gutter: clamp(20px, 5vw, 96px);
+  --r: 4px;
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+}
+
+/* ---------- 1. EDITORIAL (報道 / 調査報道の新聞調) ---------- */
+[data-theme="editorial"]{
+  --bg:#f1ece1;
+  --bg-2:#fbf8f1;
+  --bg-3:#e7dfce;
+  --ink:#1a1611;
+  --ink-2:#5b5247;
+  --ink-3:#9b9183;
+  --line:#d8cdb8;
+  --line-strong:#1a1611;
+  --accent:#bf2a1d;
+  --accent-soft:#bf2a1d18;
+  --bg-blur:rgba(241,236,225,.82);
+  --danger-glow:rgba(191,42,29,.5);
+  --accent-2:#1c3a63;
+  --danger:#bf2a1d;
+  --ok:#1f6f43;
+  --warn:#9a6310;
+  --chip:#e7dfce;
+  --font-display:"Noto Serif JP", serif;
+  --font-body:"Noto Sans JP", sans-serif;
+  --font-mono:"JetBrains Mono", monospace;
+  --shadow: 0 1px 0 var(--line), 0 18px 40px -28px rgba(26,22,17,.5);
+  --tex: .35;
+  color-scheme: light;
+}
+
+/* ============================================================
+   記事レイアウト・コンポーネント・チャート・テクスチャ
+   ============================================================ */
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.8;
+  letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  transition:background .5s var(--ease), color .5s var(--ease);
+}
+::selection{ background:var(--accent); color:var(--bg); }
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+
+/* ---------- ページテクスチャ ---------- */
+.tex-layer{
+  position:fixed; inset:0; pointer-events:none; z-index:1;
+  mix-blend-mode:normal;
+  opacity:.5;
+  background:
+    radial-gradient(rgba(26,22,17,.05) 1px, transparent 1.4px);
+  background-size:4px 4px;
+}
+
+/* ============================================================
+   トップバー + テーマ切替 + 進捗バー
+   ============================================================ */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+  padding:12px var(--gutter);
+  background:var(--bg-blur);
+  backdrop-filter:blur(14px) saturate(1.1);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  border-bottom:1px solid var(--line);
+  transition:background .5s var(--ease), border-color .5s var(--ease);
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap;
+}
+.brand b{ color:var(--ink); font-weight:700; }
+.brand .dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--danger);
+  box-shadow:0 0 0 0 var(--danger);
+  animation:pulse 2.4s infinite;
+}
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 var(--danger-glow); }
+  70%{ box-shadow:0 0 0 7px transparent; }
+  100%{ box-shadow:0 0 0 0 transparent; }
+}
+@media (max-width:680px){
+  .brand span.tag{ display:none; }
+}
+.progress{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:var(--accent); z-index:70;
+  transition:width .1s linear;
+}
+
+/* ============================================================
+   共有レイアウト
+   ============================================================ */
+.wrap{ position:relative; z-index:2; }
+section{ position:relative; }
+.inner{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:0 var(--gutter);
+}
+.read{ max-width:var(--readw); }
+.kicker{
+  font-family:var(--font-mono);
+  font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); font-weight:600;
+  display:inline-flex; align-items:center; gap:9px;
+}
+.kicker::before{
+  content:""; width:26px; height:1px; background:var(--accent);
+  display:inline-block;
+}
+p{ color:var(--ink); }
+.lead{ color:var(--ink-2); }
+strong{ color:var(--ink); font-weight:700; }
+strong{ background:linear-gradient(transparent 62%, var(--accent-soft) 0); }
+
+/* reveal — 基本状態は「表示」。JSが .anim を付けたときのみ隠す
+   （no-JS・印刷・モーション低減では常に表示） */
+html.anim .reveal{ opacity:0; transform:translateY(26px); }
+html.anim .reveal.is-in{ opacity:1; transform:none; transition:opacity .8s var(--ease-out), transform .9s var(--ease-out); }
+html.anim .reveal.d1{ transition-delay:.08s; }
+html.anim .reveal.d2{ transition-delay:.16s; }
+html.anim .reveal.d3{ transition-delay:.24s; }
+html.anim .reveal.d4{ transition-delay:.32s; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  min-height:100svh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:120px var(--gutter) 64px;
+  position:relative; overflow:hidden;
+}
+.hero .inner{ width:100%; }
+.hero-grid{
+  display:grid; grid-template-columns:1fr; gap:48px; align-items:end;
+}
+@media (max-width:900px){ .hero-grid{ gap:36px; } }
+.hero-head .eyebrow{
+  font-family:var(--font-mono); font-size:13px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-2); margin-bottom:24px;
+  display:flex; gap:14px; flex-wrap:wrap;
+}
+.hero-head .eyebrow b{ color:var(--danger); }
+.hero-head .eyebrow > span{ white-space:nowrap; }
+.hero h1{
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:clamp(40px, 7.2vw, 104px);
+  line-height:1.02;
+  letter-spacing:-.01em;
+  margin:0 0 26px;
+  color:var(--ink);
+}
+.hero h1 .hl{ color:var(--accent); }
+.hero .sub{
+  font-size:clamp(16px,1.6vw,20px); color:var(--ink-2);
+  max-width:50ch; line-height:1.8; margin:0;
+}
+.scroll-hint{
+  position:absolute; left:50%; bottom:24px; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-3); display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.scroll-hint .ln{ width:1px; height:34px; background:linear-gradient(var(--ink-3), transparent); animation:drop 1.8s infinite; }
+@media (max-height:760px){ .scroll-hint{ display:none; } }
+@keyframes drop{ 0%{transform:scaleY(0);transform-origin:top;} 50%{transform:scaleY(1);transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0);transform-origin:bottom;} }
+
+/* ============================================================
+   セクション骨格
+   ============================================================ */
+.section{ padding:clamp(64px,10vh,128px) 0; border-top:1px solid var(--line); }
+.section.tight{ padding-top:clamp(40px,6vh,72px); }
+.sec-head{ display:flex; align-items:baseline; gap:22px; margin-bottom:40px; }
+.sec-num{
+  font-family:var(--font-mono); font-weight:700;
+  font-size:clamp(28px,4vw,46px); color:var(--accent); line-height:1;
+}
+.sec-title{
+  font-family:var(--font-display); font-weight:900;
+  font-size:clamp(26px,3.6vw,44px); line-height:1.12; margin:0; letter-spacing:-.01em;
+}
+.sec-dek{ color:var(--ink-2); font-size:clamp(15px,1.5vw,18px); max-width:62ch; margin:18px 0 0; }
+.bodytext > p{ font-size:clamp(15px,1.5vw,17.5px); margin:0 0 20px; max-width:64ch; }
+
+/* ---------- LEDE（前提） ---------- */
+.lede-sec{ padding:clamp(40px,7vh,86px) 0 0; }
+.lede{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(18px,2.1vw,26px); line-height:1.78; color:var(--ink);
+  margin:0; text-wrap:pretty;
+}
+.lede b{ color:var(--ink); font-weight:700; }
+.lede .drop{
+  float:left; font-family:var(--font-display); font-weight:900;
+  font-size:4.4em; line-height:.74; color:var(--accent);
+  padding:8px 16px 0 0;
+}
+
+/* ============================================================
+   TL;DR — 30秒でわかる要点
+   ============================================================ */
+.tldr{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+@media (max-width:760px){ .tldr{ grid-template-columns:1fr; } }
+.tldr-card{ background:var(--bg-2); padding:30px 30px 34px; position:relative; transition:background .4s; }
+.tldr-card:hover{ background:var(--bg-3); }
+.tldr-card .n{ font-family:var(--font-mono); font-size:13px; color:var(--accent); font-weight:700; letter-spacing:.1em; }
+.tldr-card h3{ font-family:var(--font-display); font-weight:700; font-size:clamp(19px,2vw,24px); line-height:1.4; margin:14px 0 10px; }
+.tldr-card p{ color:var(--ink-2); font-size:14.5px; margin:0; line-height:1.75; }
+.tldr-card.flag::after{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--danger); }
+
+/* ============================================================
+   PYRAMID — モデル階級
+   ============================================================ */
+.pyramid{ display:flex; flex-direction:column; gap:8px; align-items:center; }
+.tier{
+  width:100%; max-width:var(--w,720px);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 26px; border:1px solid var(--line); background:var(--bg-2);
+  border-radius:var(--r); transition:transform .5s var(--ease-out), border-color .4s, background .4s;
+}
+.tier .tname{ font-family:var(--font-display); font-weight:700; font-size:clamp(17px,2vw,22px); }
+.tier .tdesc{ font-family:var(--font-mono); font-size:12px; color:var(--ink-3); letter-spacing:.06em; }
+.tier.top{
+  background:var(--accent); color:#fff; border-color:var(--accent);
+  box-shadow:0 20px 50px -22px var(--accent);
+}
+.tier.top .tname{ font-weight:900; }
+.tier.top .tdesc{ color:#fff; opacity:.78; }
+.tier .new-flag{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; padding:3px 9px; border-radius:999px; border:1px solid currentColor; }
+
+/* ============================================================
+   SPLIT — Fable vs Mythos
+   ============================================================ */
+.split{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+@media (max-width:820px){ .split{ grid-template-columns:1fr; } }
+.split-col{ background:var(--bg-2); padding:36px clamp(24px,3vw,40px) 40px; position:relative; }
+.split-col .ico{ font-size:30px; line-height:1; }
+.split-col .badge{ font-family:var(--font-mono); font-size:12px; letter-spacing:.1em; padding:5px 11px; border-radius:999px; display:inline-block; margin-top:8px; white-space:nowrap; }
+.split-col.safe .badge{ background:var(--ok); color:#fff; }
+.split-col.raw .badge{ background:var(--danger); color:#fff; }
+.split-col h3{ font-family:var(--font-display); font-weight:900; font-size:clamp(26px,3vw,34px); margin:18px 0 4px; }
+.split-col .role{ font-family:var(--font-mono); font-size:12px; color:var(--ink-3); letter-spacing:.08em; margin-bottom:18px; }
+.split-col p{ color:var(--ink-2); font-size:15px; margin:0; }
+.split-vs{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3; width:54px; height:54px; border-radius:50%; background:var(--bg); border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:13px; letter-spacing:.05em; }
+@media (max-width:820px){ .split-vs{ display:none; } }
+.naming{ margin-top:1px; background:var(--bg-2); border:1px solid var(--line); border-top:0; border-radius:0 0 var(--r) var(--r); padding:28px clamp(24px,3vw,40px); }
+.naming .quote{ font-family:var(--font-display); font-style:italic; font-size:clamp(16px,1.8vw,20px); line-height:1.7; color:var(--ink); border-left:3px solid var(--accent); padding-left:20px; margin:14px 0 0; }
+.naming .quote .en{ color:var(--ink-2); font-size:.85em; display:block; margin-top:8px; font-style:normal; font-family:var(--font-mono); }
+.quote .cite{ display:block; margin-top:12px; font-style:normal; font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em; color:var(--ink-3); }
+.quote .cite::before{ content:"— 出典: "; color:var(--ink-3); }
+.quote .cite a{ color:var(--accent); text-decoration:none; font-weight:700; }
+.quote .cite a:hover{ text-decoration:underline; }
+
+/* ============================================================
+   ベンチマークバー
+   ============================================================ */
+.bench-note{ font-family:var(--font-mono); font-size:12.5px; color:var(--warn); border:1px dashed var(--warn); border-radius:var(--r); padding:10px 14px; display:inline-flex; gap:8px; margin-bottom:30px; }
+.bench-group + .bench-group{ margin-top:36px; }
+.bench-group > h4{ font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2); margin:0 0 18px; display:flex; align-items:center; gap:10px; }
+.bench-group > h4 .pill{ font-size:11px; padding:3px 8px; border-radius:999px; }
+.pill.fable{ background:var(--ok); color:#fff; }
+.pill.mythos{ background:var(--danger); color:#fff; }
+.metric{ margin-bottom:24px; }
+.metric .mlabel{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:11px; gap:12px; }
+.metric .mlabel .mn{ font-family:var(--font-body); font-weight:700; font-size:15px; }
+.metric .mlabel .mu{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-3); }
+.bars{ display:flex; flex-direction:column; gap:7px; }
+.bar-row{ display:grid; grid-template-columns:120px 1fr; align-items:center; gap:14px; }
+@media (max-width:560px){ .bar-row{ grid-template-columns:88px 1fr; gap:10px; } }
+.bar-row .who{ font-family:var(--font-mono); font-size:12px; color:var(--ink-2); text-align:right; white-space:nowrap; }
+.bar-track{ position:relative; height:30px; background:var(--bg-3); border-radius:3px; overflow:hidden; }
+.bar-fill{ position:absolute; left:0; top:0; bottom:0; width:0; background:var(--ink-3); border-radius:3px; transition:width 1.1s var(--ease-out); display:flex; align-items:center; }
+.bar-fill .v{ position:absolute; right:10px; font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--bg); opacity:0; transition:opacity .4s .5s; }
+.is-in .bar-fill .v{ opacity:1; }
+.bar-row.hero-row .bar-fill{ background:var(--accent); }
+.bar-row.hero-row .who{ color:var(--ink); font-weight:700; }
+.bar-fill.win{ background:var(--accent); }
+
+/* ============================================================
+   実務インパクトカード
+   ============================================================ */
+.impact{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media (max-width:860px){ .impact{ grid-template-columns:1fr; } }
+.icard{ border:1px solid var(--line); background:var(--bg-2); border-radius:var(--r); padding:28px 26px 30px; display:flex; flex-direction:column; }
+.icard .big{ font-family:var(--font-display); font-weight:900; font-size:clamp(30px,3.4vw,42px); line-height:1.05; color:var(--accent); letter-spacing:-.01em; }
+.icard .big small{ font-size:.42em; color:var(--ink-2); font-weight:700; display:block; margin-top:6px; letter-spacing:.02em; }
+.icard h4{ font-family:var(--font-display); font-weight:700; font-size:18px; margin:18px 0 8px; }
+.icard p{ color:var(--ink-2); font-size:14px; margin:0; line-height:1.7; }
+
+/* ============================================================
+   価格
+   ============================================================ */
+.price-wrap{ display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); gap:34px; align-items:start; }
+@media (max-width:860px){ .price-wrap{ grid-template-columns:1fr; } }
+.ptable{ border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:var(--bg-2); }
+.prow{ display:grid; grid-template-columns:1.3fr 1fr 1fr; }
+.prow + .prow{ border-top:1px solid var(--line); }
+.prow > div{ padding:15px 18px; font-family:var(--font-mono); font-size:14px; }
+.prow.head > div{ background:var(--bg-3); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); font-weight:700; }
+.prow .lab{ color:var(--ink-2); font-family:var(--font-body); font-size:13.5px; }
+.prow .fab{ color:var(--accent); font-weight:700; }
+.prow .opu{ color:var(--ink-3); }
+.price-vis h4{ font-family:var(--font-mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2); margin:0 0 22px; }
+.pcompare{ display:flex; flex-direction:column; gap:26px; }
+.pc-cap{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); margin-bottom:11px; }
+.pc-row{ display:grid; grid-template-columns:48px 1fr; gap:12px; align-items:center; }
+.pc-row + .pc-row{ margin-top:8px; }
+.pcn{ font-family:var(--font-mono); font-size:12px; color:var(--ink-2); text-align:right; }
+.pc-track{ position:relative; height:34px; background:var(--bg-3); border-radius:4px; overflow:hidden; }
+.pc-track i{ position:absolute; left:0; top:0; bottom:0; width:0; display:flex; align-items:center; justify-content:flex-end; border-radius:4px; transition:width 1s var(--ease-out); }
+.pc-track.fab i{ background:var(--accent); }
+.pc-track.opu i{ background:var(--ink-3); }
+.pc-track i b{ font-family:var(--font-mono); font-size:12.5px; font-weight:700; color:var(--bg); padding-right:11px; white-space:nowrap; }
+.pc-track.fab i b{ color:#fff; }
+.x2{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-weight:700; color:var(--accent); }
+
+/* phased rollout */
+.phases{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:40px; counter-reset:ph; }
+@media (max-width:760px){ .phases{ grid-template-columns:1fr; } }
+.phase{ border:1px solid var(--line); border-radius:var(--r); padding:22px; background:var(--bg-2); position:relative; }
+.phase .ph-when{ font-family:var(--font-mono); font-size:12px; color:var(--accent); font-weight:700; letter-spacing:.04em; }
+.phase p{ margin:10px 0 0; font-size:13.5px; color:var(--ink-2); }
+.phase.struck{ opacity:.62; }
+.phase.struck::after{ content:"中止"; position:absolute; top:14px; right:14px; font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; color:var(--danger); border:1px solid var(--danger); padding:2px 7px; border-radius:999px; }
+
+/* operational reality list */
+.reality{ margin-top:40px; display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+.rrow{ background:var(--bg-2); padding:24px clamp(20px,2.5vw,32px); display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:start; }
+.rrow .code{ font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--danger); border:1px solid var(--danger); padding:6px 10px; border-radius:var(--r); white-space:nowrap; align-self:start; }
+.rrow .code.warn{ color:var(--warn); border-color:var(--warn); }
+.rrow h4{ font-family:var(--font-display); font-weight:700; font-size:17px; margin:0 0 6px; }
+.rrow p{ margin:0; color:var(--ink-2); font-size:14px; }
+
+/* ============================================================
+   72時間タイムライン（クライマックス）
+   ============================================================ */
+.climax{ background:var(--bg-2); }
+.tl{ position:relative; margin-top:40px; padding-left:8px; }
+.tl::before{ content:""; position:absolute; left:13px; top:8px; bottom:8px; width:2px; background:linear-gradient(var(--ok), var(--warn) 55%, var(--danger)); }
+.tl-item{ position:relative; padding:0 0 36px 52px; }
+.tl-item:last-child{ padding-bottom:0; }
+.tl-item .node{ position:absolute; left:4px; top:3px; width:20px; height:20px; border-radius:50%; background:var(--bg); border:2px solid var(--ink-3); z-index:2; }
+.tl-item.kill .node{ border-color:var(--danger); background:var(--danger); box-shadow:0 0 0 6px var(--accent-soft); }
+.tl-item .when{ font-family:var(--font-mono); font-size:12px; color:var(--accent); letter-spacing:.04em; font-weight:700; }
+.tl-item .what{ font-size:15px; color:var(--ink); margin:7px 0 0; max-width:64ch; }
+.tl-item .what code{ font-family:var(--font-mono); font-size:.86em; background:var(--bg-3); padding:2px 6px; border-radius:4px; color:var(--ink-2); }
+.tl-item.kill .what{ font-weight:700; }
+
+/* claims face-off */
+.faceoff{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:44px; }
+@media (max-width:760px){ .faceoff{ grid-template-columns:1fr; } }
+.fo-col{ background:var(--bg-2); padding:30px; }
+.fo-col .fo-who{ font-family:var(--font-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; display:inline-flex; gap:8px; align-items:center; }
+.fo-col.gov .fo-who{ color:var(--warn); }
+.fo-col.ant .fo-who{ color:var(--accent-2); }
+.fo-col p{ margin:0; color:var(--ink-2); font-size:14.5px; }
+
+/* tombstone */
+.rip{ margin-top:52px; display:flex; justify-content:center; }
+.stone{
+  text-align:center; padding:46px 56px 40px; max-width:460px; width:100%;
+  border:1px solid var(--line-strong); border-radius:120px 120px 12px 12px;
+  background:var(--bg-3);
+  box-shadow:var(--shadow);
+}
+.stone .cross{ font-family:var(--font-display); font-size:26px; color:var(--ink-3); }
+.stone .rip-t{ font-family:var(--font-mono); letter-spacing:.3em; color:var(--ink-2); font-size:13px; margin:6px 0 16px; }
+.stone .rip-name{ font-family:var(--font-display); font-weight:900; font-size:clamp(24px,3vw,32px); line-height:1.2; }
+.stone .rip-dates{ font-family:var(--font-mono); font-size:14px; color:var(--ink-2); margin-top:12px; }
+.stone .rip-epi{ font-size:13px; color:var(--ink-3); margin-top:18px; font-style:italic; }
+
+/* ============================================================
+   引用 / 考察
+   ============================================================ */
+.pull{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:clamp(40px,6vw,72px) 0; margin:8px 0; text-align:center; }
+.pull q{ font-family:var(--font-display); font-weight:900; font-size:clamp(24px,4vw,46px); line-height:1.3; quotes:none; display:block; max-width:18ch; margin:0 auto; }
+.pull q::before{ content:"“"; color:var(--accent); }
+.pull q::after{ content:"”"; color:var(--accent); }
+.pull .pq-cap{ font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3); margin-top:24px; }
+
+/* ============================================================
+   フッター / 情報ソース
+   ============================================================ */
+.foot{ border-top:1px solid var(--line); padding:64px 0 80px; }
+.src-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:26px; }
+@media (max-width:720px){ .src-list{ grid-template-columns:1fr; } }
+.src-item{ display:block; background:var(--bg-2); padding:20px 24px; transition:background .3s; color:inherit; text-decoration:none; }
+.src-item:hover{ background:var(--bg-3); }
+a.src-item:hover .st{ color:var(--accent); }
+.src-item .st{ font-family:var(--font-body); font-weight:700; font-size:14.5px; display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.src-item .so{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); }
+.src-item .sd{ color:var(--ink-2); font-size:12.5px; margin-top:6px; }
+.disclaimer{ font-size:12.5px; color:var(--ink-3); margin-top:34px; font-style:italic; max-width:70ch; }
+.colophon{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:.08em; margin-top:30px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; border-top:1px solid var(--line); padding-top:22px; }
+</style>
+</head>
+<body>
+<div class="progress"></div>
+<div class="tex-layer"></div>
+
+<!-- ===================== TOP BAR ===================== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <b>生成AI週報</b><span class="tag">／ 深掘りビジュアル</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" data-screen-label="Hero">
+  <div class="inner">
+    <div class="hero-grid">
+      <div class="hero-head full">
+        <div class="eyebrow">
+          <span>生成AI週報 深掘り · 2026/06/14 週</span>
+          <span><b>対象</b> Claude Fable 5 / Mythos 5</span>
+        </div>
+        <h1>公開<span class="hl">72時間</span>で<br />消えた最強モデル</h1>
+        <p class="sub">これまでの最上位 Opus の、さらに上。初めて一般公開された新クラス「Mythos」級。だが性能でも需要でもなく——<strong>国家安全保障</strong>を理由に、わずか3日で「スイッチを切られた」。</p>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><span class="ln"></span></div>
+</section>
+
+<!-- ===================== LEDE — premise ===================== -->
+<section class="lede-sec" data-screen-label="リード">
+  <div class="inner read">
+    <p class="lede"><span class="drop">2</span>026年6月9日、Anthropic は Claude の新モデル <b>Fable 5</b> と <b>Mythos 5</b> を公開した。従来の最上位 Opus を超える新クラス「Mythos」級が、初めて広く一般に開かれた瞬間だった。中身は同じ基盤モデルで、安全装置の<b>あり（Fable）</b>／<b>なし（Mythos）</b>だけが違う。性能はほぼ全ベンチで最先端——だが価格は Opus の2倍で炎上し、公開からわずか72時間後、米政府の指令で完全に停止された。本稿は、その3日間に何が起きたのかをたどる。</p>
+  </div>
+</section>
+
+<!-- ===================== 00 TL;DR ===================== -->
+<section class="section" data-screen-label="30秒でわかる要点">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">00</span>
+      <div>
+        <h2 class="sec-title">30秒でわかる要点</h2>
+        <p class="sec-dek">最先端の登場と消失が、同じ一週間に起きた。まずは全体像を4点で。</p>
+      </div>
+    </div>
+    <div class="tldr">
+      <div class="tldr-card reveal">
+        <div class="n">01</div>
+        <h3>Opus の「さらに上」、新クラス Mythos が初公開</h3>
+        <p>従来最上位の Opus を超える新階級。一般に広く公開されたのは今回が初めて。</p>
+      </div>
+      <div class="tldr-card reveal d1">
+        <div class="n">02</div>
+        <h3>中身は同一。違いは「安全装置の有無」だけ</h3>
+        <p>安全装置あり＝<strong>Fable 5</strong>、なし＝<strong>Mythos 5</strong>。基盤モデルはまったく同じ。</p>
+      </div>
+      <div class="tldr-card reveal d2">
+        <div class="n">03</div>
+        <h3>全ベンチでほぼ最先端。だが価格は Opus の2倍</h3>
+        <p>性能はトップ級。一方で公開直後から容量不足とコスト急増で炎上した。</p>
+      </div>
+      <div class="tldr-card flag reveal d3">
+        <div class="n">04</div>
+        <h3>公開3日後、米政府の指令で全面停止</h3>
+        <p>性能ではなく<strong>国家安全保障</strong>を理由に止められた、初の象徴的ケース。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PYRAMID — model tiers ===================== -->
+<section class="section tight" data-screen-label="モデル階級">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">前提</span>
+      <div>
+        <h2 class="sec-title">モデル階級——どこに位置するのか</h2>
+        <p class="sec-dek">Claude は能力順に階級分けされている。Fable 5 / Mythos 5 は、その頂点に新設された階級だ。</p>
+      </div>
+    </div>
+    <div class="pyramid">
+      <div class="tier top reveal" style="--w:760px">
+        <span class="tname">Mythos</span>
+        <span class="new-flag">★ 今回の新階級 · 最上位</span>
+      </div>
+      <div class="tier reveal d1" style="--w:680px">
+        <span class="tname">Opus</span>
+        <span class="tdesc">従来の最上位</span>
+      </div>
+      <div class="tier reveal d2" style="--w:600px">
+        <span class="tname">Sonnet</span>
+        <span class="tdesc">標準</span>
+      </div>
+      <div class="tier reveal d3" style="--w:520px">
+        <span class="tname">Haiku</span>
+        <span class="tdesc">軽量</span>
+      </div>
+    </div>
+    <p class="sec-dek reveal d2" style="margin-top:34px;">最初の Mythos 級「Mythos Preview」は 2026年4月、<strong>Project Glasswing</strong> を通じてサイバー防御の限られたパートナーにのみ提供されていた。今回はこの最上位階級を初めて広く公開したものだ。</p>
+  </div>
+</section>
+
+<!-- ===================== 01 CORE — Fable vs Mythos ===================== -->
+<section class="section" data-screen-label="01 核心">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">01</span>
+      <div>
+        <h2 class="sec-title">核心——違いは「安全装置の有無」だけ</h2>
+        <p class="sec-dek">2つは中身がまったく同じ基盤モデル。分けているのは性能ではなく、危険な要求を遮断する仕組み（安全分類器）の有無だけだ。</p>
+      </div>
+    </div>
+
+    <div class="split reveal">
+      <div class="split-col safe">
+        <div class="ico">🛡</div>
+        <span class="badge">SAFEGUARDS ON</span>
+        <h3>Fable 5</h3>
+        <div class="role">公開版 · 一般ユーザー向け</div>
+        <p>サイバー・生物・化学・モデル蒸留に触れる要求を分類器が検知すると、その応答だけ <strong>Opus 4.8 にフォールバック</strong>し、切り替わったことをユーザーに通知する。安全装置付きの「語られる版」。</p>
+      </div>
+      <div class="split-vs">VS</div>
+      <div class="split-col raw">
+        <div class="ico">🔒</div>
+        <span class="badge">SAFEGUARDS OFF</span>
+        <h3>Mythos 5</h3>
+        <div class="role">制限版 · 承認組織のみ</div>
+        <p>安全装置（分類器）を外した「生のモデル」。Glasswing パートナーと、近く一部の生物研究者にのみ限定提供される予定だった。<strong>危険領域の性能もそのまま露出する。</strong></p>
+      </div>
+    </div>
+
+    <div class="naming reveal d1">
+      <span class="kicker">命名の由来</span>
+      <p style="color:var(--ink-2);font-size:14.5px;margin:14px 0 0;">Fable はラテン語の <i>fabula</i>（語られるもの）に由来。Mythos はギリシャ語で <i>fabula</i> と同根。Anthropic 公式コメント——</p>
+      <blockquote class="quote">安全装置こそが2つのモデルを区別するものであり、それゆえ異なる名前を与えた。
+        <span class="en">“The safeguards are what distinguish the two models (Fable and Mythos) and are why we've given them different names.”</span>
+        <span class="cite"><a href="https://www.anthropic.com/news/claude-fable-5-mythos-5" target="_blank" rel="noopener">Anthropic 公式</a></span>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 PERFORMANCE — benchmarks ===================== -->
+<section class="section" data-screen-label="02 性能">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">02</span>
+      <div>
+        <h2 class="sec-title">性能——どれくらい強いのか</h2>
+        <p class="sec-dek">数値はすべて Anthropic が 6/9 に公表した自己評価値。第三者の独立検証ではない。</p>
+      </div>
+    </div>
+
+    <div class="bench reveal">
+
+      <div class="bench-group">
+        <h4>コーディング系 <span class="pill fable">公開版 Fable 5 で有効</span></h4>
+
+        <div class="metric reveal">
+          <div class="mlabel"><span class="mn">SWE-Bench Pro</span><span class="mu">エージェント型コーディング · 全モデル中トップ</span></div>
+          <div class="bars">
+            <div class="bar-row hero-row"><span class="who">Fable 5</span><div class="bar-track"><div class="bar-fill" data-w="100"><span class="v">80.3%</span></div></div></div>
+            <div class="bar-row"><span class="who">Opus 4.8</span><div class="bar-track"><div class="bar-fill" data-w="86.2"><span class="v">69.2%</span></div></div></div>
+            <div class="bar-row"><span class="who">GPT-5.5</span><div class="bar-track"><div class="bar-fill" data-w="73"><span class="v">58.6%</span></div></div></div>
+            <div class="bar-row"><span class="who">Gemini 3.1 Pro</span><div class="bar-track"><div class="bar-fill" data-w="67.5"><span class="v">54.2%</span></div></div></div>
+          </div>
+        </div>
+
+        <div class="metric reveal">
+          <div class="mlabel"><span class="mn">SWE-bench Verified</span><span class="mu">コーディング</span></div>
+          <div class="bars">
+            <div class="bar-row hero-row"><span class="who">Fable 5</span><div class="bar-track"><div class="bar-fill" data-w="100"><span class="v">95.0%</span></div></div></div>
+            <div class="bar-row"><span class="who">Opus 4.8</span><div class="bar-track"><div class="bar-fill" data-w="93.3"><span class="v">88.6%</span></div></div></div>
+          </div>
+        </div>
+
+        <div class="metric reveal">
+          <div class="mlabel"><span class="mn">Spatial Reasoning（空間推論）</span><span class="mu">Opus の2倍以上</span></div>
+          <div class="bars">
+            <div class="bar-row hero-row"><span class="who">Fable 5</span><div class="bar-track"><div class="bar-fill" data-w="100"><span class="v">38.6%</span></div></div></div>
+            <div class="bar-row"><span class="who">Opus 4.8</span><div class="bar-track"><div class="bar-fill" data-w="37.6"><span class="v">14.5%</span></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bench-group">
+        <h4>サイバー・生物 <span class="pill mythos">＝ Mythos 5 · 分類器なしの値</span></h4>
+
+        <div class="metric reveal">
+          <div class="mlabel"><span class="mn">ExploitBench</span><span class="mu">サイバー / capture率 · Opus のほぼ2倍</span></div>
+          <div class="bars">
+            <div class="bar-row hero-row"><span class="who">Mythos 5</span><div class="bar-track"><div class="bar-fill win" data-w="100"><span class="v">78.0%</span></div></div></div>
+            <div class="bar-row"><span class="who">Opus 4.8</span><div class="bar-track"><div class="bar-fill" data-w="51.3"><span class="v">40.0%</span></div></div></div>
+            <div class="bar-row"><span class="who">GPT-5.5</span><div class="bar-track"><div class="bar-fill" data-w="43.6"><span class="v">34.0%</span></div></div></div>
+          </div>
+        </div>
+
+        <div class="metric reveal">
+          <div class="mlabel"><span class="mn">生物ベンチ</span><span class="mu">対 Opus 4.8</span></div>
+          <div class="bars">
+            <div class="bar-row hero-row"><span class="who">Mythos 5</span><div class="bar-track"><div class="bar-fill win" data-w="100"><span class="v">46.1</span></div></div></div>
+            <div class="bar-row"><span class="who">Opus 4.8</span><div class="bar-track"><div class="bar-fill" data-w="86.8"><span class="v">40.0</span></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="sec-dek reveal" style="margin-top:30px;"><strong>数値の読み方:</strong> サイバー・生物の高スコアは安全装置なしの Mythos 5 の値。公開版 Fable 5 ではこれらの領域は Opus 4.8 にフォールバックして遮断されるため、一般ユーザーがその実効能力を引き出せるわけではない。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 03 IMPACT ===================== -->
+<section class="section" data-screen-label="03 実務インパクト">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">03</span>
+      <div>
+        <h2 class="sec-title">実務インパクト——長く複雑なほど効く</h2>
+        <p class="sec-dek">「タスクが長く複雑なほど、過去モデルに対する優位が拡大する」と Anthropic は主張。以下はいずれも顧客・ベンダーの自己申告で、独立検証された数字ではない。</p>
+      </div>
+    </div>
+    <div class="impact">
+      <div class="icard reveal">
+        <div class="big">5,000万行<small>を1日で移行（Stripe）</small></div>
+        <h4>2か月分を、1日で</h4>
+        <p>5,000万行規模の Ruby コードベース全体の移行を Fable 5 で1日で完了。人手なら専任チームでも2か月以上かかる作業だという。</p>
+      </div>
+      <div class="icard reveal d1">
+        <div class="big">約3倍<small>記憶インフラの活用効果</small></div>
+        <h4>「記憶」を使いこなす力</h4>
+        <p>「Slay the Spire」を用いた実験で、永続的な記憶を与えたときの性能向上は同条件の Opus 4.8 の約3倍。長い文脈窓と記憶活用は別物、という示唆。</p>
+      </div>
+      <div class="icard reveal d2">
+        <div class="big">1/3<small>の推論トークンで到達</small></div>
+        <h4>金融・研究でも高評価</h4>
+        <p>ある物理研究では「GPT-5.5 が4日かけた結果に、約36時間・約1/3のトークンで到達」。Hebbia の金融ベンチでも全テスト中トップ。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 PRICE ===================== -->
+<section class="section" data-screen-label="04 代償・価格">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">04</span>
+      <div>
+        <h2 class="sec-title">代償——最先端、ただし高い。そして炎上した</h2>
+        <p class="sec-dek">価格は Opus 4.8 のちょうど2倍で、公開モデルとしては最も高価な部類。Mythos Preview（$25/$125）の半額未満ではある。</p>
+      </div>
+    </div>
+
+    <div class="price-wrap">
+      <div class="ptable reveal">
+        <div class="prow head"><div>項目（per 100万トークン）</div><div>Fable / Mythos 5</div><div>Opus 4.8</div></div>
+        <div class="prow"><div class="lab">入力</div><div class="fab">$10</div><div class="opu">$5</div></div>
+        <div class="prow"><div class="lab">出力</div><div class="fab">$50</div><div class="opu">$25</div></div>
+        <div class="prow"><div class="lab">プロンプトキャッシュ（ヒット時）</div><div class="fab">$1</div><div class="opu">$0.50</div></div>
+        <div class="prow"><div class="lab">バッチ API（5割引）</div><div class="fab">$5 / $25</div><div class="opu">—</div></div>
+      </div>
+
+      <div class="price-vis reveal d1">
+        <h4>Opus 比 — 入力も出力も <span class="x2">×2.0</span></h4>
+        <div class="pcompare">
+          <div class="pc-item">
+            <div class="pc-cap">入力 / 100万トークン</div>
+            <div class="pc-row"><span class="pcn">Fable</span><div class="pc-track fab"><i data-w="100"><b>$10</b></i></div></div>
+            <div class="pc-row"><span class="pcn">Opus</span><div class="pc-track opu"><i data-w="50"><b>$5</b></i></div></div>
+          </div>
+          <div class="pc-item">
+            <div class="pc-cap">出力 / 100万トークン</div>
+            <div class="pc-row"><span class="pcn">Fable</span><div class="pc-track fab"><i data-w="100"><b>$50</b></i></div></div>
+            <div class="pc-row"><span class="pcn">Opus</span><div class="pc-track opu"><i data-w="50"><b>$25</b></i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- phased rollout -->
+    <div style="margin-top:54px">
+      <span class="kicker reveal">サブスク提供は段階的だった（停止前の当初計画）</span>
+      <div class="phases">
+        <div class="phase struck reveal">
+          <div class="ph-when">〜 6/22</div>
+          <p>Pro / Max / Team 等で追加費用なしで同梱。</p>
+        </div>
+        <div class="phase struck reveal d1">
+          <div class="ph-when">6/23 〜</div>
+          <p>サブスクから削除、利用にはクレジットが必要に。</p>
+        </div>
+        <div class="phase struck reveal d2">
+          <div class="ph-when">容量確保後</div>
+          <p>標準機能として復帰を目指す——はずだった。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- operational reality -->
+    <div style="margin-top:34px">
+      <span class="kicker reveal">運用で噴出した3つの現実</span>
+      <div class="reality">
+        <div class="rrow reveal">
+          <span class="code">529 Overloaded</span>
+          <div><h4>容量不足でサーバー側エラー多発</h4><p>需要が供給を上回り負荷をロードシェッド。軽いリクエストでも容量エラーが頻発した。レート制限（429）とは別物で、指数バックオフと Opus 4.8 への自前フォールバックが推奨された。</p></div>
+        </div>
+        <div class="rrow reveal d1">
+          <span class="code warn">+30% tokens</span>
+          <div><h4>コストが想定より膨らむ</h4><p>新トークナイザ採用で同じ文章でもトークン消費が約30%増。高い単価と重なり、利用枠が早く尽きる声が続出。見積りはトークンカウント API で再測定するのが安全。</p></div>
+        </div>
+        <div class="rrow reveal d2">
+          <span class="code warn">$$$ / day</span>
+          <div><h4>「高すぎて普及の足かせ」</h4><p>TechCrunch は「この価格だけで広範な利用の抑止力になりうる」と指摘。本番で連続稼働させると1日に数百〜数千ドルに達するとの開発者試算（自己申告）もあった。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 CLIMAX — shutdown ===================== -->
+<section class="section climax" data-screen-label="05 クライマックス・停止">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">05</span>
+      <div>
+        <h2 class="sec-title">クライマックス——公開72時間で停止</h2>
+        <p class="sec-dek">容量不足の一時障害とは別に、両モデルは米政府の輸出管理指令で完全停止された。この記事で最も重要な出来事だ。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>2026年6月12日（金）17:21（米東部時間）、Anthropic は米政府から<strong>輸出管理指令</strong>を受領。内容は、国家安全保障当局を理由に、<strong>米国内外を問わずあらゆる外国籍者によるアクセスを停止せよ</strong>というもの。商務長官 Howard Lutnick 氏が Dario Amodei 氏宛に書簡を送ったと報じられている。</p>
+      <p>この指令は Anthropic 自身の外国籍従業員にも及ぶため、選択的に遵守すれば膨大なユーザーを巻き込む。そこで Anthropic は<strong>遵守の唯一の方法として全ユーザー向けに完全停止</strong>を選択。「外国籍者向けに削除せよ」が事実上「全員向けに削除」となった。なお他の Claude モデルはすべて影響を受けていない。</p>
+    </div>
+
+    <!-- 72h timeline -->
+    <div style="margin-top:8px">
+      <span class="kicker reveal">時系列 — 72時間の生涯</span>
+      <div class="tl">
+        <div class="tl-item reveal"><span class="node"></span><div class="when">6/9（火）</div><p class="what">Claude Fable 5 / Mythos 5 を一般公開。</p></div>
+        <div class="tl-item kill reveal"><span class="node"></span><div class="when">6/12（金）17:21 ET</div><p class="what">米政府が輸出管理指令を発出、Anthropic が受領。</p></div>
+        <div class="tl-item reveal"><span class="node"></span><div class="when">6/12（金）夜</div><p class="what">全ユーザーで両モデルが順次利用不可に。チャットには <code>There's an issue with the selected model (claude-fable-5[1m])...</code> と表示。</p></div>
+        <div class="tl-item reveal"><span class="node"></span><div class="when">6/13（土）00:50 UTC</div><p class="what">Claude Status に「We've suspended access to Claude Mythos 5 and Claude Fable 5」と掲示。</p></div>
+      </div>
+    </div>
+
+    <!-- claims face-off -->
+    <span class="kicker reveal" style="display:block;margin-top:48px;">政府側の主張 vs Anthropic 側の反論</span>
+    <div class="faceoff reveal">
+      <div class="fo-col gov">
+        <div class="fo-who">⚑ 政府側の主張</div>
+        <p>Anthropic の理解では、政府は「Fable 5 を jailbreak（安全装置の回避）する方法が見つかった」と考えている。Axios は、別の企業が「Mythos を jailbreak した」と主張したのを受けて商務省が動いたこと、政府は事前にローンチ停止を求めたが失敗したことを報じている。</p>
+      </div>
+      <div class="fo-col ant">
+        <div class="fo-who">◆ Anthropic 側の反論</div>
+        <p>実演された手法を検証した結果、「他の公開モデルでもバイパスなしに見つけられる、既知の軽微な脆弱性が少数浮上しただけ」と説明。指令には懸念の具体的詳細が示されておらず、決定は誤解に基づくとして復帰を求めている。</p>
+      </div>
+    </div>
+
+    <!-- tombstone -->
+    <div class="rip reveal">
+      <div class="stone">
+        <div class="cross">✝</div>
+        <div class="rip-t">R · I · P</div>
+        <div class="rip-name">Claude Fable 5</div>
+        <div class="rip-dates">June 9 — June 12, 2026</div>
+        <div class="rip-epi">最先端モデルが、性能でも需要でもなく国家安全保障を理由に「スイッチを切られた」初の象徴的ケース。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 06 ANALYSIS ===================== -->
+<section class="section" data-screen-label="06 考察">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">06</span>
+      <div>
+        <h2 class="sec-title">考察——なぜ二層で出し、誰が決めるのか</h2>
+      </div>
+    </div>
+    <div class="bodytext read reveal">
+      <p>Fable と Mythos の二層リリースは、Anthropic が「能力が高すぎて無修正では渡せない」と初めて判断したことの表れだった。2026年4月に Project Glasswing を通じて限られた組織にのみ提供した際、「十分に強い安全装置を開発できたら、いずれ Mythos 級の能力を全ユーザーに開放したい」と表明していた。今回の Fable 5 は、その約束を「安全分類器という形の安全装置」で果たしたものと位置づけられる。</p>
+      <p>象徴的なのは、Fable 5 公開のわずか数日前に、Anthropic 自身が「フロンティアの能力が、攻撃的サイバーセキュリティなどの領域で本当に危険になりつつある」と<strong>公開警告を出していた</strong>こと。能力の解放と危険性の警告が同じ週に同居する——これが直面するトレードオフの構造を端的に示している。</p>
+    </div>
+  </div>
+
+  <div class="pull reveal">
+    <q>フロンティアモデルを公開してよいか、最終的に誰が決めるのか。</q>
+    <div class="pq-cap">突きつけられた論点</div>
+  </div>
+
+  <div class="inner">
+    <div class="bodytext read reveal">
+      <p>二層リリースは「公開するか否か」を<strong>企業が</strong>安全装置で制御する試みだった。しかし今回、米政府が輸出管理指令で公開済みモデルを停止させたことで、論点は一段上がった。企業の自主規制でも需要でもコストでもなく、<strong>国家安全保障</strong>という軸が前面に出た最初の事例として、今回の一件は今後の「最先端モデルへのアクセスの設計」に長く影響を残しそうだ。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER / SOURCES ===================== -->
+<footer class="foot" data-screen-label="情報ソース">
+  <div class="inner">
+    <span class="kicker">情報ソース</span>
+    <div class="src-list">
+      <a class="src-item" href="https://www.anthropic.com/news/claude-fable-5-mythos-5" target="_blank" rel="noopener"><div class="st">Claude Fable 5 and Claude Mythos 5<span class="so">Anthropic</span></div><div class="sd">公式 · リリース / 価格 / 提供条件 / 安全装置</div></a>
+      <a class="src-item" href="https://status.claude.com" target="_blank" rel="noopener"><div class="st">Claude Status<span class="so">Anthropic</span></div><div class="sd">公式 · 停止の掲示 / インシデント履歴</div></a>
+      <a class="src-item" href="https://techcrunch.com/2026/06/09/anthropics-claude-fable-5-is-a-version-of-mythos-the-public-can-access-today" target="_blank" rel="noopener"><div class="st">Fable 5 is a version of Mythos the public can access<span class="so">TechCrunch</span></div><div class="sd">報道 · 公開範囲 / コスト懸念</div></a>
+      <a class="src-item" href="https://thenewstack.io/us-gov-orders-anthropic-to-pull-fable-5-and-mythos-5-three-days-after-launch" target="_blank" rel="noopener"><div class="st">Federal government orders Anthropic to pull Fable 5 and Mythos 5<span class="so">The New Stack</span></div><div class="sd">報道 · 停止の経緯 / 時刻 / 反論（Axios 引用）</div></a>
+    </div>
+    <p class="disclaimer">※ ベンチマーク・顧客事例はベンダー／顧客の自己申告を含む。すべての数値は Anthropic の自己評価であり、第三者の独立検証ではない。最新情報は各リンク先を確認のこと。</p>
+    <div class="colophon">
+      <span>生成AI週報 深掘りビジュアル · 2026/06/14 週</span>
+      <span>報道 / Editorial</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+/* ============================================================
+   インタラクション: スクロール進捗・リビール・チャート
+   ============================================================ */
+(function () {
+  var root = document.documentElement;
+
+  /* アニメーション制御: モーションが許可されているときのみ「隠して→表示」する */
+  var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (motionOK) root.classList.add('anim');
+
+  /* ---------- スクロール進捗 ---------- */
+  var bar = document.querySelector('.progress');
+
+  /* ---------- リビール + チャート描画（スクロール矩形ベース・どこでも堅牢） ---------- */
+  function fillCharts(node) {
+    node.querySelectorAll('.bar-fill[data-w]').forEach(function (el) {
+      el.style.width = el.dataset.w + '%';
+    });
+    node.querySelectorAll('.pc-track i[data-w]').forEach(function (el) {
+      el.style.width = el.dataset.w + '%';
+    });
+  }
+
+  var revealEls = [].slice.call(document.querySelectorAll('.reveal'));
+  var chartEls = [].slice.call(document.querySelectorAll('.bench, .price-vis, .pcompare'));
+
+  function tick() {
+    // スクロール進捗
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    if (bar) bar.style.width = (p * 100).toFixed(2) + '%';
+
+    // トリガー帯に入った要素をリビール
+    var vh = window.innerHeight || h.clientHeight;
+    var trigger = vh * 0.92;
+    revealEls = revealEls.filter(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < trigger && r.bottom > -40) { el.classList.add('is-in'); fillCharts(el); return false; }
+      return true;
+    });
+    chartEls = chartEls.filter(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < trigger && r.bottom > -40) { fillCharts(el); return false; }
+      return true;
+    });
+  }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { tick(); ticking = false; });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  tick(); // 初回パス（ファーストビュー）
+
+  // セーフティネット: モーション低減時はすべて即時表示・描画する
+  if (!motionOK) {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-in'); });
+    fillCharts(document);
+  }
+})();
+</script>
+</body>
+</html>

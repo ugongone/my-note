@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="editorial">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AIアクセスが地政学になった一週間 — Anthropicモデル停止とG7「信頼できるパートナー」構想</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700;900&family=Shippori+Mincho:wght@500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/_assets/lightbox/lightbox.css" />
+<script src="/_assets/lightbox/lightbox.js" defer></script>
+<style>
+/* ============================================================
+   G7 × AIアクセス地政学 — News Visualization
+   トークンシステム + Editorial（報道）テーマ
+   ============================================================ */
+:root{
+  --maxw: 1120px;
+  --readw: 760px;
+  --gutter: clamp(20px, 5vw, 96px);
+  --r: 4px;
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+}
+
+/* ---------- EDITORIAL (報道 / 調査報道の新聞調) ---------- */
+[data-theme="editorial"]{
+  --bg:#f1ece1;
+  --bg-2:#fbf8f1;
+  --bg-3:#e7dfce;
+  --ink:#1a1611;
+  --ink-2:#5b5247;
+  --ink-3:#9b9183;
+  --line:#d8cdb8;
+  --line-strong:#1a1611;
+  --accent:#bf2a1d;
+  --accent-soft:#bf2a1d18;
+  --bg-blur:rgba(241,236,225,.82);
+  --danger-glow:rgba(191,42,29,.5);
+  --accent-2:#1c3a63;
+  --danger:#bf2a1d;
+  --ok:#1f6f43;
+  --warn:#9a6310;
+  --chip:#e7dfce;
+  --font-display:"Noto Serif JP", serif;
+  --font-body:"Noto Sans JP", sans-serif;
+  --font-mono:"JetBrains Mono", monospace;
+  --shadow: 0 1px 0 var(--line), 0 18px 40px -28px rgba(26,22,17,.5);
+  --tex: .35;
+  color-scheme: light;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.8;
+  letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  transition:background .5s var(--ease), color .5s var(--ease);
+}
+::selection{ background:var(--accent); color:var(--bg); }
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+
+.tex-layer{
+  position:fixed; inset:0; pointer-events:none; z-index:1;
+  mix-blend-mode:normal;
+  opacity:.5;
+  background:
+    radial-gradient(rgba(26,22,17,.05) 1px, transparent 1.4px);
+  background-size:4px 4px;
+}
+
+/* ---------- トップバー / 進捗 ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+  padding:12px var(--gutter);
+  background:var(--bg-blur);
+  backdrop-filter:blur(14px) saturate(1.1);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  border-bottom:1px solid var(--line);
+  transition:background .5s var(--ease), border-color .5s var(--ease);
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap;
+}
+.brand b{ color:var(--ink); font-weight:700; }
+.brand .dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--danger);
+  box-shadow:0 0 0 0 var(--danger);
+  animation:pulse 2.4s infinite;
+}
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 var(--danger-glow); }
+  70%{ box-shadow:0 0 0 7px transparent; }
+  100%{ box-shadow:0 0 0 0 transparent; }
+}
+@media (max-width:680px){
+  .brand span.tag{ display:none; }
+}
+.progress{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:var(--accent); z-index:70;
+  transition:width .1s linear;
+}
+
+/* ---------- 共有レイアウト ---------- */
+.wrap{ position:relative; z-index:2; }
+section{ position:relative; }
+.inner{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:0 var(--gutter);
+}
+.read{ max-width:var(--readw); }
+.kicker{
+  font-family:var(--font-mono);
+  font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); font-weight:600;
+  display:inline-flex; align-items:center; gap:9px;
+}
+.kicker::before{
+  content:""; width:26px; height:1px; background:var(--accent);
+  display:inline-block;
+}
+p{ color:var(--ink); }
+.lead{ color:var(--ink-2); }
+strong{ color:var(--ink); font-weight:700; }
+strong{ background:linear-gradient(transparent 62%, var(--accent-soft) 0); }
+
+/* reveal */
+html.anim .reveal{ opacity:0; transform:translateY(26px); }
+html.anim .reveal.is-in{ opacity:1; transform:none; transition:opacity .8s var(--ease-out), transform .9s var(--ease-out); }
+html.anim .reveal.d1{ transition-delay:.08s; }
+html.anim .reveal.d2{ transition-delay:.16s; }
+html.anim .reveal.d3{ transition-delay:.24s; }
+html.anim .reveal.d4{ transition-delay:.32s; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+/* ---------- HERO ---------- */
+.hero{
+  min-height:100svh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:120px var(--gutter) 64px;
+  position:relative; overflow:hidden;
+}
+.hero .inner{ width:100%; }
+.hero-grid{
+  display:grid; grid-template-columns:1fr; gap:48px; align-items:end;
+}
+@media (max-width:900px){ .hero-grid{ gap:36px; } }
+.hero-head .eyebrow{
+  font-family:var(--font-mono); font-size:13px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-2); margin-bottom:24px;
+  display:flex; gap:14px; flex-wrap:wrap;
+}
+.hero-head .eyebrow b{ color:var(--danger); }
+.hero-head .eyebrow > span{ white-space:nowrap; }
+.hero h1{
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:clamp(38px, 6.6vw, 96px);
+  line-height:1.04;
+  letter-spacing:-.01em;
+  margin:0 0 26px;
+  color:var(--ink);
+}
+.hero h1 .hl{ color:var(--accent); }
+.hero .sub{
+  font-size:clamp(16px,1.6vw,20px); color:var(--ink-2);
+  max-width:54ch; line-height:1.8; margin:0;
+}
+.scroll-hint{
+  position:absolute; left:50%; bottom:24px; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-3); display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.scroll-hint .ln{ width:1px; height:34px; background:linear-gradient(var(--ink-3), transparent); animation:drop 1.8s infinite; }
+@media (max-height:760px){ .scroll-hint{ display:none; } }
+@keyframes drop{ 0%{transform:scaleY(0);transform-origin:top;} 50%{transform:scaleY(1);transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0);transform-origin:bottom;} }
+
+/* ---------- セクション骨格 ---------- */
+.section{ padding:clamp(64px,10vh,128px) 0; border-top:1px solid var(--line); }
+.section.tight{ padding-top:clamp(40px,6vh,72px); }
+.sec-head{ display:flex; align-items:baseline; gap:22px; margin-bottom:40px; }
+.sec-num{
+  font-family:var(--font-mono); font-weight:700;
+  font-size:clamp(28px,4vw,46px); color:var(--accent); line-height:1;
+}
+.sec-title{
+  font-family:var(--font-display); font-weight:900;
+  font-size:clamp(26px,3.6vw,44px); line-height:1.12; margin:0; letter-spacing:-.01em;
+}
+.sec-dek{ color:var(--ink-2); font-size:clamp(15px,1.5vw,18px); max-width:62ch; margin:18px 0 0; }
+.bodytext > p{ font-size:clamp(15px,1.5vw,17.5px); margin:0 0 20px; max-width:64ch; }
+
+/* ---------- LEDE（前提） ---------- */
+.lede-sec{ padding:clamp(40px,7vh,86px) 0 0; }
+.lede{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(18px,2.1vw,26px); line-height:1.78; color:var(--ink);
+  margin:0; text-wrap:pretty;
+}
+.lede b{ color:var(--ink); font-weight:700; }
+.lede .drop{
+  float:left; font-family:var(--font-display); font-weight:900;
+  font-size:4.4em; line-height:.74; color:var(--accent);
+  padding:8px 16px 0 0;
+}
+
+/* ---------- TL;DR ---------- */
+.tldr{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+@media (max-width:760px){ .tldr{ grid-template-columns:1fr; } }
+.tldr-card{ background:var(--bg-2); padding:30px 30px 34px; position:relative; transition:background .4s; }
+.tldr-card:hover{ background:var(--bg-3); }
+.tldr-card .n{ font-family:var(--font-mono); font-size:13px; color:var(--accent); font-weight:700; letter-spacing:.1em; }
+.tldr-card h3{ font-family:var(--font-display); font-weight:700; font-size:clamp(19px,2vw,24px); line-height:1.4; margin:14px 0 10px; }
+.tldr-card p{ color:var(--ink-2); font-size:14.5px; margin:0; line-height:1.75; }
+.tldr-card.flag::after{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--danger); }
+
+/* ---------- SPLIT — 両刃の剣 ---------- */
+.split{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+@media (max-width:820px){ .split{ grid-template-columns:1fr; } }
+.split-col{ background:var(--bg-2); padding:36px clamp(24px,3vw,40px) 40px; position:relative; }
+.split-col .ico{ font-size:30px; line-height:1; }
+.split-col .badge{ font-family:var(--font-mono); font-size:12px; letter-spacing:.1em; padding:5px 11px; border-radius:999px; display:inline-block; margin-top:8px; white-space:nowrap; }
+.split-col.safe .badge{ background:var(--ok); color:#fff; }
+.split-col.raw .badge{ background:var(--danger); color:#fff; }
+.split-col h3{ font-family:var(--font-display); font-weight:900; font-size:clamp(22px,2.6vw,30px); margin:18px 0 4px; }
+.split-col .role{ font-family:var(--font-mono); font-size:12px; color:var(--ink-3); letter-spacing:.08em; margin-bottom:18px; }
+.split-col p{ color:var(--ink-2); font-size:15px; margin:0; }
+.split-vs{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3; width:54px; height:54px; border-radius:50%; background:var(--bg); border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:13px; letter-spacing:.05em; }
+@media (max-width:820px){ .split-vs{ display:none; } }
+.naming{ margin-top:1px; background:var(--bg-2); border:1px solid var(--line); border-top:0; border-radius:0 0 var(--r) var(--r); padding:28px clamp(24px,3vw,40px); }
+.naming .quote{ font-family:var(--font-display); font-style:italic; font-size:clamp(16px,1.8vw,20px); line-height:1.7; color:var(--ink); border-left:3px solid var(--accent); padding-left:20px; margin:14px 0 0; }
+.naming .quote .en{ color:var(--ink-2); font-size:.85em; display:block; margin-top:8px; font-style:normal; font-family:var(--font-mono); }
+.quote .cite{ display:block; margin-top:12px; font-style:normal; font-family:var(--font-mono); font-size:11.5px; letter-spacing:.04em; color:var(--ink-3); }
+.quote .cite::before{ content:"— 出典: "; color:var(--ink-3); }
+.quote .cite a{ color:var(--accent); text-decoration:none; font-weight:700; }
+.quote .cite a:hover{ text-decoration:underline; }
+
+/* ---------- 実務インパクトカード ---------- */
+.impact{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media (max-width:860px){ .impact{ grid-template-columns:1fr; } }
+.icard{ border:1px solid var(--line); background:var(--bg-2); border-radius:var(--r); padding:28px 26px 30px; display:flex; flex-direction:column; }
+.icard .big{ font-family:var(--font-display); font-weight:900; font-size:clamp(26px,3vw,38px); line-height:1.05; color:var(--accent); letter-spacing:-.01em; }
+.icard .big small{ font-size:.46em; color:var(--ink-2); font-weight:700; display:block; margin-top:6px; letter-spacing:.02em; }
+.icard h4{ font-family:var(--font-display); font-weight:700; font-size:18px; margin:18px 0 8px; }
+.icard p{ color:var(--ink-2); font-size:14px; margin:0; line-height:1.7; }
+
+/* ---------- voices（誰が何を言ったか） ---------- */
+.reality{ margin-top:40px; display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+.rrow{ background:var(--bg-2); padding:24px clamp(20px,2.5vw,32px); display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:start; }
+.rrow .code{ font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--accent-2); border:1px solid var(--accent-2); padding:6px 10px; border-radius:var(--r); white-space:nowrap; align-self:start; }
+.rrow .code.gov{ color:var(--warn); border-color:var(--warn); }
+.rrow .code.host{ color:var(--accent); border-color:var(--accent); }
+.rrow h4{ font-family:var(--font-display); font-weight:700; font-size:17px; margin:0 0 6px; }
+.rrow h4 .org{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-3); letter-spacing:.06em; margin-left:8px; }
+.rrow p{ margin:0; color:var(--ink-2); font-size:14px; }
+
+/* ---------- タイムライン ---------- */
+.climax{ background:var(--bg-2); }
+.tl{ position:relative; margin-top:40px; padding-left:8px; }
+.tl::before{ content:""; position:absolute; left:13px; top:8px; bottom:8px; width:2px; background:linear-gradient(var(--ink-3), var(--danger) 45%, var(--accent-2)); }
+.tl-item{ position:relative; padding:0 0 36px 52px; }
+.tl-item:last-child{ padding-bottom:0; }
+.tl-item .node{ position:absolute; left:4px; top:3px; width:20px; height:20px; border-radius:50%; background:var(--bg); border:2px solid var(--ink-3); z-index:2; }
+.tl-item.kill .node{ border-color:var(--danger); background:var(--danger); box-shadow:0 0 0 6px var(--accent-soft); }
+.tl-item.diplo .node{ border-color:var(--accent-2); background:var(--accent-2); box-shadow:0 0 0 6px rgba(28,58,99,.12); }
+.tl-item .when{ font-family:var(--font-mono); font-size:12px; color:var(--accent); letter-spacing:.04em; font-weight:700; }
+.tl-item.diplo .when{ color:var(--accent-2); }
+.tl-item .what{ font-size:15px; color:var(--ink); margin:7px 0 0; max-width:64ch; }
+.tl-item .what code{ font-family:var(--font-mono); font-size:.86em; background:var(--bg-3); padding:2px 6px; border-radius:4px; color:var(--ink-2); }
+.tl-item.kill .what{ font-weight:700; }
+
+/* ---------- 引用 / 考察 ---------- */
+.pull{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:clamp(40px,6vw,72px) 0; margin:8px 0; text-align:center; }
+.pull q{ font-family:var(--font-display); font-weight:900; font-size:clamp(22px,3.4vw,40px); line-height:1.3; quotes:none; display:block; max-width:22ch; margin:0 auto; }
+.pull q::before{ content:"\201C"; color:var(--accent); }
+.pull q::after{ content:"\201D"; color:var(--accent); }
+.pull .pq-cap{ font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3); margin-top:24px; }
+
+/* ---------- 注記ボックス ---------- */
+.note{ font-family:var(--font-mono); font-size:12.5px; color:var(--warn); border:1px dashed var(--warn); border-radius:var(--r); padding:10px 14px; display:inline-flex; gap:8px; }
+
+/* ---------- 図版（引用画像） ---------- */
+.figure{ margin:38px 0 4px; }
+.figure img{ width:100%; height:auto; display:block; border:1px solid var(--line); border-radius:var(--r); background:var(--bg-3); cursor:zoom-in; box-shadow:var(--shadow); }
+.figure figcaption{ margin-top:13px; font-size:13px; color:var(--ink-2); line-height:1.7; display:flex; flex-direction:column; gap:5px; max-width:64ch; }
+.figure figcaption .src{ font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; color:var(--ink-3); }
+.figure figcaption .src::before{ content:"出典: "; }
+.figure figcaption .src a{ color:var(--accent); text-decoration:none; font-weight:700; }
+.figure figcaption .src a:hover{ text-decoration:underline; }
+
+/* ---------- フッター / 情報ソース ---------- */
+.foot{ border-top:1px solid var(--line); padding:64px 0 80px; }
+.src-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:26px; }
+@media (max-width:720px){ .src-list{ grid-template-columns:1fr; } }
+.src-item{ display:block; background:var(--bg-2); padding:20px 24px; transition:background .3s; color:inherit; text-decoration:none; }
+.src-item:hover{ background:var(--bg-3); }
+a.src-item:hover .st{ color:var(--accent); }
+.src-item .st{ font-family:var(--font-body); font-weight:700; font-size:14.5px; display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.src-item .so{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); }
+.src-item .sd{ color:var(--ink-2); font-size:12.5px; margin-top:6px; }
+.disclaimer{ font-size:12.5px; color:var(--ink-3); margin-top:34px; font-style:italic; max-width:70ch; }
+.colophon{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:.08em; margin-top:30px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; border-top:1px solid var(--line); padding-top:22px; }
+</style>
+</head>
+<body>
+<div class="progress"></div>
+<div class="tex-layer"></div>
+
+<!-- ===================== TOP BAR ===================== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <b>生成AI週報</b><span class="tag">／ 深掘りビジュアル</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" data-screen-label="Hero">
+  <div class="inner">
+    <div class="hero-grid">
+      <div class="hero-head full">
+        <div class="eyebrow">
+          <span>生成AI週報 深掘り · 2026/06/21 週</span>
+          <span><b>対象</b> G7 / 先端AIアクセス</span>
+        </div>
+        <h1>AIアクセスが<br /><span class="hl">地政学</span>になった一週間</h1>
+        <p class="sub">米政府がAnthropicの最上位モデルを「世界一斉停止」させた波紋は、数日でG7サミットの議題にまで届いた。論点はもはや性能でも価格でもない——<strong>誰がそのAIを使ってよいか</strong>を、どの国が決めるのか、だ。</p>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><span class="ln"></span></div>
+</section>
+
+<!-- ===================== LEDE — premise ===================== -->
+<section class="lede-sec" data-screen-label="リード">
+  <div class="inner read">
+    <p class="lede"><span class="drop">6</span>月12日（金）、Anthropicは最上位モデル <b>Fable 5</b> と <b>Mythos 5</b> への全ユーザーのアクセスを停止した。トランプ大統領が安全保障を理由に「外国籍者のアクセス遮断」を命じる輸出管理措置を講じたためだ。週明け、その余波はフランス・エヴィアンで開かれていた<b>G7サミット</b>に波及する。同盟国を締め出した規制をどう回避するか——首脳とAI企業トップが、先端モデルへのアクセスそのものを外交テーブルに乗せた。本稿は、停止からG7「信頼できるパートナー」構想までの一連の動きをたどる。</p>
+  </div>
+</section>
+
+<!-- ===================== 00 TL;DR ===================== -->
+<section class="section" data-screen-label="30秒でわかる要点">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">00</span>
+      <div>
+        <h2 class="sec-title">30秒でわかる要点</h2>
+        <p class="sec-dek">先端AIへのアクセスが、通商・外交・安全保障の交渉材料になった。まずは全体像を4点で。</p>
+      </div>
+    </div>
+    <div class="tldr">
+      <div class="tldr-card flag reveal">
+        <div class="n">01</div>
+        <h3>米政府命令でAnthropic最上位モデルが世界停止</h3>
+        <p>6/12、外国籍者のアクセス遮断を命じる輸出管理措置を受け、Fable 5 / Mythos 5 を全ユーザー向けに停止した。</p>
+      </div>
+      <div class="tldr-card reveal d1">
+        <div class="n">02</div>
+        <h3>引き金は「サイバー能力」への安全保障懸念</h3>
+        <p>コードの脆弱性を見つけるMythosは、防御にも攻撃にも使える。銀行・インフラへの脅威が問題視された。</p>
+      </div>
+      <div class="tldr-card reveal d2">
+        <div class="n">03</div>
+        <h3>G7が「信頼できるパートナー」構想を協議</h3>
+        <p>6/16、同盟国に限定開放して規制を回避する案が浮上（初報はFT、Reuters続報）。対象は国または企業。</p>
+      </div>
+      <div class="tldr-card reveal d3">
+        <div class="n">04</div>
+        <h3>首脳とAI CEOが直接対話、日本も当事者に</h3>
+        <p>6/17の昼食会にAltman・Amodei・Hassabisらが出席。高市首相も出席し「ミュトス」が議題に上った。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 01 発端 ===================== -->
+<section class="section climax tight" data-screen-label="01 発端・停止">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">01</span>
+      <div>
+        <h2 class="sec-title">発端——公開直後の「世界一斉停止」</h2>
+        <p class="sec-dek">6/9に公開された最上位モデルが、わずか数日後に米政府の指令で止まった。この停止が、その後すべての出発点になった。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>Anthropicは6月9日、従来の最上位 Opus を超える新クラスのモデル <strong>Fable 5</strong> と <strong>Mythos 5</strong> を公開した。だがその直後、トランプ大統領はAnthropicに対し、<strong>国家安全保障を理由に外国籍者のアクセスを遮断するよう命じた</strong>。輸出管理措置は6月12日（金）夜に発効し、Anthropicは同日、両モデルへの<strong>全ユーザーのアクセスを停止</strong>した。措置は「外国籍者向け」だったが、自社の外国籍従業員にも及ぶため、事実上の全面停止となった。</p>
+      <p>背景には、政権とAnthropicの関係悪化もある。トランプ氏はAnthropicを「過激な左派」「ウォーク（woke）」な企業と公然と評していた（The National報道）。なぜ公開前に検証していたモデルが、公開後に止まったのか——その技術的な経緯と、政府・Anthropic双方の食い違いは、次章で詳しく見る。</p>
+    </div>
+
+    <!-- timeline -->
+    <div style="margin-top:8px">
+      <span class="kicker reveal">時系列 — 停止からG7まで</span>
+      <div class="tl">
+        <div class="tl-item reveal"><span class="node"></span><div class="when">6/9（火）</div><p class="what">Anthropicが最上位 Fable 5 / Mythos 5 を一般公開。</p></div>
+        <div class="tl-item kill reveal"><span class="node"></span><div class="when">6/12（金）夜</div><p class="what">外国籍者のアクセス遮断を命じる輸出管理措置が発効。Anthropicは両モデルを全ユーザー向けに停止。</p></div>
+        <div class="tl-item diplo reveal"><span class="node"></span><div class="when">6/15–17</div><p class="what">仏エヴィアン（Évian-les-Bains）でG7サミット開催。AIアクセスが主要議題に浮上。</p></div>
+        <div class="tl-item diplo reveal"><span class="node"></span><div class="when">6/16（火）</div><p class="what">Reutersが「信頼できるパートナー」構想を報道（初報はFT）。Lutnick商務長官を中心に協議。</p></div>
+        <div class="tl-item diplo reveal"><span class="node"></span><div class="when">6/17（水）</div><p class="what">首脳と約12名のAI企業トップによるワーキングランチ。Macronは「数週間内に進展」と発言。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 両刃の剣 ===================== -->
+<section class="section" data-screen-label="02 停止の経緯">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">02</span>
+      <div>
+        <h2 class="sec-title">なぜ検証済みなのに、公開後に止まったのか</h2>
+        <p class="sec-dek">公開前に数千時間の検証を経たのに、3日で停止。経緯を3ステップで。</p>
+      </div>
+    </div>
+
+    <!-- 3-step flow -->
+    <div class="impact">
+      <div class="icard reveal">
+        <div class="big">①<small>公開前</small></div>
+        <h4>検証は済んでいた</h4>
+        <p>Anthropicの公式声明によると、米政府・英AISI・第三者と合わせ<strong>数千時間</strong>のレッドチーム検証を完了していた。</p>
+      </div>
+      <div class="icard reveal d1">
+        <div class="big">②<small>公開後</small></div>
+        <h4>回避手法が浮上</h4>
+        <p>Anthropicの公式声明によると、安全装置を<strong>ジェイルブレイク</strong>する方法に政府が気づいたとされる（具体的根拠は非公開）。</p>
+      </div>
+      <div class="icard reveal d2">
+        <div class="big">③<small>6/12</small></div>
+        <h4>停止指令</h4>
+        <p>Reutersによると、外国籍のアクセス遮断を命じる輸出管理指令で<strong>全面停止</strong>に至った。</p>
+      </div>
+    </div>
+
+    <p class="note reveal" style="display:flex;margin-top:22px;">※ 引き金は2系統で報じられた。①別の企業が「Mythosをジェイルブレイクした」と主張し商務省が動いた（Axiosのスクープ）。②AmazonのジャシーCEOがベッセント財務長官に懸念を伝えた（The Informationが初報、WSJ・Reutersも報道）。いずれも関係者筋で、Amazonは「詳細は明かさない」としている。</p>
+  </div>
+</section>
+
+<!-- ===================== 03 trusted partners ===================== -->
+<section class="section" data-screen-label="03 信頼できるパートナー">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">03</span>
+      <div>
+        <h2 class="sec-title">G7の打開策——「信頼できるパートナー」構想</h2>
+        <p class="sec-dek">同盟国まで締め出した規制は、すぐに摩擦を生んだ。G7はそれを回避する枠組みを模索しはじめる。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>6月16日、国際通信社の<strong>ロイター（Reuters）</strong>は外交筋3名の話として、G7首脳が米企業の先端AIモデルを一部の「信頼できるパートナー」に開放する案を協議したと報じた（初報は英経済紙フィナンシャル・タイムズ＝FT）。これは外国籍者の利用禁止を回避し、同盟国がアクセスを取り戻す「裏口」になりうる。協議はサミットの場外で、主に<strong>Lutnick商務長官</strong>との間で行われたとされる。</p>
+      <p><strong>「Mythosで既にやっていたのでは？」</strong>——半分はそのとおりだ。停止前、AnthropicはMythosを自社の限定提供プログラム「Project Glasswing」を通じて<strong>15カ国超</strong>の重要インフラ組織（医療・通信・電力・水道など）に渡していた（ロイター）。だが今回の連邦規制はそれごと遮断した。G7案が新しいのは、「誰を信頼するか」の判断を、<strong>企業任せから政府主導の枠組みへ</strong>移す点にある。</p>
+    </div>
+
+    <div class="impact" style="margin-top:8px">
+      <div class="icard reveal">
+        <div class="big">国 or 企業<small>「信頼できるパートナー」の対象</small></div>
+        <h4>対象は柔軟に設計</h4>
+        <p>パートナーは特定の国にも、特定の企業にもなりうる。米規制の例外として、限定的にアクセスを認める枠組みが想定されている。</p>
+      </div>
+      <div class="icard reveal d1">
+        <div class="big">対 中国<small>狙いはサイバー防御力の強化</small></div>
+        <h4>同盟内で能力を共有</h4>
+        <p>広いアクセスはG7諸国が中国などのライバルに対し、より強力なサイバー防御を構築する助けになるとされる。「中国に追いつかせたくないなら、信頼できる仲間で革新を交換しよう」と外交筋。</p>
+      </div>
+      <div class="icard reveal d2">
+        <div class="big">EU<small>Mythosの影響を研究目的で要求</small></div>
+        <h4>欧州は「主権」との板挟み</h4>
+        <p>EUはMythosへのアクセスを求める一方、技術主権の強化と、米企業が支配する先端AIへの追随との間でバランスに苦慮している。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 working lunch ===================== -->
+<section class="section climax" data-screen-label="04 首脳とCEOの対話">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">04</span>
+      <div>
+        <h2 class="sec-title">首脳とAI CEOの直接対話（6/17）</h2>
+        <p class="sec-dek">サミット2日目、約12名のテック幹部が首脳と同じテーブルに着いた。AI企業トップの地政学的な影響力を象徴する光景だった。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>水曜のワーキングランチには、OpenAIのSam Altman、AnthropicのDario Amodei、Google DeepMindのDemis Hassabisら約12名のテック幹部が出席。米国側はトランプ大統領に加え、ベッセント財務長官、Lutnick商務長官、ルビオ国務長官が同席した。出席企業の大半が米国勢で、他のG7各国は1社ずつという構図も、米国のAI支配を浮き彫りにした。</p>
+    </div>
+
+    <figure class="figure reveal">
+      <img src="https://image.cnbcfm.com/api/v1/image/108323235-1781707962297-gettyimages-2282033342-090a1082_o4bhzzd7.jpeg?v=1781727317&amp;w=1920&amp;h=1080" alt="G7サミットのAIワーキングランチに出席するAnthropic CEOのダリオ・アモデイ氏（フランス・エヴィアン）" data-lightbox loading="lazy" />
+      <figcaption>
+        AIをテーマにしたG7のワーキングランチに出席する<strong>Anthropic CEOのダリオ・アモデイ氏</strong>（フランス・エヴィアン＝レ＝バン、2026年6月17日／CNBC掲載写真）。停止措置の当事者が、首脳と同じテーブルに着いた。
+        <span class="src"><a href="https://www.cnbc.com/2026/06/17/anthropic-amodei-google-hassabis-us-ai-coalition-g7.html" target="_blank" rel="noopener">CNBC</a> ／ Getty Images（Anna Moneymaker）</span>
+      </figcaption>
+    </figure>
+
+    <span class="kicker reveal" style="display:block;margin-top:8px;">誰が何を主張したか</span>
+    <div class="reality reveal">
+      <div class="rrow">
+        <span class="code">提言</span>
+        <div><h4>Dario Amodei<span class="org">Anthropic CEO</span></h4><p>国際協調の領域として「フロンティアモデルへの構造化されたアクセス」「中国を除くチップ・重要部品の取引」を挙げ、サイバー・バイオテロ・情報分野でのリスク対処での各国協力を訴えた。Macronとは個別会談も実施。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code">提言</span>
+        <div><h4>Sam Altman<span class="org">OpenAI CEO</span></h4><p>テストの世界共通基準を定め、能力とリスクを専門的・中立的に分析し、各国協力の場となる「国際フォーラム」の創設を呼びかけた（OpenAIのブリーフィング）。先月にはサイバー専門チーム向けに GPT-5.5 Cyber を限定提供している。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code gov">同意</span>
+        <div><h4>Mark Carney<span class="org">カナダ首相</span></h4><p>米国がAI連合を主導しうるという考えに同意したと、複数の関係者が伝えた。同盟主導の枠組みづくりに前向きな姿勢を示した。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code host">議長国</span>
+        <div><h4>Emmanuel Macron<span class="org">フランス大統領 / 議長</span></h4><p>先端モデルへのアクセス拡大は「数週間内に進展する」と期待を表明。Mythosの広範な提供は米国の利益でもあると指摘した。G7は金融安定・生産性・労働市場への影響を当局に評価させる共同声明を発表。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 日本 ===================== -->
+<section class="section" data-screen-label="05 日本への波及">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">05</span>
+      <div>
+        <h2 class="sec-title">日本への波及——傍観者ではいられない</h2>
+        <p class="sec-dek">日本もこの構図の当事者だ。G7のテーブルに首相が座り、国内では制度の見直しが動き出した。</p>
+      </div>
+    </div>
+    <div class="bodytext reveal">
+      <p>G7サミットには<strong>高市早苗首相</strong>も出席し、NHKによれば会合では「ミュトス」も議題に上った。先端AIへのアクセスが安全保障と結びつく以上、日本にとっても「使いたいモデルが、国の判断で突然使えなくなる」リスクは他人事ではない。</p>
+      <p>呼応するように、日本政府は6月19日、AI政策の指針「<strong>AI基本計画</strong>」の改定案を公表した。昨年12月の初策定からわずか半年での異例の見直しで、Anthropicの「クロード・ミュトス」級AIを念頭に置く（TBS／毎日新聞ほか）。改定案の柱は次の3つだ。</p>
+    </div>
+
+    <div class="impact" style="margin-top:8px">
+      <div class="icard reveal">
+        <div class="big">安保リスク<small>異例の半年での改定</small></div>
+        <h4>ミュトス級を脅威認定</h4>
+        <p>昨年12月の初策定から約半年。脆弱性を高度に発見できる「クロード・ミュトス」級AIで、悪用したサイバー攻撃の危険が高まると明記した。（TBS／毎日新聞）</p>
+      </div>
+      <div class="icard reveal d1">
+        <div class="big">防御3本柱<small>サイバー対策の強化</small></div>
+        <h4>調査・点検・国際連携</h4>
+        <p>①AI法に基づく機動的な調査、②政府の重要システムの緊急点検と重要インフラへの注意喚起、③外国政府機関・AI開発企業との連携。AIセーフティ機関（AISI）の役割も強める。（毎日新聞）</p>
+      </div>
+      <div class="icard reveal d2">
+        <div class="big">AI主権<small>新たな国家目標</small></div>
+        <h4>一国・一社依存を避ける</h4>
+        <p>すべての国産化にはこだわらず、特定の国や企業への過度な依存を回避。依存先の多元化と、緊急時の代替手段の確保を重視する。（毎日新聞）</p>
+      </div>
+    </div>
+
+    <p class="note reveal" style="display:flex;margin-top:18px;">※ 改定案はパブリックコメントを経て、7月の閣議決定を目指す段階。</p>
+  </div>
+</section>
+
+<!-- ===================== 06 含意 ===================== -->
+<section class="section" data-screen-label="06 含意">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">06</span>
+      <div>
+        <h2 class="sec-title">含意——AIアクセスが「地政学」になった</h2>
+      </div>
+    </div>
+    <div class="bodytext read reveal">
+      <p>これまで先端AIをめぐる論点は、性能・価格・安全性という「製品」の軸で語られてきた。だが今週起きたのは、その一段上の出来事だ。<strong>米政府が公開済みのモデルを停止させ、その回避策が同盟国の首脳会議の議題になった</strong>。アクセスの可否を最終的に握るのは、もはや企業でも市場でもなく、国家の安全保障判断になりうる——それが現実になった。</p>
+    </div>
+
+    <figure class="figure reveal read" style="max-width:var(--readw)">
+      <img src="https://images.theconversation.com/files/741768/original/file-20260615-71-a8gvu9.jpg?ixlib=rb-4.1.0&amp;rect=0%2C476%2C4000%2C2000&amp;q=45&amp;auto=format&amp;w=1356&amp;h=668&amp;fit=crop" alt="Anthropic社プレジデントのダニエラ・アモデイ氏が登壇する様子" data-lightbox loading="lazy" />
+      <figcaption>
+        Anthropic社プレジデントのダニエラ・アモデイ氏（左）。米政府による停止措置の背景を解説したThe Conversationの記事でリード画像として用いられた。
+        <span class="src"><a href="https://theconversation.com/why-the-us-government-shut-down-anthropics-latest-claude-ai-model-285223" target="_blank" rel="noopener">The Conversation</a> ／ Getty Images（Minh Connors）</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="pull reveal">
+    <q>いつ止められるか分からないなら、誰も米国のAIを買わない。</q>
+    <div class="pq-cap">Macron仏大統領 — Reuters (6/17) の趣旨</div>
+  </div>
+
+  <div class="inner">
+    <div class="bodytext read reveal">
+      <p>Macronのこの指摘は、規制の副作用を端的に突く。アクセスが政治判断で突然遮断されうるなら、先端AIは「いつ使えなくなるか分からない基盤」になり、商業的な信頼そのものが損なわれる。だからこそ米国にとっても、信頼できる相手への構造化されたアクセスを設計する動機がある。今週の一連の動きは、<strong>「先端モデルへのアクセスをどう国際的に設計するか」</strong>という問いが、今後のAI競争の中心テーマの一つになることを告げている。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER / SOURCES ===================== -->
+<footer class="foot" data-screen-label="情報ソース">
+  <div class="inner">
+    <span class="kicker">情報ソース</span>
+    <div class="src-list">
+      <a class="src-item" href="https://www.reuters.com/legal/government/g7-leaders-discuss-trusted-partners-access-cutting-edge-us-ai-models-sources-say-2026-06-16" target="_blank" rel="noopener"><div class="st">G7 leaders discuss 'trusted partners' access to cutting-edge US AI models<span class="so">Reuters</span></div><div class="sd">メディア報道（6/16）· 構想の概要 / 停止の経緯 / 15カ国超への提供</div></a>
+      <a class="src-item" href="https://www.reuters.com/legal/litigation/g7-leaders-vow-closer-ties-ai-they-hash-out-trusted-partners-scheme-2026-06-17" target="_blank" rel="noopener"><div class="st">At G7, Macron says he expects progress on broadening access to Mythos<span class="so">Reuters</span></div><div class="sd">メディア報道（6/17）· Macron発言 / G7共同声明 / サミット日程</div></a>
+      <a class="src-item" href="https://www.cnbc.com/2026/06/17/anthropic-amodei-google-hassabis-us-ai-coalition-g7.html" target="_blank" rel="noopener"><div class="st">Anthropic, Google DeepMind CEOs call for U.S.-led AI coalition at G7<span class="so">CNBC</span></div><div class="sd">メディア報道（6/17）· 昼食会の出席者 / Amodei・Altman・Carneyの発言</div></a>
+      <a class="src-item" href="https://www.axios.com/2026/06/12/anthropic-trump-mythos-fable-national-security" target="_blank" rel="noopener"><div class="st">Scoop: Trump admin blocks foreign access to Anthropic's most powerful AI<span class="so">Axios</span></div><div class="sd">メディア報道（6/12 スクープ）· 停止の引き金（別企業のジェイルブレイク主張）/ 公開前の停止要請</div></a>
+      <a class="src-item" href="https://techcrunch.com/2026/06/13/amazon-ceo-reportedly-raised-anthropic-model-concerns-before-government-crackdown" target="_blank" rel="noopener"><div class="st">Amazon CEO reportedly raised Anthropic model concerns before government crackdown<span class="so">TechCrunch</span></div><div class="sd">メディア報道（6/13）· AmazonジャシーCEOの懸念報告（WSJ／The Information／Reuters引用）</div></a>
+      <a class="src-item" href="https://mainichi.jp/articles/20260620/k00/00m/010/143000c" target="_blank" rel="noopener"><div class="st">AI基本計画改定案発表　サイバー攻撃巡り懸念、専門機関強化へ<span class="so">毎日新聞</span></div><div class="sd">メディア報道（6/20）· 日本政府のAI基本計画改定案（AISI強化／AI主権／3本柱）</div></a>
+    </div>
+    <p class="disclaimer">※ 「信頼できるパートナー」構想は外交筋の話に基づく協議段階の情報であり、確定した制度ではない。日本政府のAI基本計画改定案はTBS・毎日新聞ほかの報道に基づき、パブリックコメントを経て7月の閣議決定を目指す段階。高市首相のG7出席は首相官邸・各社報道による。最新情報は各リンク先を確認のこと。</p>
+    <div class="colophon">
+      <span>生成AI週報 深掘りビジュアル · 2026/06/21 週</span>
+      <span>報道 / Editorial</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+/* ============================================================
+   インタラクション: スクロール進捗・リビール
+   ============================================================ */
+(function () {
+  var root = document.documentElement;
+  var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (motionOK) root.classList.add('anim');
+
+  var bar = document.querySelector('.progress');
+  var revealEls = [].slice.call(document.querySelectorAll('.reveal'));
+
+  function tick() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    if (bar) bar.style.width = (p * 100).toFixed(2) + '%';
+
+    var vh = window.innerHeight || h.clientHeight;
+    var trigger = vh * 0.92;
+    revealEls = revealEls.filter(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < trigger && r.bottom > -40) { el.classList.add('is-in'); return false; }
+      return true;
+    });
+  }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { tick(); ticking = false; });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  tick();
+
+  if (!motionOK) {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-in'); });
+  }
+})();
+</script>
+</body>
+</html>

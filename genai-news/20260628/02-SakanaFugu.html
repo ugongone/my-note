@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="editorial">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>一つのAPIで、世界中のモデルを指揮する — Sakana AI「Fugu / Fugu Ultra」の実力と落とし穴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700;900&family=Shippori+Mincho:wght@500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   Sakana Fugu — News Visualization
+   トークンシステム + Editorial（報道）テーマ
+   ============================================================ */
+:root{
+  --maxw: 1120px;
+  --readw: 760px;
+  --gutter: clamp(20px, 5vw, 96px);
+  --r: 4px;
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+}
+
+/* ---------- EDITORIAL (報道 / 調査報道の新聞調) ---------- */
+[data-theme="editorial"]{
+  --bg:#f1ece1;
+  --bg-2:#fbf8f1;
+  --bg-3:#e7dfce;
+  --ink:#1a1611;
+  --ink-2:#5b5247;
+  --ink-3:#9b9183;
+  --line:#d8cdb8;
+  --line-strong:#1a1611;
+  --accent:#bf2a1d;
+  --accent-soft:#bf2a1d18;
+  --bg-blur:rgba(241,236,225,.82);
+  --danger-glow:rgba(191,42,29,.5);
+  --accent-2:#1c3a63;
+  --danger:#bf2a1d;
+  --ok:#1f6f43;
+  --warn:#9a6310;
+  --chip:#e7dfce;
+  --font-display:"Noto Serif JP", serif;
+  --font-body:"Noto Sans JP", sans-serif;
+  --font-mono:"JetBrains Mono", monospace;
+  --shadow: 0 1px 0 var(--line), 0 18px 40px -28px rgba(26,22,17,.5);
+  --tex: .35;
+  color-scheme: light;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.8;
+  letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  transition:background .5s var(--ease), color .5s var(--ease);
+}
+::selection{ background:var(--accent); color:var(--bg); }
+a{ color:inherit; }
+img{ max-width:100%; display:block; }
+
+.tex-layer{
+  position:fixed; inset:0; pointer-events:none; z-index:1;
+  mix-blend-mode:normal;
+  opacity:.5;
+  background:
+    radial-gradient(rgba(26,22,17,.05) 1px, transparent 1.4px);
+  background-size:4px 4px;
+}
+
+/* ---------- トップバー / 進捗 ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+  padding:12px var(--gutter);
+  background:var(--bg-blur);
+  backdrop-filter:blur(14px) saturate(1.1);
+  -webkit-backdrop-filter:blur(14px) saturate(1.1);
+  border-bottom:1px solid var(--line);
+  transition:background .5s var(--ease), border-color .5s var(--ease);
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap;
+}
+.brand b{ color:var(--ink); font-weight:700; }
+.brand .dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--danger);
+  box-shadow:0 0 0 0 var(--danger);
+  animation:pulse 2.4s infinite;
+}
+.topbar .back{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-2); text-decoration:none;
+  border:1px solid var(--line); border-radius:999px; padding:6px 14px;
+  transition:color .3s, border-color .3s;
+}
+.topbar .back:hover{ color:var(--accent); border-color:var(--accent); }
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 var(--danger-glow); }
+  70%{ box-shadow:0 0 0 7px transparent; }
+  100%{ box-shadow:0 0 0 0 transparent; }
+}
+@media (max-width:680px){
+  .brand span.tag{ display:none; }
+}
+.progress{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:var(--accent); z-index:70;
+  transition:width .1s linear;
+}
+
+/* ---------- 共有レイアウト ---------- */
+.wrap{ position:relative; z-index:2; }
+section{ position:relative; }
+.inner{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:0 var(--gutter);
+}
+.read{ max-width:var(--readw); }
+.kicker{
+  font-family:var(--font-mono);
+  font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); font-weight:600;
+  display:inline-flex; align-items:center; gap:9px;
+}
+.kicker::before{
+  content:""; width:26px; height:1px; background:var(--accent);
+  display:inline-block;
+}
+p{ color:var(--ink); }
+.lead{ color:var(--ink-2); }
+strong{ color:var(--ink); font-weight:700; }
+strong{ background:linear-gradient(transparent 62%, var(--accent-soft) 0); }
+
+/* reveal */
+html.anim .reveal{ opacity:0; transform:translateY(26px); }
+html.anim .reveal.is-in{ opacity:1; transform:none; transition:opacity .8s var(--ease-out), transform .9s var(--ease-out); }
+html.anim .reveal.d1{ transition-delay:.08s; }
+html.anim .reveal.d2{ transition-delay:.16s; }
+html.anim .reveal.d3{ transition-delay:.24s; }
+html.anim .reveal.d4{ transition-delay:.32s; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+/* ---------- HERO ---------- */
+.hero{
+  min-height:100svh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:120px var(--gutter) 64px;
+  position:relative; overflow:hidden;
+}
+.hero .inner{ width:100%; }
+.hero-grid{
+  display:grid; grid-template-columns:1fr; gap:48px; align-items:end;
+}
+@media (max-width:900px){ .hero-grid{ gap:36px; } }
+.hero-head .eyebrow{
+  font-family:var(--font-mono); font-size:13px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-2); margin-bottom:24px;
+  display:flex; gap:14px; flex-wrap:wrap;
+}
+.hero-head .eyebrow b{ color:var(--danger); }
+.hero-head .eyebrow > span{ white-space:nowrap; }
+.hero h1{
+  font-family:var(--font-display);
+  font-weight:900;
+  font-size:clamp(36px, 6.2vw, 88px);
+  line-height:1.06;
+  letter-spacing:-.01em;
+  margin:0 0 26px;
+  color:var(--ink);
+}
+.hero h1 .hl{ color:var(--accent); }
+.hero .sub{
+  font-size:clamp(16px,1.6vw,20px); color:var(--ink-2);
+  max-width:56ch; line-height:1.8; margin:0;
+}
+.scroll-hint{
+  position:absolute; left:50%; bottom:24px; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--ink-3); display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.scroll-hint .ln{ width:1px; height:34px; background:linear-gradient(var(--ink-3), transparent); animation:drop 1.8s infinite; }
+@media (max-height:760px){ .scroll-hint{ display:none; } }
+@keyframes drop{ 0%{transform:scaleY(0);transform-origin:top;} 50%{transform:scaleY(1);transform-origin:top;} 51%{transform-origin:bottom;} 100%{transform:scaleY(0);transform-origin:bottom;} }
+
+/* ---------- セクション骨格 ---------- */
+.section{ padding:clamp(64px,10vh,128px) 0; border-top:1px solid var(--line); }
+.section.tight{ padding-top:clamp(40px,6vh,72px); }
+.sec-head{ display:flex; align-items:baseline; gap:22px; margin-bottom:40px; }
+.sec-num{
+  font-family:var(--font-mono); font-weight:700;
+  font-size:clamp(28px,4vw,46px); color:var(--accent); line-height:1;
+}
+.sec-title{
+  font-family:var(--font-display); font-weight:900;
+  font-size:clamp(26px,3.6vw,44px); line-height:1.12; margin:0; letter-spacing:-.01em;
+}
+.sec-dek{ color:var(--ink-2); font-size:clamp(15px,1.5vw,18px); max-width:62ch; margin:18px 0 0; }
+.bodytext > p{ font-size:clamp(15px,1.5vw,17.5px); margin:0 0 20px; max-width:64ch; }
+
+/* ---------- LEDE（前提） ---------- */
+.lede-sec{ padding:clamp(40px,7vh,86px) 0 0; }
+.lede{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(18px,2.1vw,26px); line-height:1.78; color:var(--ink);
+  margin:0; text-wrap:pretty;
+}
+.lede b{ color:var(--ink); font-weight:700; }
+.lede .drop{
+  float:left; font-family:var(--font-display); font-weight:900;
+  font-size:4.4em; line-height:.74; color:var(--accent);
+  padding:8px 16px 0 0;
+}
+
+/* ---------- TL;DR ---------- */
+.tldr{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+@media (max-width:760px){ .tldr{ grid-template-columns:1fr; } }
+.tldr-card{ background:var(--bg-2); padding:30px 30px 34px; position:relative; transition:background .4s; }
+.tldr-card:hover{ background:var(--bg-3); }
+.tldr-card .n{ font-family:var(--font-mono); font-size:13px; color:var(--accent); font-weight:700; letter-spacing:.1em; }
+.tldr-card h3{ font-family:var(--font-display); font-weight:700; font-size:clamp(19px,2vw,24px); line-height:1.4; margin:14px 0 10px; }
+.tldr-card p{ color:var(--ink-2); font-size:14.5px; margin:0; line-height:1.75; }
+.tldr-card.flag::after{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--danger); }
+
+/* ---------- 実務インパクトカード ---------- */
+.impact{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.impact.two{ grid-template-columns:repeat(2,1fr); }
+@media (max-width:860px){ .impact, .impact.two{ grid-template-columns:1fr; } }
+.icard{ border:1px solid var(--line); background:var(--bg-2); border-radius:var(--r); padding:28px 26px 30px; display:flex; flex-direction:column; }
+.icard .big{ font-family:var(--font-display); font-weight:900; font-size:clamp(26px,3vw,38px); line-height:1.05; color:var(--accent); letter-spacing:-.01em; }
+.icard .big small{ font-size:.46em; color:var(--ink-2); font-weight:700; display:block; margin-top:6px; letter-spacing:.02em; }
+.icard h4{ font-family:var(--font-display); font-weight:700; font-size:18px; margin:18px 0 8px; }
+.icard p{ color:var(--ink-2); font-size:14px; margin:0; line-height:1.7; }
+
+/* ---------- voices（誰が何を言ったか / 勝敗） ---------- */
+.reality{ margin-top:40px; display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+.rrow{ background:var(--bg-2); padding:24px clamp(20px,2.5vw,32px); display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:start; }
+.rrow .code{ font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--accent-2); border:1px solid var(--accent-2); padding:6px 10px; border-radius:var(--r); white-space:nowrap; align-self:start; }
+.rrow .code.win{ color:var(--ok); border-color:var(--ok); }
+.rrow .code.lose{ color:var(--danger); border-color:var(--danger); }
+.rrow h4{ font-family:var(--font-display); font-weight:700; font-size:17px; margin:0 0 6px; }
+.rrow h4 .org{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-3); letter-spacing:.06em; margin-left:8px; }
+.rrow p{ margin:0; color:var(--ink-2); font-size:14px; }
+
+/* ---------- オーケストレーション図 ---------- */
+.flowx{ margin:38px auto 6px; max-width:560px; display:flex; flex-direction:column; align-items:center; }
+.fx-node{ width:100%; text-align:center; border:1px solid var(--line); background:var(--bg-2); border-radius:var(--r); padding:18px 22px; font-family:var(--font-display); font-weight:700; font-size:clamp(17px,2vw,21px); }
+.fx-node small{ display:block; font-family:var(--font-body); font-weight:400; font-size:13px; color:var(--ink-2); margin-top:7px; line-height:1.6; }
+.fx-node.user{ background:var(--bg-3); }
+.fx-node.cond{ border:2px solid var(--accent); background:var(--accent-soft); }
+.fx-node.ans{ background:var(--ink); color:var(--bg-2); border-color:var(--ink); }
+.fx-badge{ display:inline-block; font-family:var(--font-mono); font-weight:700; font-size:11px; letter-spacing:.1em; color:#fff; background:var(--accent); border-radius:999px; padding:3px 13px; margin-bottom:10px; }
+.fx-arrow{ font-family:var(--font-mono); font-size:12px; letter-spacing:.04em; color:var(--accent); padding:12px 0; text-align:center; }
+.pool{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; width:100%; }
+.chip{ font-family:var(--font-mono); font-size:13px; font-weight:500; background:var(--bg-2); border:1px solid var(--accent); color:var(--accent); border-radius:999px; padding:8px 16px; }
+.chip.self{ border-style:dashed; color:var(--ink-2); border-color:var(--ink-3); }
+
+/* ---------- 料金比較テーブル ---------- */
+.ctable-wrap{ overflow-x:auto; margin-top:10px; border:1px solid var(--line); border-radius:var(--r); }
+.ctable{ width:100%; border-collapse:collapse; font-size:14px; background:var(--bg-2); min-width:600px; }
+.ctable th, .ctable td{ border-bottom:1px solid var(--line); padding:12px 16px; text-align:left; vertical-align:top; }
+.ctable thead th{ font-family:var(--font-mono); font-size:12px; letter-spacing:.04em; color:var(--ink-2); background:var(--bg-3); border-bottom:2px solid var(--line-strong); white-space:nowrap; }
+.ctable tbody th{ font-family:var(--font-display); font-weight:700; white-space:nowrap; }
+.ctable td.num{ font-family:var(--font-mono); font-size:13px; white-space:nowrap; }
+.ctable tr.me th, .ctable tr.me td{ background:var(--accent-soft); }
+.ctable small{ display:block; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-3); margin-top:3px; }
+.tcap{ font-family:var(--font-mono); font-size:12px; color:var(--ink-3); margin:0 0 4px; }
+.subtable{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:20px; }
+@media(max-width:600px){ .subtable{ grid-template-columns:1fr; } }
+.subtable .pp{ background:var(--bg-2); padding:20px 22px; }
+.subtable .pp .pn{ font-family:var(--font-mono); font-size:12px; color:var(--ink-3); letter-spacing:.06em; }
+.subtable .pp .pv{ font-family:var(--font-display); font-weight:900; font-size:28px; color:var(--accent); margin:5px 0 3px; }
+.subtable .pp .pd{ font-size:13px; color:var(--ink-2); }
+
+/* ---------- 引用 / 考察 ---------- */
+.pull{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:clamp(40px,6vw,72px) 0; margin:8px 0; text-align:center; }
+.pull q{ font-family:var(--font-display); font-weight:900; font-size:clamp(20px,3vw,36px); line-height:1.34; quotes:none; display:block; max-width:26ch; margin:0 auto; }
+.pull q::before{ content:"\201C"; color:var(--accent); }
+.pull q::after{ content:"\201D"; color:var(--accent); }
+.pull .pq-cap{ font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3); margin-top:24px; }
+
+/* ---------- 注記ボックス ---------- */
+.note{ font-family:var(--font-mono); font-size:12.5px; color:var(--warn); border:1px dashed var(--warn); border-radius:var(--r); padding:12px 16px; line-height:1.7; }
+
+/* ---------- 留意ボックス（やや強め） ---------- */
+.caution{ border:1px solid var(--line); border-left:4px solid var(--accent); background:var(--bg-2); border-radius:var(--r); padding:24px 26px; margin-top:28px; }
+.caution h4{ font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:0 0 12px; }
+.caution p{ margin:0 0 12px; font-size:14.5px; color:var(--ink-2); }
+.caution p:last-child{ margin-bottom:0; }
+.caution p strong{ color:var(--ink); }
+
+/* ---------- フッター / 情報ソース ---------- */
+.foot{ border-top:1px solid var(--line); padding:64px 0 80px; }
+.src-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:26px; }
+@media (max-width:720px){ .src-list{ grid-template-columns:1fr; } }
+.src-item{ display:block; background:var(--bg-2); padding:20px 24px; transition:background .3s; color:inherit; text-decoration:none; }
+.src-item:hover{ background:var(--bg-3); }
+a.src-item:hover .st{ color:var(--accent); }
+.src-item .st{ font-family:var(--font-body); font-weight:700; font-size:14.5px; display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.src-item .so{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); }
+.src-item .sd{ color:var(--ink-2); font-size:12.5px; margin-top:6px; }
+.disclaimer{ font-size:12.5px; color:var(--ink-3); margin-top:34px; font-style:italic; max-width:70ch; }
+.colophon{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); letter-spacing:.08em; margin-top:30px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; border-top:1px solid var(--line); padding-top:22px; }
+</style>
+</head>
+<body>
+<div class="progress"></div>
+<div class="tex-layer"></div>
+
+<!-- ===================== TOP BAR ===================== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <b>生成AI週報</b><span class="tag">／ 深掘りビジュアル</span>
+  </div>
+  <a class="back" href="01-メインニュース.html">← 週報トップ</a>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" data-screen-label="Hero">
+  <div class="inner">
+    <div class="hero-grid">
+      <div class="hero-head full">
+        <div class="eyebrow">
+          <span>生成AI週報 深掘り · 2026/06/22 週</span>
+          <span><b>対象</b> 国産マルチエージェント / Sakana AI</span>
+        </div>
+        <h1>国産AI企業 <span class="hl">Sakana AI</span> が、<br />新モデル「Fugu」を公開</h1>
+        <p class="sub">東京発のSakana AIが6月22日に投入した「Fugu / Fugu Ultra」。複数のAIを束ねて“集合知”を売る——<strong>フロンティア級に匹敵</strong>という主張の、実力と落とし穴を読み解く。</p>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><span class="ln"></span></div>
+</section>
+
+<!-- ===================== 00 TL;DR ===================== -->
+<section class="section" data-screen-label="30秒でわかる要点">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">00</span>
+      <div>
+        <h2 class="sec-title">30秒でわかる要点</h2>
+        <p class="sec-dek">「賢い1モデル」ではなく「複数モデルの編成」を売る、国産スタートアップの一手。まず全体像を4点で。</p>
+      </div>
+    </div>
+    <div class="tldr">
+      <div class="tldr-card flag reveal">
+        <div class="n">01</div>
+        <h3>国産マルチエージェント「Fugu / Ultra」一般提供</h3>
+        <p>6/22、複数のAIを単一API（OpenAI互換）で束ねるシステムを提供開始。日常用Fuguと高難度用Fugu Ultraの2種。</p>
+      </div>
+      <div class="tldr-card reveal d1">
+        <div class="n">02</div>
+        <h3>中核は学習した“指揮役”Conductor</h3>
+        <p>どのモデルに任せ、どう連携させ、どうまとめるかを自ら学習。必要なら自分自身を再帰的に呼び出す。</p>
+      </div>
+      <div class="tldr-card reveal d2">
+        <div class="n">03</div>
+        <h3>「フロンティア級に匹敵」は自社評価</h3>
+        <p>一部ベンチでFable 5超を主張。ただし比較相手は各社公表値で、規制モデルはそもそもプール外という留保つき。</p>
+      </div>
+      <div class="tldr-card flag reveal d3">
+        <div class="n">04</div>
+        <h3>真の狙いは脱・単一ベンダー依存</h3>
+        <p>同じ週のFable 5 / Mythos停止を背景に、「輸出規制を迂回できるAI主権」を前面に押し出す。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 01 概要 ===================== -->
+<section class="section tight" data-screen-label="01 概要">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">01</span>
+      <div>
+        <h2 class="sec-title">6月22日、何が始まったのか</h2>
+        <p class="sec-dek">「複数のAIをまとめて1つのように使えるサービス」。まずは製品像を押さえる。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>Sakana AIが6月22日に一般提供を始めた <strong>Sakana Fugu（サカナ・フグ）</strong> は、ひとことで言えば「複数のAIモデルを、1つのAIのように使えるサービス」だ。従来のChatGPTやClaudeが「1つの巨大モデル」を相手にするのに対し、Fuguは裏側でGPTやGemini、各種オープンモデルを<strong>“チーム”として抱え込み</strong>、質問の難しさに応じて使い分けたり連携させたりする。利用者から見れば窓口は1つ。<strong>OpenAI互換のAPI</strong>にリクエストを送るだけでいい。</p>
+      <p>ラインアップは2つ。日常業務向けでバランス重視の <strong>Fugu</strong> と、高難度・多段階タスクに特化した上位版 <strong>Fugu Ultra</strong> だ。</p>
+    </div>
+
+    <div class="impact two reveal" style="margin-top:8px">
+      <div class="icard">
+        <div class="big">Fugu<small>日常のデフォルト</small></div>
+        <h4>性能と速度のバランス型</h4>
+        <p>応答の軽快さが要るコーディング補助やチャットボットなど、インタラクティブな用途に自然に組み込める日常使いのモデル。</p>
+      </div>
+      <div class="icard">
+        <div class="big">Ultra<small>高難度の本気仕事</small></div>
+        <h4>多段階で粘る作業に特化</h4>
+        <p>データ分析・論文の再現・サイバーセキュリティ診断・文献／特許調査など、精度と深さが最重要の場面で厚みのある専門エージェント群を連携させる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 02 性能 ===================== -->
+<section class="section" data-screen-label="02 性能と素性" style="padding-bottom:0">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">02</span>
+      <div>
+        <h2 class="sec-title">「フロンティア級に匹敵」——その数字の“素性”</h2>
+        <p class="sec-dek">一部ベンチでFable 5超を主張。だが、額面どおりには受け取れない。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>Sakana AIの主張は具体的だ。報道（ITmedia・GIGAZINEなど）によれば、上位版Fugu Ultraの成績は<strong>得意・不得意がくっきり分かれる</strong>。</p>
+    </div>
+
+    <div class="reality reveal">
+      <div class="rrow">
+        <span class="code win">✓ 勝ち</span>
+        <div><h4>Fugu Ultra ＞ Fable 5<span class="org">Terminal-Bench 2.1</span></h4><p>エージェントのプログラミング性能を測るベンチで、Anthropicの最上位級 Fable 5 を上回るスコア。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code win">✓ 勝ち</span>
+        <div><h4>Fugu Ultra ＞ Mythos Preview<span class="org">Charxiv Reasoning</span></h4><p>複雑な図表の読解を測るベンチで、提供停止中の Claude Mythos Preview のスコアを上回る。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code win">✓ 勝ち</span>
+        <div><h4>最短 19 手で解答<span class="org">ルービックキューブ</span></h4><p>Gemini 3.1 Pro・Opus 4.8・GPT-5.5 を抑え、4モデル中もっとも少ない手数で解いた。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code lose">✕ 負け</span>
+        <div><h4>Fugu Ultra ＜ Fable 5<span class="org">Humanity's Last Exam</span></h4><p>広範な学問知識を一発で問うテストでは、Fable 5 に及ばなかったと自ら認めている。</p></div>
+      </div>
+      <div class="rrow">
+        <span class="code lose">✕ 負け</span>
+        <div><h4>Fugu Ultra 73.7 ＜ Fable 5 80.0<span class="org">SWE-bench Pro（単一ソース）</span></h4><p>ソフトウェア工学のベンチでは Fable 5 が上回ると報じられた。規制モデルを土俵に載せれば序列は変わりうる。</p></div>
+      </div>
+    </div>
+
+    <div class="bodytext reveal" style="margin-top:36px">
+      <p>エージェント的なコーディングや図表読解では最上位級を上回る一方、広範な知識を一発で問うタスクでは及ばない。万能ではなく、<strong>「多段階で粘る作業」に強いタイプ</strong>だと読める。</p>
+      <p>ただし、ここは最も慎重に読むべき部分だ。これらの数字は、Sakana AI自身が注記する<strong>3つの留保</strong>の上に成り立っている。</p>
+    </div>
+
+    <div class="impact reveal" style="margin-top:8px">
+      <div class="icard">
+        <div class="big">①<small>同一条件ではない</small></div>
+        <h4>比較相手は各社の公表値</h4>
+        <p>同じ環境での直接対戦ではなく、各提供元が自社で測って公表した値を並べたもの。条件は揃っていない。</p>
+      </div>
+      <div class="icard">
+        <div class="big">②<small>そもそも使えない</small></div>
+        <h4>Fable 5／Mythosはプール外</h4>
+        <p>両モデルは一般提供されておらず、Fuguのエージェントプールにも含まれない。「自分が中に組み込めないモデルと肩を並べた」という主張だ。</p>
+      </div>
+      <div class="icard">
+        <div class="big">③<small>第三者検証なし</small></div>
+        <h4>すべて自社評価</h4>
+        <p>独立した第三者による再現検証ではない。あくまでSakana AIの自己申告である点に留意が必要。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal" style="margin-top:34px">
+      <p>さらに利用者目線で見過ごせないのが<strong>透明性</strong>だ。Fuguは内部でどのモデルを使ったかをユーザーが確認できない。GIGAZINEなど一部メディアは、この「中身が見えない」点を弱点として指摘している。技術者コミュニティ（Hacker Newsなど）では、<strong>「結局モデルルーターでは？」</strong>という反応も並んだ。</p>
+    </div>
+  </div>
+
+  <div class="pull reveal">
+    <q>素の出力品質はトップクラスのフロンティアモデルと同等。長いセッションでもキャラクターが崩れなかった。</q>
+    <div class="pq-cap">Sakana AIが公式に紹介するテスター（エンタープライズ企業経営層）の声</div>
+  </div>
+</section>
+
+<!-- ===================== 03 仕組み ===================== -->
+<section class="section" data-screen-label="03 仕組み">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">03</span>
+      <div>
+        <h2 class="sec-title">仕組み——「指揮役」が複数モデルを編成する</h2>
+        <p class="sec-dek">なぜ複数を1つに見せられるのか。鍵は“学習した指揮者”にある。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>Fuguの核心は、<strong>Fugu自体が「協調の仕方」を学習した小さな言語モデル</strong>である点にある。人手で「この質問はモデルA、難しければB」とルールを決めるのではない。<strong>いつ委譲し、エージェント同士がどう対話し、各モデルの成果をどう1つの信頼できる答えにまとめるか</strong>を、Fugu自身が学習している。必要なら自分自身を再帰的に呼び出し、推論を段階的に深めることもできる（推論時スケーリング）。</p>
+    </div>
+
+    <div class="flowx reveal" role="img" aria-label="Fuguの処理フロー：リクエストが単一APIを経てFugu（指揮役）に渡り、内部で複数モデルを動的に編成し、検証・統合して1つの回答を返す">
+      <div class="fx-node user">あなたのリクエスト</div>
+      <div class="fx-arrow">↓ 送るのは単一API（OpenAI互換）だけ</div>
+      <div class="fx-node cond"><span class="fx-badge">指揮役</span>Fugu（Conductor）<small>誰に任せ・どう連携し・どうまとめるかを“学習済み”</small></div>
+      <div class="fx-arrow">⟱ 内部で専門モデルのチームを動的に編成 ⟱</div>
+      <div class="pool">
+        <span class="chip">GPT-5.5</span>
+        <span class="chip">Gemini 3.1</span>
+        <span class="chip">オープンモデル</span>
+        <span class="chip self">Fugu自身 ↻</span>
+      </div>
+      <div class="fx-arrow">↑ 成果を検証し、1つの答えに統合</div>
+      <div class="fx-node ans">回答</div>
+    </div>
+
+    <div class="bodytext reveal" style="margin-top:34px">
+      <p>既存のモデルルーターが「最適な1つを選ぶ」のに対し、Fuguは「多数を学習的に編成する」。基盤には同社のICLR 2026採択論文 <strong>TRINITY</strong> と <strong>Conductor</strong> がある。さらに、<strong>データ・プライバシー要件に応じて特定モデルをプールから除外</strong> でき、「このベンダーは使わせたくない」といった統制も利用側でかけられる。学習ベースゆえ、新しい優れたモデルが登場すれば順次プールに加わり、システム全体が底上げされる——というのが同社の描く成長像だ。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 04 狙い ===================== -->
+<section class="section" data-screen-label="04 狙い">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">04</span>
+      <div>
+        <h2 class="sec-title">真の狙い——脱・単一ベンダー依存と輸出規制の回避</h2>
+        <p class="sec-dek">ベンチの勝ち負けではない。鍵は“いま起きている地政学”だ。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>Fuguの位置づけを理解する鍵は性能ではなく <strong>地政学</strong> にある。Sakana AIは公式ブログで、これを技術的最適化を超えた「地政学的・実務的な必然」とまで表現する。背景にあるのは同じ週の事件だ——Anthropicの最上位 <strong>Fable 5 / Mythos 5</strong> が、米政府の輸出管理・安全保障上の懸念から提供停止に追い込まれた。重要インフラや金融、行政を「一社のAPI」だけに頼っていると、<strong>規制が変わった瞬間にアクセスが断たれうる</strong>。そのリスクが、仮定ではなく現実として突きつけられた。</p>
+    </div>
+  </div>
+
+  <div class="pull reveal">
+    <q>規制や輸出管理、各国の政策が変われば、アクセスの条件は一夜にして変わり得る。</q>
+    <div class="pq-cap">Sakana AI 公式ブログ — 単一ベンダー依存のリスクについて</div>
+  </div>
+
+  <div class="inner">
+    <div class="bodytext reveal">
+      <p>Fuguの売り文句 <strong>「輸出規制のリスクを負うことなく、フロンティアレベルの能力を発揮する」</strong> は、まさにここを突く。背後のモデル群は柔軟に入れ替え可能で、あるプロバイダーが制限しても影響を動的に迂回する——Sakana AIはこれを「AI主権（AI sovereignty）」を支える現実解と位置づける。国産スタートアップが、単一モデルの賢さではなく <strong>「特定企業・特定国家への依存を避ける仕組み」</strong> で差別化を狙う構図だ。</p>
+    </div>
+
+    <div class="impact reveal" style="margin-top:8px">
+      <div class="icard">
+        <div class="big">依存<small>一社停止の現実</small></div>
+        <h4>単一API依存は弱点</h4>
+        <p>重要インフラや金融を1社のAPIだけで動かすことは、組織にとっても国家にとっても現実的な脆弱性になり得る。</p>
+      </div>
+      <div class="icard">
+        <div class="big">規制<small>一夜で変わる</small></div>
+        <h4>アクセスは政策で急変</h4>
+        <p>Fable 5／Mythos停止が示したとおり、輸出管理や各国政策が変わればアクセス条件は突然変わりうる。</p>
+      </div>
+      <div class="icard">
+        <div class="big">日本<small>BCPとコスト</small></div>
+        <h4>多元化という現実解</h4>
+        <p>用途別に複数モデルを使い分ける運用は、業務継続（BCP）と費用対効果の両面で国内企業にも刺さる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 05 料金 ===================== -->
+<section class="section" data-screen-label="05 料金">
+  <div class="inner">
+    <div class="sec-head reveal">
+      <span class="sec-num">05</span>
+      <div>
+        <h2 class="sec-title">料金——Claude API などと並べて見る</h2>
+        <p class="sec-dek">表示価格は安く見える。だが、それは“窓口の値段”にすぎない。</p>
+      </div>
+    </div>
+
+    <div class="bodytext reveal">
+      <p>APIの表示価格を主要モデルと並べると、Fugu Ultra（入力$5・出力$30）は Fable 5（$10／$50）より安く見える。数字だけ見れば割安だ。</p>
+    </div>
+
+    <p class="tcap reveal">主要モデルのAPI料金比較（100万トークンあたり・本シナリオ内の各社公表値）</p>
+    <div class="ctable-wrap reveal">
+      <table class="ctable">
+        <thead>
+          <tr><th>モデル</th><th>入力</th><th>出力</th><th>キャッシュ入力</th><th>備考</th></tr>
+        </thead>
+        <tbody>
+          <tr class="me">
+            <th>Sakana Fugu Ultra</th>
+            <td class="num">$5<small>27.2万超 $10</small></td>
+            <td class="num">$30<small>27.2万超 $45</small></td>
+            <td class="num">$0.50<small>27.2万超 $1</small></td>
+            <td>内部で複数モデルを呼ぶマルチエージェント</td>
+          </tr>
+          <tr class="me">
+            <th>Sakana Fugu（無印）</th>
+            <td class="num">固定単価なし</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td>単一稼働時は呼んだ基盤モデルの標準レート／複数時は最上位レート＋編成</td>
+          </tr>
+          <tr>
+            <th>Claude Fable 5</th>
+            <td class="num">$10</td>
+            <td class="num">$50</td>
+            <td class="num">約$1<small>90%引き</small></td>
+            <td>Mythosクラス・現在は一般提供停止中</td>
+          </tr>
+          <tr>
+            <th>Claude Opus 4.8（標準）</th>
+            <td class="num">$5</td>
+            <td class="num">$25</td>
+            <td class="num">約$0.50</td>
+            <td>高速モードは $10／$50</td>
+          </tr>
+          <tr>
+            <th>GPT-5.5</th>
+            <td class="num">$5</td>
+            <td class="num">$30</td>
+            <td class="num">$0.50</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th>Gemini 3.1 Pro</th>
+            <td class="num">$2</td>
+            <td class="num">$12</td>
+            <td class="num">$0.20</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bodytext reveal" style="margin-top:30px">
+      <p>注意すべきは、<strong>Fugu Ultraの表示価格は「窓口の値段」にすぎない</strong>点だ。Fuguは裏で複数モデルを動かし、各社のAPI正規料金を払ったうえで自社の編成マージンを上乗せする。さらにマルチエージェントは通常チャットの約15倍のトークンを消費するとされ、重いUltraタスクでは1メッセージあたり約$10に達するとの指摘もある。</p>
+    </div>
+
+    <div class="impact two reveal" style="margin-top:8px">
+      <div class="icard">
+        <div class="big">約15倍<small>トークン消費</small></div>
+        <h4>“複数モデルを何度も呼ぶ”代償</h4>
+        <p>マルチエージェントが消費するトークン量の目安（通常チャット比）。単価が安く見えても総額は膨らみやすい。</p>
+      </div>
+      <div class="icard">
+        <div class="big">約$10<small>1メッセージ</small></div>
+        <h4>重いUltraタスクの到達コスト例</h4>
+        <p>一部の有料利用者からは「動作が遅く感じる」という声も。安さと速さはトレードオフになりやすい。</p>
+      </div>
+    </div>
+
+    <p class="tcap reveal" style="margin-top:30px">個人・小規模向けサブスクリプション（Fugu / Fugu Ultra 両方を利用可）</p>
+    <div class="subtable reveal">
+      <div class="pp"><div class="pn">STANDARD</div><div class="pv">$20</div><div class="pd">基準となる利用枠</div></div>
+      <div class="pp"><div class="pn">PRO</div><div class="pv">$100</div><div class="pd">Standardの10倍の利用枠</div></div>
+      <div class="pp"><div class="pn">MAX</div><div class="pv">$200</div><div class="pd">Standardの20倍の利用枠</div></div>
+    </div>
+    <p class="note reveal" style="margin-top:18px">※ 2026年7月31日までに加入すると2か月目が無料になる導入キャンペーンあり。</p>
+
+    <div class="caution reveal">
+      <h4>結論：何にとって“得”か</h4>
+      <p>Fuguが効くのは「入り組んで長く、単一モデルでは解きにくい」タスク——<strong>データ分析・論文再現・セキュリティ診断・コードレビュー</strong>など。逆に定型・大量処理や軽い一発質問では、トークンを食うぶん割高になりやすい。</p>
+      <p><strong>「賢さの足し算」ではなく「依存リスクの保険＋多段タスクの質」に価値を見いだせるか</strong>——それが採否の分かれ目になる。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER / SOURCES ===================== -->
+<footer class="foot" data-screen-label="情報ソース">
+  <div class="inner">
+    <span class="kicker">情報ソース</span>
+    <div class="src-list">
+      <a class="src-item" href="https://sakana.ai/fugu-release/" target="_blank" rel="noopener"><div class="st">Sakana Fugu: One Model to Command Them All<span class="so">公式</span></div><div class="sd">公式リリース · 製品概要 / Conductorの仕組み / ベンチ注記 / 輸出規制への言及 / 料金方針</div></a>
+      <a class="src-item" href="https://www.itmedia.co.jp/news/articles/2606/23/news117.html" target="_blank" rel="noopener"><div class="st">Sakana AI、一部「ミュトス越えの性能」うたうAIを提供<span class="so">ITmedia</span></div><div class="sd">メディア報道 · Terminal-Bench 2.1 / Charxiv / Humanity's Last Exam の結果、API・サブスク価格</div></a>
+      <a class="src-item" href="https://gigazine.net/news/20260622-sakana-fugu-multi-agent-system-ai/" target="_blank" rel="noopener"><div class="st">Sakana AIがClaude Fable超えをアピールするマルチエージェント「Sakana Fugu」を発表<span class="so">GIGAZINE</span></div><div class="sd">メディア報道 · 料金詳細、ベンチ条件（Fable 5／Mythosをプール外で測定）、出力モデル不可視の論点</div></a>
+      <a class="src-item" href="https://forest.watch.impress.co.jp/docs/news/2118969.html" target="_blank" rel="noopener"><div class="st">Sakana AI、「Fable 5」や「Mythos」に匹敵するAIモデルをリリース<span class="so">窓の杜</span></div><div class="sd">メディア報道 · 2ティアの位置づけ、輸出規制リスク回避という訴求、テスト運用の事例</div></a>
+      <a class="src-item" href="https://www.finout.io/blog/claude-fable-5-mythos-5-pricing-benchmarks" target="_blank" rel="noopener"><div class="st">Claude Fable 5 and Mythos 5: Pricing, API Costs, and Benchmarks<span class="so">Finout</span></div><div class="sd">メディア報道 · Fable 5＝$10／$50、Opus 4.8＝$5／$25、GPT-5.5＝$5／$30 などの料金比較</div></a>
+      <a class="src-item" href="https://www.anthropic.com/news/claude-opus-4-8" target="_blank" rel="noopener"><div class="st">Introducing Claude Opus 4.8<span class="so">公式</span></div><div class="sd">公式 · Opus 4.8 標準 $5／$25・高速モード $10／$50 の確認</div></a>
+    </div>
+    <p class="disclaimer">※ 性能・価格の数値はいずれも本シナリオ（2026年6月時点）で各社が公表した値に基づく。ベンチマークはSakana AIの自社評価であり、独立した第三者検証ではない点に留意。SWE-bench Proの比較は単一メディアの報道に基づく。仕様・価格は変動しうるため、最終判断時は各リンク先を確認のこと。</p>
+    <div class="colophon">
+      <span>生成AI週報 深掘りビジュアル · 2026/06/22 週</span>
+      <span>報道 / Editorial</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+/* ============================================================
+   インタラクション: スクロール進捗・リビール
+   ============================================================ */
+(function () {
+  var root = document.documentElement;
+  var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (motionOK) root.classList.add('anim');
+
+  var bar = document.querySelector('.progress');
+  var revealEls = [].slice.call(document.querySelectorAll('.reveal'));
+
+  function tick() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    if (bar) bar.style.width = (p * 100).toFixed(2) + '%';
+
+    var vh = window.innerHeight || h.clientHeight;
+    var trigger = vh * 0.92;
+    revealEls = revealEls.filter(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < trigger && r.bottom > -40) { el.classList.add('is-in'); return false; }
+      return true;
+    });
+  }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { tick(); ticking = false; });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  tick();
+
+  if (!motionOK) {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-in'); });
+  }
+})();
+</script>
+</body>
+</html>

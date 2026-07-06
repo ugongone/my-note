@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="editorial">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国産フィジカルAIに1兆円 | 経産省プロジェクト始動（10分解説・Editorial）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  /* ============ Editorial（報道）テーマ・カラートークン ============ */
+  :root {
+    --bg:      #f1ece1;   /* 用紙のクリーム */
+    --bg2:     #e7dfce;   /* 影のベージュ */
+    --panel:   #fbf8f1;   /* カード面 */
+    --panel2:  #e7dfce;   /* 沈めた面 */
+    --line:    #d8cdb8;   /* 罫線 */
+    --line-strong: #1a1611;
+    --text:    #1a1611;   /* 墨 */
+    --sub:     #5b5247;   /* 焦茶 */
+    --ink3:    #9b9183;   /* 淡い茶 */
+    --accent:  #bf2a1d;   /* 朱赤（主アクセント） */
+    --accent-soft: #bf2a1d18;
+    --accent2: #9a6310;   /* 琥珀（警告・見通し） */
+    --accent3: #1c3a63;   /* 藍（副アクセント） */
+    --ok:      #1f6f43;   /* 緑 */
+    --warn:    #9a6310;
+    --shadow:  0 1px 0 var(--line), 0 20px 44px -30px rgba(26,22,17,.55);
+    --r: 4px;
+    --font-display: "Noto Serif JP", serif;
+    --font-body: "Noto Sans JP", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    color-scheme: light;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.8;
+    letter-spacing: .01em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+  svg.lucide { width: 100%; height: 100%; }
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  /* ============ 紙のテクスチャ（点描） ============ */
+  .tex-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    opacity: .5;
+    background: radial-gradient(rgba(26,22,17,.05) 1px, transparent 1.4px);
+    background-size: 4px 4px;
+  }
+
+  /* ============ デッキ / スライド ============ */
+  .deck { position: fixed; inset: 0; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    padding: 5vh 5.5vw 9vh;
+    opacity: 0; visibility: hidden;
+    transform: translateX(3vw);
+    transition: opacity .55s ease, transform .55s ease, visibility 0s linear .55s;
+    background:
+      radial-gradient(1100px 560px at 90% -12%, rgba(191,42,29,.05), transparent 60%),
+      radial-gradient(820px 460px at -6% 112%, rgba(28,58,99,.05), transparent 60%),
+      linear-gradient(168deg, var(--bg) 0%, var(--bg2) 100%);
+  }
+  .slide.active {
+    opacity: 1; visibility: visible;
+    transform: translateX(0);
+    transition: opacity .55s ease, transform .55s ease, visibility 0s;
+    z-index: 2;
+  }
+  .slide.leaving { z-index: 1; transform: translateX(-3vw); }
+
+  /* 入場アニメーション（.active時のみ発火） */
+  .a { opacity: 0; }
+  .slide.active .a {
+    animation: rise .7s cubic-bezier(.16,1,.3,1) both;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  .slide.active .a.pop { animation-name: pop; }
+  @keyframes pop { 0% { opacity:0; transform:scale(.72); } 70% { opacity:1; transform:scale(1.05); } 100% { opacity:1; transform:scale(1); } }
+  .slide.active .a.fromL { animation-name: fromL; }
+  @keyframes fromL { from { opacity:0; transform:translateX(-34px); } to { opacity:1; transform:none; } }
+  .slide.active .a.fromR { animation-name: fromR; }
+  @keyframes fromR { from { opacity:0; transform:translateX(34px); } to { opacity:1; transform:none; } }
+
+  /* ============ 共通パーツ ============ */
+  .kicker {
+    display: inline-flex; align-items: center; gap: .6vw;
+    font-family: var(--font-mono);
+    font-size: 1.45vh; letter-spacing: .22em; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 1.4vh; font-weight: 600;
+  }
+  .kicker::before {
+    content: ""; width: 2vw; max-width: 30px; height: 1px; background: var(--accent);
+  }
+  .kicker .ic { width: 2.1vh; height: 2.1vh; }
+  h1 {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 6.4vh; line-height: 1.08; letter-spacing: -.01em;
+  }
+  h2 {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 4.2vh; line-height: 1.2; margin-bottom: .8vh; letter-spacing: -.01em;
+  }
+  .lead { font-size: 1.95vh; color: var(--sub); line-height: 1.8; }
+  .accent { color: var(--accent); }
+  .amber { color: var(--accent2); }
+  .navy { color: var(--accent3); }
+  strong { font-weight: 700; color: var(--text); background: linear-gradient(transparent 62%, var(--accent-soft) 0); }
+  .body { flex: 1; display: flex; align-items: center; min-height: 0; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--r); padding: 2.4vh 1.6vw; box-shadow: var(--shadow);
+  }
+  .tag {
+    display: inline-flex; align-items: center; gap: .3vw;
+    font-family: var(--font-mono);
+    font-size: 1.35vh; font-weight: 700;
+    padding: .5vh .8vw; border-radius: 999px; letter-spacing: .08em;
+  }
+  .tag.hard { background: var(--ok); color: #fff; }
+  .tag.soft { background: var(--warn); color: #fff; }
+  .tag .ic { width: 1.6vh; height: 1.6vh; }
+
+  /* ============ ナビゲーションUI ============ */
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px; z-index: 60;
+    background: var(--accent);
+    width: 0%; transition: width .45s ease;
+  }
+  .hud {
+    position: fixed; bottom: 2.4vh; left: 0; right: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dots { display: flex; gap: .55vw; }
+  .dot {
+    width: 1.1vh; height: 1.1vh; border-radius: 50%;
+    background: var(--line); border: 1px solid var(--ink3); cursor: pointer; padding: 0;
+    transition: transform .25s, background .25s;
+  }
+  .dot.on { background: var(--accent); border-color: var(--accent); transform: scale(1.4); }
+  .pageno {
+    position: fixed; bottom: 2.1vh; right: 2vw; z-index: 40;
+    display: flex; align-items: center; gap: .5vw;
+    font-family: var(--font-mono);
+    font-size: 1.5vh; color: var(--sub); letter-spacing: .06em;
+  }
+  .pageno .ic { width: 1.7vh; height: 1.7vh; color: var(--accent); }
+  .navbtn {
+    position: fixed; top: 50%; transform: translateY(-50%); z-index: 40;
+    width: 4.8vh; height: 4.8vh; border-radius: 50%;
+    background: var(--panel); color: var(--sub);
+    border: 1px solid var(--line-strong); box-shadow: var(--shadow);
+    cursor: pointer; font-size: 2.2vh;
+    transition: color .2s, background .2s;
+  }
+  .navbtn:hover { color: #fff; background: var(--accent); border-color: var(--accent); }
+  #prev { left: 1.2vw; } #next { right: 1.2vw; }
+  .hint {
+    position: fixed; bottom: 2.1vh; left: 2vw; z-index: 40;
+    font-family: var(--font-mono);
+    font-size: 1.3vh; color: var(--ink3); letter-spacing: .04em;
+  }
+
+  /* ============ S1: タイトル ============ */
+  .s1-center { width: 100%; text-align: center; }
+  .s1-date {
+    display: inline-flex; align-items: center; gap: .5vw;
+    font-family: var(--font-mono);
+    font-size: 1.55vh; font-weight: 700; color: var(--accent);
+    border: 1px solid var(--accent); border-radius: 999px;
+    padding: .7vh 1.4vw; margin-bottom: 3vh; letter-spacing: .16em;
+  }
+  .s1-date .ic { width: 2vh; height: 2vh; }
+  .s1-date .pd {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+  .slide.active .s1-date .pd { animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(191,42,29,.5); } 70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .s1-eyebrow {
+    font-family: var(--font-mono); font-size: 1.5vh; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--sub); margin-bottom: 2vh;
+  }
+  .s1-sub { font-size: 2.1vh; color: var(--sub); margin-top: 2.6vh; line-height: 1.85; }
+  .s1-nums { display: flex; justify-content: center; gap: 0; margin-top: 4.6vh; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); max-width: 68vw; margin-left: auto; margin-right: auto; }
+  .bignum {
+    text-align: center; background: var(--panel);
+    padding: 2.8vh 2.4vw; flex: 1; position: relative;
+  }
+  .bignum + .bignum { border-left: 1px solid var(--line); }
+  .bignum .v { font-family: var(--font-display); font-weight: 900; font-size: 6vh; line-height: 1; color: var(--accent); letter-spacing: -.01em; }
+  .bignum .v .unit { font-size: 2.8vh; }
+  .bignum .l { font-family: var(--font-mono); font-size: 1.35vh; color: var(--sub); margin-top: 1.4vh; letter-spacing: .04em; line-height: 1.6; }
+  .bignum.gold .v { color: var(--accent2); }
+  .bignum.navy .v { color: var(--accent3); }
+  .bignum.gold::before, .bignum.navy::before { content: ""; }
+
+  .orbit-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .55; }
+  .orbit-bg svg { width: 100%; height: 100%; }
+  .slide.active .orbit-ring { animation: spin 55s linear infinite; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============ S2: 全体像スキーム ============ */
+  .scheme { display: flex; align-items: center; justify-content: center; width: 100%; }
+  .scheme-col { display: flex; flex-direction: column; gap: 2vh; }
+  .org {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 2.2vh 1.6vw; text-align: center; min-width: 15vw; box-shadow: var(--shadow);
+  }
+  .org .oic { width: 3.8vh; height: 3.8vh; margin: 0 auto 1vh; color: var(--ink3); }
+  .org .role { font-family: var(--font-mono); font-size: 1.25vh; color: var(--ink3); letter-spacing: .1em; margin-bottom: .8vh; text-transform: uppercase; }
+  .org .name { font-family: var(--font-display); font-size: 2.6vh; font-weight: 900; }
+  .org .desc { font-size: 1.45vh; color: var(--sub); margin-top: 1vh; line-height: 1.6; }
+  .org.hero { border: 1px solid var(--accent); box-shadow: 0 20px 50px -26px var(--accent); }
+  .org.hero .oic { color: var(--accent); }
+  .org.hero .name { color: var(--accent); }
+  .org.hero2 { border: 1px solid var(--accent3); }
+  .org.hero2 .oic, .org.hero2 .name { color: var(--accent3); }
+  .flow-arrow { display: flex; flex-direction: column; align-items: center; padding: 0 1.6vw; }
+  .flow-arrow .lbl { font-family: var(--font-mono); font-size: 1.3vh; color: var(--accent2); font-weight: 700; margin-bottom: .7vh; white-space: nowrap; letter-spacing: .04em; }
+  .arrow-line { position: relative; width: 8vw; height: 2px; background: var(--line-strong); }
+  .arrow-line::after {
+    content: ""; position: absolute; right: -2px; top: -5px;
+    border: 6px solid transparent; border-left-color: var(--line-strong);
+  }
+  .arrow-line .pulse {
+    position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 8px rgba(191,42,29,.5);
+  }
+  .slide.active .arrow-line .pulse { animation: slidePulse 1.8s ease-in-out infinite; }
+  @keyframes slidePulse { 0% { left:0; opacity:0; } 15% { opacity:1; } 85% { opacity:1; } 100% { left:calc(100% - 10px); opacity:0; } }
+  .plus { font-family: var(--font-display); font-size: 3.2vh; font-weight: 900; color: var(--ink3); text-align: center; }
+  .oneliner {
+    margin-top: 3.2vh; text-align: center; font-family: var(--font-display);
+    font-size: 2.3vh; font-weight: 700; line-height: 1.7;
+  }
+  .oneliner mark { background: linear-gradient(transparent 60%, var(--accent-soft) 0); color: inherit; padding: 0 .2em; }
+
+  /* ============ S3: 対比 ============ */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.8vw; width: 100%; align-items: stretch; }
+  .vs-card { padding: 3.4vh 2vw; text-align: center; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
+  .vs-card.old { background: var(--panel); }
+  .vs-card.new { background: var(--bg2); border-color: var(--accent); }
+  .vs-card .vic { width: 7.4vh; height: 7.4vh; margin-bottom: 1.8vh; }
+  .vs-card.old .vic { color: var(--ink3); }
+  .vs-card.new .vic { color: var(--accent); }
+  .vs-card h3 { font-family: var(--font-display); font-weight: 900; font-size: 2.7vh; margin-bottom: .8vh; }
+  .vs-card.new h3 { color: var(--accent); }
+  .vs-card .where { font-family: var(--font-mono); font-size: 1.4vh; letter-spacing: .16em; color: var(--ink3); font-weight: 700; margin-bottom: 1.8vh; text-transform: uppercase; }
+  .vs-card.new .where { color: var(--accent); }
+  .vs-card p { font-size: 1.75vh; color: var(--sub); line-height: 1.8; }
+  .vs-card .loopchips { display: flex; gap: .5vw; margin-top: 2vh; align-items: center; }
+  .loopchips .lc {
+    display: inline-flex; align-items: center; gap: .3vw;
+    font-family: var(--font-mono);
+    font-size: 1.4vh; font-weight: 700; color: var(--accent);
+    background: var(--panel); border: 1px solid var(--accent); border-radius: 999px; padding: .6vh .8vw;
+  }
+  .loopchips .lc .ic { width: 1.7vh; height: 1.7vh; }
+  .loopchips .sep { color: var(--accent); font-weight: 800; }
+  .vs-mid { display: flex; align-items: center; justify-content: center; }
+  .vs-mid .icwrap {
+    width: 5.4vh; height: 5.4vh; border-radius: 50%;
+    background: var(--bg); border: 1px solid var(--line-strong);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .vs-mid .ic { width: 2.6vh; height: 2.6vh; color: var(--accent); }
+
+  /* ============ S4: 何を作る（収束図） ============ */
+  .mm { display: flex; align-items: center; justify-content: center; gap: 0; width: 100%; }
+  .mm-inputs { display: flex; flex-direction: column; gap: 1.3vh; }
+  .mchip {
+    display: flex; align-items: center; gap: .8vw;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 1.2vh 1.2vw; font-size: 1.75vh; font-weight: 700; box-shadow: var(--shadow);
+    min-width: 12vw;
+  }
+  .mchip .ic { width: 2.5vh; height: 2.5vh; color: var(--accent); flex: none; }
+  .mm-core {
+    text-align: center; border-radius: 50%;
+    width: 29vh; height: 29vh;
+    background: var(--accent);
+    color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 20px 50px -22px var(--accent); position: relative;
+  }
+  .slide.active .mm-core { animation: pop .7s cubic-bezier(.16,1,.3,1) both .7s, breathe 3.2s ease-in-out 1.5s infinite; }
+  @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  .mm-core::before {
+    content: ""; position: absolute; inset: -1.6vh; border-radius: 50%;
+    border: 1px dashed var(--accent);
+  }
+  .slide.active .mm-core::before { animation: spin 32s linear infinite; }
+  .mm-core .cic { width: 4.8vh; height: 4.8vh; margin-bottom: .8vh; }
+  .mm-core .t1 { font-family: var(--font-display); font-size: 2.3vh; font-weight: 900; line-height: 1.4; }
+  .mm-core .t2 { font-family: var(--font-mono); font-size: 1.3vh; opacity: .85; margin-top: .7vh; letter-spacing: .1em; }
+  .mm-out {
+    text-align: center; background: var(--panel); border: 1px solid var(--accent2);
+    border-radius: var(--r); padding: 2.6vh 1.6vw; box-shadow: var(--shadow); min-width: 11vw;
+  }
+  .mm-out .oic { width: 5.6vh; height: 5.6vh; color: var(--accent2); margin: 0 auto 1vh; }
+  .mm-out .t { font-family: var(--font-display); font-size: 1.85vh; font-weight: 700; color: var(--accent2); line-height: 1.5; }
+  .mm-note { text-align: center; font-size: 1.75vh; color: var(--sub); margin-top: 3vh; line-height: 1.75; }
+
+  /* ============ S5: お金 ============ */
+  .budget-wrap { width: 100%; display: grid; grid-template-columns: 1.15fr 1fr; gap: 3vw; align-items: center; }
+  .bar-block { margin-bottom: 4vh; }
+  .bar-title { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.2vh; gap: 1vw; }
+  .bar-title .t { font-size: 1.7vh; font-weight: 700; display: flex; align-items: center; gap: .6vw; }
+  .bar-title .n { font-family: var(--font-display); font-size: 3.6vh; font-weight: 900; white-space: nowrap; letter-spacing: -.01em; }
+  .bar-rail { height: 4.6vh; background: var(--panel2); border-radius: var(--r); border: 1px solid var(--line); overflow: hidden; }
+  .bar-fill {
+    height: 100%; width: 0; border-radius: 3px;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: .8vw;
+    font-family: var(--font-mono); font-size: 1.4vh; font-weight: 700; color: #fff;
+  }
+  .slide.active .bar-fill { transition: width 1.4s cubic-bezier(.16,1,.3,1) .5s; }
+  .bar-fill.blue { background: var(--accent); }
+  .bar-fill.gold { background: var(--accent2); }
+  .bar-note { font-size: 1.45vh; color: var(--sub); margin-top: .9vh; }
+  .gate-title { font-family: var(--font-display); font-size: 2vh; font-weight: 900; margin-bottom: 2.4vh; display: flex; align-items: center; gap: .6vw; }
+  .gate-title .ic { width: 2.4vh; height: 2.4vh; color: var(--accent); }
+  .gates { display: flex; align-items: flex-start; }
+  .gate-year { flex: none; text-align: center; }
+  .gate-node {
+    width: 4.6vh; height: 4.6vh; border-radius: 50%; margin: 0 auto;
+    background: var(--panel2); border: 1px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 1.4vh; font-weight: 700; color: var(--accent);
+  }
+  .gate-year .y { font-family: var(--font-mono); font-size: 1.2vh; color: var(--sub); margin-top: .9vh; }
+  .gate-link { flex: 1; height: 2px; background: var(--line-strong); position: relative; margin-top: 2.2vh; min-width: 1.6vw; }
+  .gate-link::after {
+    content: "審査"; position: absolute; top: -2.7vh; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 1.1vh; color: var(--accent2); font-weight: 700; white-space: nowrap;
+  }
+  .gate-msg {
+    margin-top: 2.6vh; font-size: 1.5vh; color: var(--sub); line-height: 1.75;
+    background: var(--accent-soft); border-left: 3px solid var(--accent2);
+    padding: 1.4vh 1vw; border-radius: 0 var(--r) var(--r) 0;
+  }
+
+  /* ============ S6: 体制・Noetra ============ */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; width: 100%; box-shadow: var(--shadow); }
+  .duo-card { padding: 2.8vh 1.8vw; background: var(--panel); position: relative; }
+  .duo-card.noetra::before, .duo-card.aist::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .duo-card.noetra::before { background: var(--accent); }
+  .duo-card.aist::before { background: var(--accent3); }
+  .duo-head { display: flex; align-items: center; gap: .9vw; margin-bottom: 1.8vh; }
+  .duo-head .dic { width: 4.2vh; height: 4.2vh; flex: none; }
+  .duo-card.noetra .dic { color: var(--accent); }
+  .duo-card.aist .dic { color: var(--accent3); }
+  .duo-head .who { font-family: var(--font-display); font-size: 2.9vh; font-weight: 900; }
+  .duo-card.noetra .who { color: var(--accent); }
+  .duo-card.aist .who { color: var(--accent3); }
+  .duo-head .pos { font-family: var(--font-mono); font-size: 1.3vh; color: var(--ink3); letter-spacing: .06em; margin-top: .3vh; }
+  .duo-card ul { list-style: none; }
+  .duo-card li { font-size: 1.7vh; line-height: 1.7; padding-left: 1.5em; position: relative; margin-bottom: 1.3vh; }
+  .duo-card li::before { content: "▸"; position: absolute; left: .2em; color: var(--accent2); }
+  .profile { margin-top: 2.6vh; display: grid; grid-template-columns: 1fr 1fr; gap: 1.8vw; width: 100%; }
+  .profile .card h3 { font-family: var(--font-display); font-size: 1.75vh; margin-bottom: 1.3vh; display: flex; align-items: center; gap: .6vw; }
+  .chips { display: flex; flex-wrap: wrap; gap: .8vh .5vw; }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 1.45vh; font-weight: 700; padding: .7vh 1vw; border-radius: var(--r);
+    background: var(--panel2); border: 1px solid var(--accent); color: var(--text);
+  }
+  .chip.rumor { border-style: dashed; border-color: var(--accent2); color: var(--sub); background: var(--bg); }
+  .profile .note { font-size: 1.35vh; color: var(--sub); margin-top: 1.2vh; line-height: 1.6; }
+
+  /* ============ S7: エコシステム循環 ============ */
+  .cycle-wrap { width: 100%; }
+  .cycle { display: flex; align-items: stretch; justify-content: center; gap: 0; }
+  .cyc-node {
+    flex: 1; max-width: 20vw; background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--r); padding: 2.6vh 1.4vw; text-align: center; box-shadow: var(--shadow);
+  }
+  .cyc-node .nic { width: 4.4vh; height: 4.4vh; color: var(--accent); margin: 0 auto 1.2vh; }
+  .cyc-node h3 { font-family: var(--font-display); font-size: 2vh; font-weight: 900; margin-bottom: .8vh; }
+  .cyc-node p { font-size: 1.45vh; color: var(--sub); line-height: 1.65; }
+  .cyc-arrow { display: flex; align-items: center; padding: 0 .9vw; }
+  .cyc-arrow .ic { width: 3.2vh; height: 3.2vh; color: var(--accent2); }
+  .cyc-return { position: relative; height: 9vh; margin-top: 1vh; }
+  .cyc-return svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .cyc-return .lbl {
+    position: absolute; left: 50%; top: 56%; transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 1.4vh; font-weight: 700; color: var(--accent2);
+    background: var(--bg); padding: 0 .8vw;
+  }
+  .slide.active .draw { stroke-dasharray: 900; stroke-dashoffset: 900; animation: draw 1.4s ease forwards; animation-delay: var(--d, .8s); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .field-tags { display: flex; gap: 1.6vw; margin-top: 2.4vh; }
+  .field-tags .card { flex: 1; padding: 1.8vh 1.4vw; position: relative; }
+  .field-tags h4 { font-family: var(--font-display); font-size: 1.65vh; margin-bottom: .6vh; display: flex; align-items: center; gap: .5vw; }
+  .field-tags p { font-size: 1.4vh; color: var(--sub); line-height: 1.6; }
+  .field-tags .co { border-left: 3px solid var(--ok); }
+  .field-tags .cp { border-left: 3px solid var(--accent3); }
+
+  /* ============ S8: なぜ国産 ============ */
+  .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; width: 100%; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+  .q-card { display: flex; gap: 1.1vw; align-items: flex-start; padding: 2.6vh 1.8vw; background: var(--panel); }
+  .q-icon {
+    flex: none; width: 7.4vh; height: 7.4vh; border-radius: var(--r);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .q-icon .ic { width: 4vh; height: 4vh; }
+  .q-icon.blue { background: var(--accent-soft); color: var(--accent); }
+  .q-icon.pink { background: rgba(28,58,99,.1); color: var(--accent3); }
+  .q-icon.gold { background: rgba(154,99,16,.1); color: var(--accent2); }
+  .q-icon.green { background: rgba(31,111,67,.1); color: var(--ok); }
+  .q-card h3 { font-family: var(--font-display); font-size: 2.05vh; font-weight: 900; margin-bottom: .7vh; }
+  .q-card p { font-size: 1.5vh; color: var(--sub); line-height: 1.7; }
+  .q-num { font-family: var(--font-display); font-size: 3vh; font-weight: 900; color: var(--accent); }
+
+  /* ============ S9: これから ============ */
+  .steps { display: flex; align-items: stretch; width: 100%; }
+  .step { flex: 1; }
+  .step .box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 2.6vh 1.4vw; height: 100%; box-shadow: var(--shadow);
+  }
+  .step .phase { font-family: var(--font-mono); font-size: 1.3vh; color: var(--accent); letter-spacing: .12em; font-weight: 700; margin-bottom: 1vh; text-transform: uppercase; }
+  .step h3 { font-family: var(--font-display); font-size: 2vh; font-weight: 700; margin-bottom: 1vh; line-height: 1.45; }
+  .step p { font-size: 1.45vh; color: var(--sub); line-height: 1.7; }
+  .step-arrow { display: flex; align-items: center; padding: 0 .7vw; }
+  .step-arrow .ic { width: 2.8vh; height: 2.8vh; color: var(--accent2); }
+  .macro { display: flex; gap: 1.6vw; margin-top: 3.2vh; }
+  .macro .card { flex: 1; text-align: center; }
+  .macro .v { font-family: var(--font-display); font-size: 4.2vh; font-weight: 900; color: var(--accent2); letter-spacing: -.01em; }
+  .macro .v .unit { font-size: 2.2vh; }
+  .macro .l { font-family: var(--font-mono); font-size: 1.35vh; color: var(--sub); margin-top: .8vh; line-height: 1.6; }
+
+  /* ============ S10: まとめ ============ */
+  .wrapup { display: grid; grid-template-columns: 1.15fr 1fr; gap: 2.4vw; width: 100%; align-items: start; }
+  .takeaway { display: flex; gap: 1vw; align-items: flex-start; margin-bottom: 2.2vh; }
+  .tk-num {
+    flex: none; width: 4vh; height: 4vh; border-radius: var(--r);
+    background: var(--accent); color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 2vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .takeaway .t { font-family: var(--font-display); font-size: 2vh; font-weight: 700; line-height: 1.5; }
+  .takeaway .d { font-size: 1.5vh; color: var(--sub); margin-top: .4vh; line-height: 1.65; }
+  .open-box { position: relative; }
+  .open-box::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--warn); }
+  .open-box h3 { font-family: var(--font-display); font-size: 1.85vh; font-weight: 900; margin-bottom: 1.4vh; display: flex; align-items: center; gap: .5vw; }
+  .open-box h3 .ic { width: 2.2vh; height: 2.2vh; color: var(--warn); }
+  .open-box li { font-size: 1.55vh; color: var(--sub); line-height: 1.75; list-style: none; padding-left: 1.4em; position: relative; margin-bottom: .8vh; }
+  .open-box li::before { content: "?"; position: absolute; left: 0; color: var(--warn); font-weight: 800; font-family: var(--font-mono); }
+  .srcs { margin-top: 2.4vh; font-family: var(--font-mono); font-size: 1.25vh; color: var(--ink3); line-height: 1.9; letter-spacing: .02em; }
+  .srcs a { color: var(--sub); text-decoration: none; border-bottom: 1px dotted var(--line); }
+  .srcs a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="tex-layer"></div>
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ============ 1. タイトル（0:00〜） ============ -->
+  <section class="slide" data-t="0:00">
+    <div class="orbit-bg">
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+        <g class="orbit-ring">
+          <circle cx="800" cy="450" r="560" fill="none" stroke="#d8cdb8" stroke-width="1" stroke-dasharray="4 10"/>
+          <circle cx="800" cy="-110" r="7" fill="#bf2a1d"/>
+          <circle cx="1360" cy="450" r="5" fill="#1c3a63"/>
+        </g>
+        <circle cx="800" cy="450" r="420" fill="none" stroke="#e0d7c4" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="body">
+      <div class="s1-center">
+        <div class="s1-date a pop" style="--d:.1s"><span class="pd"></span>2026.07.01 始動</div>
+        <div class="s1-eyebrow a" style="--d:.25s">METI × NEDO ／ National Project</div>
+        <h1 class="a" style="--d:.4s">国が<span class="accent">“ロボットの頭脳”</span>に<br>1兆円を賭ける</h1>
+        <p class="s1-sub a" style="--d:.6s">経産省・NEDOの国家事業が、国産フィジカルAI基盤モデルの開発を<br><strong>新会社Noetra（ノエトラ）＋ 産総研</strong> に託した</p>
+        <div class="s1-nums">
+          <div class="bignum a" style="--d:.85s">
+            <div class="v"><span data-count="3873">0</span><span class="unit"> 億円</span></div>
+            <div class="l">初年度の開発委託費（確定）</div>
+          </div>
+          <div class="bignum gold a" style="--d:1.05s">
+            <div class="v"><span data-count="1">0</span><span class="unit"> 兆円規模</span></div>
+            <div class="l">5年総額の見通し（報道）</div>
+          </div>
+          <div class="bignum navy a" style="--d:1.25s">
+            <div class="v"><span data-count="5">0</span><span class="unit"> 年間</span></div>
+            <div class="l">2026〜2030年度</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. 30秒でわかる全体像（0:30〜） ============ -->
+  <section class="slide" data-t="0:30">
+    <div class="kicker a"><i data-lucide="map" class="ic"></i>Overview</div>
+    <h2 class="a" style="--d:.1s">30秒でわかる全体像</h2>
+    <p class="lead a" style="--d:.2s">国がお金を出し、実装役と研究役の2社に開発を託す —— まずはこの委託関係を押さえれば全体が見える。</p>
+    <div class="body" style="flex-direction:column; justify-content:center">
+      <div class="scheme">
+        <div class="scheme-col">
+          <div class="org a fromL" style="--d:.3s">
+            <i data-lucide="landmark" class="oic"></i>
+            <div class="role">国（所管・予算）</div>
+            <div class="name">経産省 × NEDO</div>
+            <div class="desc">公募・審査を経て採択<br>（2026/3〜4月に公募）</div>
+          </div>
+        </div>
+        <div class="flow-arrow a" style="--d:.55s">
+          <div class="lbl">委託：初年度 約3,873億円</div>
+          <div class="arrow-line"><div class="pulse"></div></div>
+        </div>
+        <div class="scheme-col">
+          <div class="org hero a fromR" style="--d:.7s">
+            <i data-lucide="factory" class="oic"></i>
+            <div class="role">実装する会社</div>
+            <div class="name">Noetra</div>
+            <div class="desc">実用的な基盤モデルを開発・提供</div>
+          </div>
+          <div class="plus a pop" style="--d:.9s">＋</div>
+          <div class="org hero2 a fromR" style="--d:1s">
+            <i data-lucide="flask-conical" class="oic"></i>
+            <div class="role">研究する機関</div>
+            <div class="name">産総研</div>
+            <div class="desc">理論・アーキテクチャの長期研究</div>
+          </div>
+        </div>
+      </div>
+      <p class="oneliner a" style="--d:1.25s">つまり —— <mark>現実世界で動くAIの基盤を、国産で作る国家プロジェクト</mark>が始まった。</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. フィジカルAIとは（1:30〜） ============ -->
+  <section class="slide" data-t="1:30">
+    <div class="kicker a"><i data-lucide="lightbulb" class="ic"></i>What is Physical AI</div>
+    <h2 class="a" style="--d:.1s">「フィジカルAI」＝ 現実世界で動くAI</h2>
+    <p class="lead a" style="--d:.2s">テキストや画像を“作る”AIから、現実を“動かす”AIへ。主戦場が変わる。</p>
+    <div class="body">
+      <div class="versus">
+        <div class="vs-card old a fromL" style="--d:.35s">
+          <i data-lucide="monitor" class="vic"></i>
+          <h3>従来の生成AI</h3>
+          <div class="where">デジタル空間</div>
+          <p>チャットで答える。文章・画像・コードを生成する。<br>ここまでは「画面の中」の話。</p>
+        </div>
+        <div class="vs-mid a pop" style="--d:.65s"><span class="icwrap"><i data-lucide="arrow-right" class="ic"></i></span></div>
+        <div class="vs-card new a fromR" style="--d:.8s">
+          <i data-lucide="bot" class="vic"></i>
+          <h3>フィジカルAI</h3>
+          <div class="where">現実世界</div>
+          <p>ロボットや機械が、周囲の状況を捉えて自分で判断し、動く。<br>その“頭脳”となるAI。</p>
+          <div class="loopchips">
+            <span class="lc"><i data-lucide="eye" class="ic"></i>認識</span>
+            <span class="sep">→</span>
+            <span class="lc"><i data-lucide="brain" class="ic"></i>判断</span>
+            <span class="sep">→</span>
+            <span class="lc"><i data-lucide="move" class="ic"></i>動作</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. 何を作るのか（2:30〜） ============ -->
+  <section class="slide" data-t="2:30">
+    <div class="kicker a"><i data-lucide="wrench" class="ic"></i>What They Build</div>
+    <h2 class="a" style="--d:.1s">何を作るのか — 現実の情報をまるごと扱う基盤モデル</h2>
+    <div class="body" style="flex-direction:column; justify-content:center">
+      <div class="mm">
+        <div class="mm-inputs">
+          <div class="mchip a fromL" style="--d:.3s"><i data-lucide="message-square" class="ic"></i>言語</div>
+          <div class="mchip a fromL" style="--d:.4s"><i data-lucide="mic" class="ic"></i>音声</div>
+          <div class="mchip a fromL" style="--d:.5s"><i data-lucide="image" class="ic"></i>画像・動画</div>
+          <div class="mchip a fromL" style="--d:.6s"><i data-lucide="radar" class="ic"></i>センサー</div>
+          <div class="mchip a fromL" style="--d:.7s"><i data-lucide="cog" class="ic"></i>物理特性</div>
+        </div>
+        <div class="flow-arrow a" style="--d:.85s">
+          <div class="lbl">統合</div>
+          <div class="arrow-line"><div class="pulse"></div></div>
+        </div>
+        <div class="mm-core a">
+          <i data-lucide="brain-circuit" class="cic"></i>
+          <div class="t1">マルチモーダル<br>基盤モデル</div>
+          <div class="t2">実世界ネイティブ</div>
+        </div>
+        <div class="flow-arrow a" style="--d:1.2s">
+          <div class="lbl">頭脳として搭載</div>
+          <div class="arrow-line"><div class="pulse"></div></div>
+        </div>
+        <div class="mm-out a fromR" style="--d:1.35s">
+          <i data-lucide="bot" class="oic"></i>
+          <div class="t">ロボット・機械の<br>認識・判断・動作</div>
+        </div>
+      </div>
+      <p class="mm-note a" style="--d:1.6s">日本語の理解・推論を土台に、<strong>実空間の多様なデータを1つのモデルで統合処理</strong>できるようにする。<br>その拡張性と評価手法まで含めて開発するのがこの事業。</p>
+    </div>
+  </section>
+
+  <!-- ============ 5. お金の話（4:00〜） ============ -->
+  <section class="slide" data-t="4:00">
+    <div class="kicker a"><i data-lucide="coins" class="ic"></i>Budget</div>
+    <h2 class="a" style="--d:.1s">お金の話 — 「1兆円」は確定ではない</h2>
+    <div class="body">
+      <div class="budget-wrap">
+        <div>
+          <div class="bar-block a" style="--d:.3s">
+            <div class="bar-title">
+              <span class="t"><span class="tag hard"><i data-lucide="check" class="ic"></i>確定</span>初年度 2026年度</span>
+              <span class="n accent"><span data-count="3873">0</span> 億円</span>
+            </div>
+            <div class="bar-rail"><div class="bar-fill blue" data-w="38.7%"></div></div>
+            <div class="bar-note">財務省・経産省の予算資料で確認できる開発委託費</div>
+          </div>
+          <div class="bar-block a" style="--d:.55s">
+            <div class="bar-title">
+              <span class="t"><span class="tag soft"><i data-lucide="newspaper" class="ic"></i>報道見通し</span>5年間 総額</span>
+              <span class="n amber"><span data-count="10000">0</span> 億円規模</span>
+            </div>
+            <div class="bar-rail"><div class="bar-fill gold" data-w="100%"></div></div>
+            <div class="bar-note">全額が約束されているわけではない</div>
+          </div>
+        </div>
+        <div class="card a fromR" style="--d:.8s">
+          <div class="gate-title"><i data-lucide="milestone" class="ic"></i>ステージゲート方式</div>
+          <div class="gates">
+            <div class="gate-year"><div class="gate-node">'26</div><div class="y">始動</div></div>
+            <div class="gate-link"></div>
+            <div class="gate-year"><div class="gate-node">'27</div><div class="y">継続?</div></div>
+            <div class="gate-link"></div>
+            <div class="gate-year"><div class="gate-node">'28</div><div class="y">継続?</div></div>
+            <div class="gate-link"></div>
+            <div class="gate-year"><div class="gate-node">'29</div><div class="y">継続?</div></div>
+            <div class="gate-link"></div>
+            <div class="gate-year"><div class="gate-node" style="border-color:var(--accent3); color:var(--accent3)">'30</div><div class="y">最終</div></div>
+          </div>
+          <div class="gate-msg">毎年度の成果審査を<strong>通過し続けた場合のみ</strong>「1兆円」に届く。成果が出なければ打ち切りもある設計。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. 誰がやるのか（5:00〜） ============ -->
+  <section class="slide" data-t="5:00">
+    <div class="kicker a"><i data-lucide="users" class="ic"></i>Who</div>
+    <h2 class="a" style="--d:.1s">誰がやるのか — 設立半年の新会社＋産総研</h2>
+    <div class="body" style="flex-direction:column; justify-content:center">
+      <div class="duo">
+        <div class="duo-card noetra a fromL" style="--d:.3s">
+          <div class="duo-head">
+            <i data-lucide="factory" class="dic"></i>
+            <div><div class="who">Noetra</div><div class="pos">実装側 — 使えるモデルを作る</div></div>
+          </div>
+          <ul>
+            <li>2026年1月設立の新会社（旧・日本AI基盤モデル開発）</li>
+            <li>社長は<strong>丹波廣寅氏</strong> — 国産LLM「Sarashina」開発を率いた人物</li>
+            <li>国内企業のニーズを踏まえ、実用的な基盤モデルを開発・提供</li>
+          </ul>
+        </div>
+        <div class="duo-card aist a fromR" style="--d:.5s">
+          <div class="duo-head">
+            <i data-lucide="flask-conical" class="dic"></i>
+            <div><div class="who">産総研</div><div class="pos">研究側 — 先を見て土台を作る</div></div>
+          </div>
+          <ul>
+            <li>米・加・仏・英などの研究機関と連携</li>
+            <li>理論・アーキテクチャなど先進的・長期的な技術開発</li>
+            <li>資本関係ではなく、NEDO採択のコンソーシアム（共同実施）</li>
+          </ul>
+        </div>
+      </div>
+      <div class="profile">
+        <div class="card a" style="--d:.75s">
+          <h3><span class="tag hard"><i data-lucide="check" class="ic"></i>公式確認済み</span>中核出資4社</h3>
+          <div class="chips">
+            <span class="chip">ソフトバンク</span>
+            <span class="chip">NEC</span>
+            <span class="chip">ソニーグループ</span>
+            <span class="chip">ホンダ</span>
+          </div>
+        </div>
+        <div class="card a" style="--d:.95s">
+          <h3><span class="tag soft"><i data-lucide="newspaper" class="ic"></i>報道ベース</span>計44社連合へ拡大予定</h3>
+          <div class="chips">
+            <span class="chip rumor">製造業 28社</span>
+            <span class="chip rumor">非製造業 16社</span>
+            <span class="chip rumor">メガバンク・鉄鋼・楽天G など</span>
+          </div>
+          <div class="note">出資比率・正式な企業一覧は未公表</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. 戦略のキモ（6:00〜） ============ -->
+  <section class="slide" data-t="6:00">
+    <div class="kicker a"><i data-lucide="recycle" class="ic"></i>Strategy</div>
+    <h2 class="a" style="--d:.1s">戦略のキモ — “重み”を国内に開放して循環を作る</h2>
+    <p class="lead a" style="--d:.2s">1社で完結させず、学習済みパラメータ（重み）を国内企業へ広く提供。国全体のエコシステムを狙う。</p>
+    <div class="body" style="flex-direction:column; justify-content:center">
+      <div class="cycle-wrap">
+        <div class="cycle">
+          <div class="cyc-node a pop" style="--d:.35s">
+            <i data-lucide="brain-circuit" class="nic"></i>
+            <h3>基盤モデル開発</h3>
+            <p>Noetra＋産総研が開発し、<strong>重みを国内へ開放</strong></p>
+          </div>
+          <div class="cyc-arrow a" style="--d:.55s"><i data-lucide="arrow-right" class="ic"></i></div>
+          <div class="cyc-node a pop" style="--d:.7s">
+            <i data-lucide="blocks" class="nic"></i>
+            <h3>領域特化モデル</h3>
+            <p>各社が製造・物流・医療などの特化モデルを作る</p>
+          </div>
+          <div class="cyc-arrow a" style="--d:.9s"><i data-lucide="arrow-right" class="ic"></i></div>
+          <div class="cyc-node a pop" style="--d:1.05s">
+            <i data-lucide="rocket" class="nic"></i>
+            <h3>社会実装</h3>
+            <p>現場で使われ、データと知見が生まれる</p>
+          </div>
+        </div>
+        <div class="cyc-return">
+          <svg viewBox="0 0 1000 90" preserveAspectRatio="none">
+            <path class="draw" d="M 930 8 C 930 70, 70 70, 70 8" fill="none" stroke="#9a6310" stroke-width="2" stroke-dasharray="900" marker-end="url(#retArrow)"/>
+            <defs>
+              <marker id="retArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#9a6310"/>
+              </marker>
+            </defs>
+          </svg>
+          <div class="lbl a" style="--d:1.6s">データ・知見が還流し、次のモデルへ</div>
+        </div>
+        <div class="field-tags">
+          <div class="card co a fromL" style="--d:1.8s">
+            <h4><span class="tag hard">協調領域</span>みんなで作る土台</h4>
+            <p>基盤モデル・データ基盤・試験用ハード。国内企業に広く参画を呼びかけ。</p>
+          </div>
+          <div class="card cp a fromR" style="--d:2s">
+            <h4><span class="tag" style="background:var(--accent3); color:#fff">競争領域</span>各社が競う部分</h4>
+            <p>個別の特化モデルと社会実装。ここで各社が競争力を磨く。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8. なぜ国産か（7:00〜） ============ -->
+  <section class="slide" data-t="7:00">
+    <div class="kicker a"><i data-lucide="flag" class="ic"></i>Why Domestic</div>
+    <h2 class="a" style="--d:.1s">なぜ「国産」にこだわるのか — 4つの理由</h2>
+    <div class="body">
+      <div class="quad">
+        <div class="q-card a" style="--d:.3s">
+          <div class="q-icon blue"><i data-lucide="shield-check" class="ic"></i></div>
+          <div>
+            <h3>現場データの主権　<span class="q-num"><span data-count="38">0</span>%</span></h3>
+            <p>日本は産業用ロボット生産で世界の約38%を占める首位級。現場の機密データを海外製モデルに預けたくない。</p>
+          </div>
+        </div>
+        <div class="q-card a" style="--d:.5s">
+          <div class="q-icon pink"><i data-lucide="shield-alert" class="ic"></i></div>
+          <div>
+            <h3>海外依存は“もう”リスク</h3>
+            <p>海外製AIが米政府の要請で提供停止された事例が実際に発生。依存の脆さは仮定の話ではなくなった。</p>
+          </div>
+        </div>
+        <div class="q-card a" style="--d:.7s">
+          <div class="q-icon gold"><i data-lucide="zap" class="ic"></i></div>
+          <div>
+            <h3>省電力は死活問題　<span class="q-num amber"><span data-count="16.4" data-dec="1">0</span>%</span></h3>
+            <p>エネルギー自給率16.4%の日本では、AIの電力消費を抑えることが競争力に直結する。</p>
+          </div>
+        </div>
+        <div class="q-card a" style="--d:.9s">
+          <div class="q-icon green"><i data-lucide="users" class="ic"></i></div>
+          <div>
+            <h3>働き手が減っていく</h3>
+            <p>少子高齢化への切り札として、工場自動化に加え介護・医療でのロボット活用も視野に入れる。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9. これから（8:00〜） ============ -->
+  <section class="slide" data-t="8:00">
+    <div class="kicker a"><i data-lucide="trending-up" class="ic"></i>Roadmap</div>
+    <h2 class="a" style="--d:.1s">これから — まず追いつき、2028年度に国内最高水準へ</h2>
+    <div class="body" style="flex-direction:column; justify-content:center">
+      <div class="steps">
+        <div class="step a fromL" style="--d:.3s">
+          <div class="box">
+            <div class="phase">STEP 1</div>
+            <h3>国内で使われている基盤モデルと同程度の性能を確保</h3>
+            <p>まず土台を固める。</p>
+          </div>
+        </div>
+        <div class="step-arrow a pop" style="--d:.55s"><i data-lucide="arrow-right" class="ic"></i></div>
+        <div class="step a" style="--d:.6s">
+          <div class="box">
+            <div class="phase">STEP 2</div>
+            <h3>扱えるデータの多様性と、思考の深さを拡張</h3>
+            <p>マルチモーダル×推論を順次強化。</p>
+          </div>
+        </div>
+        <div class="step-arrow a pop" style="--d:.85s"><i data-lucide="arrow-right" class="ic"></i></div>
+        <div class="step a fromR" style="--d:.9s">
+          <div class="box" style="border-color:var(--accent2)">
+            <div class="phase" style="color:var(--accent2)">GOAL（報道）</div>
+            <h3>2028年度までに国内最高水準の大規模AIを構築</h3>
+            <p>フィジカルAIの頭脳として展開へ。</p>
+          </div>
+        </div>
+      </div>
+      <div class="macro">
+        <div class="card a pop" style="--d:1.15s">
+          <div class="v"><span data-count="1000">0</span><span class="unit"> 万台</span></div>
+          <div class="l">2040年までの国内AIロボット<br>導入目標（AIロボティクス戦略・報道）</div>
+        </div>
+        <div class="card a pop" style="--d:1.35s">
+          <div class="v"><span data-count="10.5" data-dec="1">0</span><span class="unit"> 兆円</span></div>
+          <div class="l">政府成長戦略がフィジカルAI分野に<br>割り当てる方向と報じられる規模</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10. まとめ（9:00〜） ============ -->
+  <section class="slide" data-t="9:00">
+    <div class="kicker a"><i data-lucide="flag-triangle-right" class="ic"></i>Takeaways</div>
+    <h2 class="a" style="--d:.1s">持ち帰り3点と、見ておくべき論点</h2>
+    <div class="body" style="flex-direction:column; justify-content:center">
+      <div class="wrapup">
+        <div>
+          <div class="takeaway a" style="--d:.3s">
+            <div class="tk-num">1</div>
+            <div>
+              <div class="t">国が“ロボットの頭脳”に本気の投資を始めた</div>
+              <div class="d">初年度3,873億円は確定。生成AIの次の主戦場＝フィジカルAIに国費を集中。</div>
+            </div>
+          </div>
+          <div class="takeaway a" style="--d:.5s">
+            <div class="tk-num">2</div>
+            <div>
+              <div class="t">1社独占ではなく「重みの開放」で国全体を底上げ</div>
+              <div class="d">Noetraが作り、重みを国内企業に提供。特化モデルと社会実装は各社の競争に委ねる設計。</div>
+            </div>
+          </div>
+          <div class="takeaway a" style="--d:.7s">
+            <div class="tk-num">3</div>
+            <div>
+              <div class="t">「1兆円」は成果次第 — 毎年の審査が試金石</div>
+              <div class="d">ステージゲート方式。確定しているのは初年度分だけで、続きは結果が決める。</div>
+            </div>
+          </div>
+        </div>
+        <div class="card open-box a fromR" style="--d:.9s">
+          <h3><i data-lucide="circle-help" class="ic"></i>まだ分かっていないこと</h3>
+          <ul>
+            <li>モデル規模・学習手法・GPUなどの技術スペック</li>
+            <li>44社連合の正式な顔ぶれと出資構造</li>
+            <li>スクラッチ開発か、既存オープンモデルがベースか<br>（“国産”の看板との整合が今後の論点）</li>
+          </ul>
+        </div>
+      </div>
+      <div class="srcs a" style="--d:1.15s">
+        一次情報：
+        <a href="https://www.meti.go.jp/press/2026/06/20260630005/20260630005.html" target="_blank" rel="noopener">経産省プレスリリース</a> ／
+        <a href="https://www.aist.go.jp/aist_j/news/pr20260630.html" target="_blank" rel="noopener">産総研 採択発表</a> ／
+        <a href="https://www.itmedia.co.jp/business/articles/2607/01/news042.html" target="_blank" rel="noopener">ITmedia</a> ／
+        <a href="https://www.watch.impress.co.jp/docs/news/2121279.html" target="_blank" rel="noopener">Impress Watch</a> ／
+        <a href="https://www.nikkei.com/article/DGXZQOUC297QR0Z20C26A6000000" target="_blank" rel="noopener">日経</a> ／
+        <a href="https://innovatopia.jp/ai/ai-news/111875" target="_blank" rel="noopener">innovatopia</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button class="navbtn" id="prev" aria-label="前のスライド">‹</button>
+<button class="navbtn" id="next" aria-label="次のスライド">›</button>
+<div class="hud"><div class="dots" id="dots"></div></div>
+<div class="pageno" id="pageno"></div>
+<div class="hint">← → キー / クリックで移動</div>
+
+<script>
+(() => {
+  lucide.createIcons();
+
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsEl = document.getElementById('dots');
+  const progress = document.getElementById('progress');
+  const pageno = document.getElementById('pageno');
+  let cur = 0;
+
+  // ドット生成
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.className = 'dot';
+    b.setAttribute('aria-label', `スライド${i + 1}`);
+    b.addEventListener('click', e => { e.stopPropagation(); go(i); });
+    dotsEl.appendChild(b);
+  });
+  const dots = Array.from(dotsEl.children);
+
+  // 数値カウントアップ
+  function runCounters(slide) {
+    slide.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseFloat(el.dataset.count);
+      const dec = parseInt(el.dataset.dec || '0', 10);
+      const dur = 1300, wait = 350;
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min(1, (now - start - wait) / dur);
+        if (t < 0) { requestAnimationFrame(tick); return; }
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = (target * eased).toLocaleString('ja-JP', {
+          minimumFractionDigits: dec, maximumFractionDigits: dec
+        });
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      el.textContent = (0).toFixed(dec);
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // 棒グラフの伸長
+  function runBars(slide) {
+    slide.querySelectorAll('.bar-fill').forEach(el => { el.style.width = '0'; });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      slide.querySelectorAll('.bar-fill').forEach(el => { el.style.width = el.dataset.w; });
+    }));
+  }
+
+  function render() {
+    dots.forEach((d, k) => d.classList.toggle('on', k === cur));
+    progress.style.width = ((cur + 1) / slides.length * 100) + '%';
+    const t = slides[cur].dataset.t || '';
+    pageno.innerHTML = `${cur + 1} / ${slides.length}　<i data-lucide="timer" class="ic"></i>${t}〜`;
+    lucide.createIcons();
+  }
+
+  function go(i) {
+    const next = Math.max(0, Math.min(slides.length - 1, i));
+    if (next === cur && slides[cur].classList.contains('active')) return;
+
+    const prev = slides[cur];
+    prev.classList.remove('active');
+    prev.classList.add('leaving');
+    setTimeout(() => prev.classList.remove('leaving'), 600);
+
+    cur = next;
+    const s = slides[cur];
+    // アニメーションを再発火させるためのリフロー
+    s.classList.remove('active');
+    void s.offsetWidth;
+    s.classList.add('active');
+
+    runCounters(s);
+    runBars(s);
+    render();
+  }
+
+  document.getElementById('prev').addEventListener('click', e => { e.stopPropagation(); go(cur - 1); });
+  document.getElementById('next').addEventListener('click', e => { e.stopPropagation(); go(cur + 1); });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length - 1);
+  });
+
+  // スワイプ対応
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) go(cur + (dx < 0 ? 1 : -1));
+    touchX = null;
+  }, { passive: true });
+
+  // 本文クリックでも進む（リンク・ボタンは除外）
+  document.getElementById('deck').addEventListener('click', e => {
+    if (e.target.closest('a, button')) return;
+    go(cur + 1);
+  });
+
+  // 初期表示
+  slides[0].classList.add('active');
+  runCounters(slides[0]);
+  render();
+})();
+</script>
+</body>
+</html>
